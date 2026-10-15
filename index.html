@@ -8,6 +8,8 @@
 <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta name="theme-color" content="#F3E4CF">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; manifest-src 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -401,7 +403,7 @@ function step(){var d=devicePixelRatio;fxx.clearRect(0,0,fxc.width,fxc.height);
 var CAP={art:null,db:null,user:null,uid:null,canWrite:null,edit:false,ready:false};
 var LIVE={supports:{},myS:null,votes:{},myV:{},wall:[]};
 (async function(){
-  if(!window.claude||!window.claude.use){CAP.ready=true;CAP.edit=true;render();return;}
+  if(!window.claude||!window.claude.use){CAP.ready=true;CAP.edit=location.protocol==="file:";render();return;}
   try{CAP.art=await window.claude.use("artifact");}catch(e){}
   try{CAP.user=await window.claude.use("user");}catch(e){}
   try{CAP.db=await window.claude.use("db");}catch(e){}
