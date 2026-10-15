@@ -63,6 +63,8 @@ h1,h2,h3{text-wrap:balance;margin:0}
 .iconbtn{border:2px solid var(--ink);background:var(--paper);border-radius:999px;padding:6px 12px;font-family:var(--cond);font-weight:700;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
 @media (max-width:1200px){.brand small{display:none}.tab{padding:8px 9px}}
 @media (max-width:860px){.brand b{display:none}}
+@media (max-width:720px){.nav .wrap{flex-wrap:wrap;row-gap:6px}.nav .brand{margin-right:auto}.tabs{order:3;flex:1 1 100%}.nav .iconbtn{padding:5px 10px;font-size:.9rem}.lbl-long{display:none}}
+@media (min-width:721px){.lbl-short{display:none}}
 
 /* phase rail */
 .phases{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-block:18px 0}
@@ -430,7 +432,7 @@ function render(){
    '<header class="nav"><div class="wrap"><a class="brand" href="#accueil" data-go="accueil"><i aria-hidden="true"></i><span><b>Retrolympique</b><small>MCCI Business School</small></span></a>'+
    '<nav class="tabs" aria-label="Sections">'+tabs.map(function(t){return '<button class="tab" data-go="'+t[0]+'" aria-current="'+(ui.tab===t[0])+'">'+(t[0]==="direct"&&liveNow?'<span class="dot"></span>':'')+t[1]+'</button>';}).join("")+'</nav>'+
    '<button class="iconbtn" data-do="tv" title="Mode écran géant">Écran</button>'+
-   (MIRROR?'<a class="iconbtn" style="background:var(--red);color:#fff;border-color:var(--red);text-decoration:none" href="'+LIVE_URL+'" target="_blank" rel="noopener">● Scores en direct</a>':'')+(CAP.edit?'<button class="iconbtn" data-do="admin">'+(ui.admin?"Orga ●":"Orga")+'</button>':'')+'</div></header>'+
+   (MIRROR?'<a class="iconbtn" style="background:var(--red);color:#fff;border-color:var(--red);text-decoration:none" href="'+LIVE_URL+'" target="_blank" rel="noopener">● <span class="lbl-long">Scores en direct</span><span class="lbl-short">Direct</span></a>':'')+(CAP.edit?'<button class="iconbtn" data-do="admin">'+(ui.admin?"Orga ●":"Orga")+'</button>':'')+'</div></header>'+
    '<main class="wrap" id="view">'+view()+'</main>'+
    '<footer><div class="wrap row" style="justify-content:space-between"><div><b class="cond" style="font-size:1.1rem;text-transform:uppercase;letter-spacing:.05em">Journée Sportive MCCI Business School</b><div class="muted small">Vendredi 23 octobre 2026 au Racing Club. 40 ans au service de l\'éducation tertiaire.</div></div><div style="display:grid;gap:6px;justify-items:start"><a class="btn sm" style="text-decoration:none" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">Formulaire d\'inscription ↗</a><div class="muted small">Barème par épreuve, 10 · 7 · 5 · 3 points, plus 1 point de participation et les bonus</div></div></div></footer>';
   if(!CAP.edit&&CAP.ready){ui.admin=false;ui.drawer=false;}
