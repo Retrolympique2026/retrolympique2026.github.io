@@ -312,6 +312,15 @@ if(!S.mb)S.mb={};
 if(S.v!==2){var d0=defaultState();ACTS.forEach(function(x){var o=S.acts&&S.acts[x.id]||{};d0.acts[x.id].h=o.h||x.h;d0.acts[x.id].l=o.l||x.l;});S.acts=d0.acts;S.fp={};S.mb={};S.v=2;}
 ACTS.forEach(function(x){if(!S.acts[x.id])S.acts[x.id]={st:"avenir",h:x.h,l:x.l,fmt:x.fmt,br:null,rk:[],ff:[]};});
 var dirty=0;
+var LIVE_URL="https://claude.ai/artifact/TM5u3ia4huTvBgUdNBzEaj";
+var ONCLAUDE=!!(window.claude&&window.claude.use);
+var MIRROR=!ONCLAUDE&&location.protocol!=="file:";
+if(!S.links)S.links={photos:"",vote:""};
+/* brouillon arbitre, protège les saisies non publiées */
+var draftMsg="";
+(function(){var dr=ssGet("draft",null);if(!dr||!dr.S||!ssGet("admin",false))return;
+  if((dr.base||0)===(S.pub||0)){S=dr.S;if(!S.links)S.links={photos:"",vote:""};dirty=dr.n||1;draftMsg="Tes saisies non publiées ont été récupérées. Pense à publier.";}
+  else{ssSet("draft",null);draftMsg="Une nouvelle version a été publiée entre temps. Tes saisies non publiées n'ont pas été appliquées, vérifie et refais les.";}})();
 function hash(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return "h"+(h>>>0).toString(36);}
 
 /* ---------- Stockage local ---------- */
@@ -388,7 +397,7 @@ function step(){var d=devicePixelRatio;fxx.clearRect(0,0,fxc.width,fxc.height);
 var CAP={art:null,db:null,user:null,uid:null,canWrite:null,edit:false,ready:false};
 var LIVE={supports:{},myS:null,votes:{},myV:{},wall:[]};
 (async function(){
-  if(!window.claude||!window.claude.use){CAP.ready=true;CAP.edit=location.protocol==="file:";render();return;}
+  if(!window.claude||!window.claude.use){CAP.ready=true;CAP.edit=true;render();return;}
   try{CAP.art=await window.claude.use("artifact");}catch(e){}
   try{CAP.user=await window.claude.use("user");}catch(e){}
   try{CAP.db=await window.claude.use("db");}catch(e){}
@@ -415,7 +424,7 @@ function render(){
    '<header class="nav"><div class="wrap"><a class="brand" href="#accueil" data-go="accueil"><i aria-hidden="true"></i><span><b>Retrolympique</b><small>MCCI Business School</small></span></a>'+
    '<nav class="tabs" aria-label="Sections">'+tabs.map(function(t){return '<button class="tab" data-go="'+t[0]+'" aria-current="'+(ui.tab===t[0])+'">'+(t[0]==="direct"&&liveNow?'<span class="dot"></span>':'')+t[1]+'</button>';}).join("")+'</nav>'+
    '<button class="iconbtn" data-do="tv" title="Mode écran géant">Écran</button>'+
-   (CAP.edit?'<button class="iconbtn" data-do="admin">'+(ui.admin?"Orga ●":"Orga")+'</button>':'')+'</div></header>'+
+   (MIRROR?'<a class="iconbtn" style="background:var(--red);color:#fff;border-color:var(--red);text-decoration:none" href="'+LIVE_URL+'" target="_blank" rel="noopener">● Scores en direct</a>':'')+(CAP.edit?'<button class="iconbtn" data-do="admin">'+(ui.admin?"Orga ●":"Orga")+'</button>':'')+'</div></header>'+
    '<main class="wrap" id="view">'+view()+'</main>'+
    '<footer><div class="wrap row" style="justify-content:space-between"><div><b class="cond" style="font-size:1.1rem;text-transform:uppercase;letter-spacing:.05em">Journée Sportive MCCI Business School</b><div class="muted small">Vendredi 23 octobre 2026 au Racing Club. 40 ans au service de l\'éducation tertiaire.</div></div><div style="display:grid;gap:6px;justify-items:start"><a class="btn sm" style="text-decoration:none" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">Formulaire d\'inscription ↗</a><div class="muted small">Barème par épreuve, 10 · 7 · 5 · 3 points, plus 1 point de participation et les bonus</div></div></div></footer>';
   if(!CAP.edit&&CAP.ready){ui.admin=false;ui.drawer=false;}
@@ -482,6 +491,7 @@ function vAccueil(){
     h+=creaBlock();
     h+=drawBlock();
   } else if(ph==="live"){
+    h+=mirrorNote();
     h+=liveHero();
     h+='<section class="block grid g2"><div>'+miniStandings(6)+'</div><div class="card"><div class="head"><h2 class="cond" style="font-weight:800;text-transform:uppercase">Dernières nouvelles</h2><button class="btn sm alt" data-go="direct">Tout le direct</button></div>'+feedHTML(6)+'</div></section>';
     h+=liveMatchesBlock();
@@ -573,8 +583,9 @@ function liveMatchesBlock(){
 }
 function feedHTML(n){var f=(S.feed||[]).slice(0,n||50);if(!f.length)return '<div class="note">Le fil d\'actu démarre avec le premier résultat.</div>';
   return '<div class="feed">'+f.map(function(x){return '<div class="it '+(x.k==="or"?"gold":"")+'"><time>'+hm(x.t)+'</time><div>'+esc(x.txt)+'</div></div>';}).join("")+'</div>';}
+function mirrorNote(){return MIRROR?'<section class="block cta" style="grid-template-columns:1fr auto"><div style="display:grid;gap:6px;min-width:0"><span class="eyebrow" style="color:#d9cdbd">Le direct se passe ailleurs</span><h2 class="disp" style="font-size:clamp(1.4rem,4vw,2rem)">Scores en temps réel</h2><p>Cette page est la vitrine de l\'événement. Les scores, le classement et les médailles sont mis à jour en direct sur le site officiel.</p></div><a class="go" href="'+LIVE_URL+'" target="_blank" rel="noopener">Ouvrir le direct ↗</a></section>':"";}
 function vDirect(){
-  return '<section class="block"><div class="head"><div><span class="eyebrow">'+(phase()==="live"?"Mis à jour par les arbitres":"Le direct ouvre le 23 octobre")+'</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le direct</h1></div><button class="btn alt" data-do="tv">Mode écran géant</button></div></section>'+
+  return mirrorNote()+'<section class="block"><div class="head"><div><span class="eyebrow">'+(phase()==="live"?"Mis à jour par les arbitres":"Le direct ouvre le 23 octobre")+'</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le direct</h1></div><button class="btn alt" data-do="tv">Mode écran géant</button></div></section>'+
    liveMatchesBlock()+'<section class="block grid g2"><div class="card"><h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">Fil d\'actu</h2>'+feedHTML(40)+'</div><div>'+miniStandings(16)+'</div></section>';
 }
 
@@ -584,7 +595,7 @@ function miniStandings(n){var st=standings();var max=Math.max(1,st[0].p);
    st.slice(0,n).map(function(r,i){return '<tr class="'+(r.id===ui.me?"me":"")+'"><td class="rank num">'+(i+1)+'</td><td><div class="cls">'+chip(r.id)+'<div style="min-width:0;flex:1"><div>'+tname(r.id)+'</div><div class="bar"><i style="width:'+Math.round(r.p/max*100)+'%;background:'+CL[r.id].col+'"></i></div></div></div></td><td class="pts num">'+r.p+'</td></tr>';}).join("")+'</tbody></table></div></div>';}
 function vClassement(){
   var st=standings();
-  return '<section class="block"><div class="head"><div><span class="eyebrow">Mis à jour en direct</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Classement</h1></div></div>'+
+  return mirrorNote()+'<section class="block"><div class="head"><div><span class="eyebrow">Mis à jour en direct</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Classement</h1></div></div>'+
    podiumBlock(true)+
    '<div class="card scroll"><table class="table"><thead><tr><th>Rang</th><th>Équipe</th><th>Médailles</th><th style="text-align:right">Points</th></tr></thead><tbody>'+
    st.map(function(r,i){return '<tr class="'+(r.id===ui.me?"me":"")+'" style="box-shadow:inset 6px 0 0 '+CL[r.id].col+'"><td class="rank num">'+(i+1)+'</td><td><div class="cls">'+chip(r.id)+tname(r.id)+'</div></td><td><div class="medals num"><span class="m g"><i></i>'+r.g+'</span><span class="m s"><i></i>'+r.s+'</span><span class="m b"><i></i>'+r.b+'</span></div></td><td class="pts num">'+r.p+'</td></tr>';}).join("")+
@@ -642,10 +653,13 @@ function nextFor(cid){var x=allMatches().find(function(x){return (x.m.a===cid||x
 function vMur(){
   var ph=phase();
   return '<section class="block"><div class="head"><div><span class="eyebrow">Photos et messages</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le mur</h1></div></div>'+
-   '<div class="grid g2" style="align-items:start"><div class="card"><h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">'+(ph==="apres"?"Raconte ta journée":"Laisse un message")+'</h2>'+postForm()+'</div>'+
+   '<div class="grid g2" style="align-items:start"><div class="card">'+(canPost()?'<h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">'+(ph==="apres"?"Raconte ta journée":"Laisse un message")+'</h2>'+postForm():publicPhotoCard())+'</div>'+
    (S.photos&&S.photos.length?'<div class="card"><span class="eyebrow">Photos officielles</span><div class="grid" style="grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px">'+S.photos.slice(0,9).map(function(p){return '<img src="'+p.src+'" alt="'+esc(p.cap||"Photo officielle")+'" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1.5px solid var(--ink)">';}).join("")+'</div></div>':'<div class="card"><span class="eyebrow">Photos officielles</span><p class="muted" style="margin:6px 0 0">Les photos de l\'équipe d\'organisation apparaîtront ici pendant et après la journée.</p></div>')+
    '</div></section><section class="block"><div class="wall" id="wall-list"></div></section>';
 }
+function safeUrl(u){return typeof u==="string"&&/^https:\/\/[^\s"'<>]+$/.test(u)?u:"";}
+function publicPhotoCard(){var u=safeUrl(S.links&&S.links.photos);
+  return '<h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">Partage tes photos</h2>'+(u?'<p style="margin:0 0 12px">Envoie tes meilleures photos à l\'organisation. Les plus belles seront publiées ici.</p><a class="btn" style="text-decoration:none;display:inline-block" href="'+esc(u)+'" target="_blank" rel="noopener">Envoyer mes photos ↗</a>':'<p class="muted" style="margin:0">L\'organisation publiera ici les photos de la journée. Le lien pour envoyer les tiennes arrive bientôt.</p>');}
 function postForm(){
   return '<form class="form" id="postf"><div class="row"><div class="field" style="flex:1;min-width:140px"><label for="p_nom">Prénom</label><input class="in" id="p_nom" maxlength="30" value="'+esc(lsGet("nom",""))+'"></div><div class="field" style="flex:1;min-width:140px"><label for="p_c">Équipe</label><select class="in" id="p_c">'+CLASSES.map(function(c){return '<option value="'+c.id+'" '+(ui.me===c.id?"selected":"")+'>'+esc(lab(c))+'</option>';}).join("")+'</select></div></div>'+
    '<div class="field"><label for="p_txt">Message</label><textarea class="in" id="p_txt" maxlength="400" placeholder="Le meilleur moment de ta journée"></textarea></div>'+
@@ -670,7 +684,7 @@ function refreshLive(){
   var vn=$("#vote-note");if(vn){vn.hidden=!CAP.ready||canPost();vn.textContent="Le vote s'ouvre aux comptes autorisés par l'organisation.";}
   // mur
   ["#wall-list","#wall-mini"].forEach(function(sel,i){var w=$(sel);if(!w)return;var posts=LIVE.wall.slice(0,i?6:200);
-    w.innerHTML=posts.length?posts.map(postHTML).join(""):'<div class="note" style="break-inside:avoid">'+(CAP.db?"Aucun message pour l'instant. Sois le premier à poster.":"Les messages du public apparaissent ici pour les visiteurs connectés.")+'</div>';});
+    w.hidden=!CAP.db&&!posts.length;w.innerHTML=posts.length?posts.map(postHTML).join(""):(CAP.db?'<div class="note" style="break-inside:avoid">Aucun message pour l\'instant.</div>':'');});
   var pn=$("#post-note"),pg=$("#p_go");if(pn&&CAP.ready){if(!canPost()){pn.hidden=false;pn.textContent="Pour publier, ouvre ce site avec un compte autorisé par l'organisation.";if(pg)pg.disabled=true;}else{pn.hidden=true;if(pg)pg.disabled=false;}}
 }
 function postHTML(p){return '<article class="post">'+(p.img?'<img src="'+esc(p.img)+'" alt="Photo partagée par '+esc(p.nom||"un participant")+'" loading="lazy">':'')+'<div class="pb"><div class="by">'+esc(p.nom||"Anonyme")+' · '+esc(nm(p.c))+'</div>'+(p.txt?'<p style="margin:6px 0 0">'+esc(p.txt)+'</p>':'')+((ui.admin&&CAP.edit)||p.owner===CAP.uid?'<button class="btn sm alt" style="margin-top:8px" data-del="'+esc(p.owner+"|"+p.pid)+'">Retirer</button>':'')+'</div></article>';}
@@ -678,7 +692,7 @@ function postHTML(p){return '<article class="post">'+(p.img?'<img src="'+esc(p.i
 function votesBlock(){
   return '<section class="block card"><span class="eyebrow">Les prix du public</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 10px">Vote pour tes coups de cœur</h2><div class="grid g2"><div>'+
    [["amb","Meilleure ambiance"],["ten","Meilleure tenue rétro"]].map(function(v){return '<div style="margin-bottom:14px"><div class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:6px">'+v[1]+'</div><div class="picks">'+CLASSES.map(function(c){return '<button class="pick" data-vote="'+v[0]+':'+c.id+'" aria-pressed="false">'+esc(c.nom)+'</button>';}).join("")+'</div></div>';}).join("")+
-   '<div class="note small" id="vote-note" hidden></div></div><div id="votes-res"></div></div></section>';
+   '<div class="note small" id="vote-note" hidden></div>'+(safeUrl(S.links&&S.links.vote)?'<a class="btn" style="text-decoration:none;display:inline-block;margin-top:6px" href="'+esc(safeUrl(S.links.vote))+'" target="_blank" rel="noopener">Voter sans compte ↗</a>':'')+'</div><div id="votes-res"></div></div></section>';
 }
 function votesRes(){var out="";[["amb","Ambiance"],["ten","Tenue rétro"]].forEach(function(v){var c=(LIVE.votes||{})[v[0]]||{};var arr=Object.keys(c).map(function(k){return [k,c[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,3);
   out+='<div style="margin-bottom:12px"><div class="eyebrow">'+v[1]+'</div>'+(arr.length?arr.map(function(x,i){return '<div class="cls small" style="margin-top:6px"><span class="pill">'+(i+1)+'</span>'+chip(x[0])+'<span>'+esc(nm(x[0]))+'</span><span class="muted">'+x[1]+' voix</span></div>';}).join(""):'<div class="muted small">Pas encore de vote</div>')+'</div>';});return out;}
@@ -729,14 +743,16 @@ function renderDrawer(){
   h+='<h3>Bonus fair play</h3><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px">'+CLASSES.map(function(c){var v=(S.fp||{})[c.id]||0;return '<div class="row small" style="justify-content:space-between;gap:6px"><b>'+esc(c.ab)+'</b><span class="step"><button type="button" data-fp="'+c.id+':-1" aria-label="Retirer">−</button><span class="num">'+v+'</span><button type="button" data-fp="'+c.id+':1" aria-label="Ajouter">+</button></span></div>';}).join("")+'</div>';
   h+='<h3>Bonus mascottes et drapeaux</h3><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px">'+CLASSES.map(function(c){var v=(S.mb||{})[c.id]||0;return '<div class="row small" style="justify-content:space-between;gap:6px"><b>'+esc(c.ab)+'</b><span class="step"><button type="button" data-mb="'+c.id+':-1" aria-label="Retirer">−</button><span class="num">'+v+'</span><button type="button" data-mb="'+c.id+':1" aria-label="Ajouter">+</button></span></div>';}).join("")+'</div><p class="muted small">Jusqu\'à 10 points par team.</p>';
   h+='<h3>Bandeau et fil d\'actu</h3><div class="field"><label for="ad_ann">Annonce en haut du site</label><input class="in" id="ad_ann" maxlength="120" value="'+esc(S.annonce||"")+'"></div><div class="row" style="margin-top:8px"><input class="in" id="ad_msg" style="flex:1;min-width:160px" maxlength="140" placeholder="Message pour le fil d\'actu"><button class="btn sm" data-do="addmsg">Ajouter</button></div>';
-  h+='<h3>Photos officielles</h3><input class="in" type="file" id="ad_photo" accept="image/*" multiple><div class="muted small" style="margin-top:4px">'+(S.photos||[]).length+' photo(s) publiées</div>'+((S.photos||[]).length?'<div class="grid" style="grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px">'+S.photos.map(function(p,i){return '<button class="pick" style="padding:0;overflow:hidden;border-radius:8px" data-delph="'+i+'" title="Retirer"><img src="'+p.src+'" alt="Retirer cette photo" style="display:block;aspect-ratio:1;object-fit:cover"></button>';}).join("")+'</div><div class="muted small">Touche une photo pour la retirer.</div>':'');
+  h+='<h3>Photos officielles</h3><input class="in" type="file" id="ad_photo" accept="image/*" multiple><div class="muted small" style="margin-top:4px">'+(S.photos||[]).length+' sur 12 photos publiées. Elles sont intégrées au site, garde les plus belles.</div>'+((S.photos||[]).length?'<div class="grid" style="grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px">'+S.photos.map(function(p,i){return '<button class="pick" style="padding:0;overflow:hidden;border-radius:8px" data-delph="'+i+'" title="Retirer"><img src="'+p.src+'" alt="Retirer cette photo" style="display:block;aspect-ratio:1;object-fit:cover"></button>';}).join("")+'</div><div class="muted small">Touche une photo pour la retirer.</div>':'');
+  h+='<h3>Liens pour le public sans compte</h3><div class="field"><label for="ad_lph">Lien pour envoyer des photos</label><input class="in" id="ad_lph" placeholder="https://… OneDrive, Google Drive ou Forms" value="'+esc(S.links.photos||"")+'"></div><div class="field" style="margin-top:8px"><label for="ad_lvo">Lien du vote du public</label><input class="in" id="ad_lvo" placeholder="https://forms.cloud.microsoft/…" value="'+esc(S.links.vote||"")+'"></div><p class="muted small">Ces boutons remplacent le mur et le vote pour les visiteurs qui n\'ont pas de compte autorisé.</p>';
   h+='<h3>Phase affichée</h3><div class="picks">'+[[null,"Automatique"]].concat(PHASES.map(function(p){return [p[0],p[1]];})).map(function(p){return '<button class="pick" data-phase="'+(p[0]||"")+'" aria-pressed="'+(S.phase===p[0])+'">'+p[1]+'</button>';}).join("")+'</div><p class="muted small">Automatique suit la date, 48h avant le 21 octobre, direct le 23 octobre à 6h00, après à 18h00.</p>';
-  h+='<h3>Réglages</h3><label class="row small" style="gap:8px"><input type="checkbox" id="ad_hok" '+(S.horairesOk?"checked":"")+'> Horaires confirmés</label><div class="row" style="margin-top:8px"><input class="in" id="ad_pin" style="flex:1;min-width:120px" inputmode="numeric" placeholder="Nouveau code arbitre"><button class="btn sm alt" data-do="setpin">Changer le code</button></div><div class="row" style="margin-top:8px"><button class="btn sm alt" data-do="backup">Copier une sauvegarde</button><button class="btn sm alt" data-do="logout">Quitter le mode orga</button></div>';
+  h+='<h3>Réglages</h3><label class="row small" style="gap:8px"><input type="checkbox" id="ad_hok" '+(S.horairesOk?"checked":"")+'> Horaires confirmés</label><div class="row" style="margin-top:8px"><input class="in" id="ad_pin" style="flex:1;min-width:120px" inputmode="numeric" placeholder="Nouveau code arbitre"><button class="btn sm alt" data-do="setpin">Changer le code</button></div><div class="row" style="margin-top:8px"><button class="btn sm alt" data-do="backup">Copier une sauvegarde</button><button class="btn sm alt" data-do="discard">Annuler mes saisies non publiées</button><button class="btn sm alt" data-do="logout">Quitter le mode orga</button></div>';
   d.innerHTML=h;
   $("#pubbar").innerHTML='<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em">'+(dirty?dirty+" modification"+(dirty>1?"s":"")+" en attente":"Tout est publié")+'</span><button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" '+(dirty&&CAP.art?"":"disabled")+'>Publier en direct</button>';
 }
 function closeDrawer(){ui.drawer=false;ssSet("drawer",false);var d=$("#drawer");if(d)d.remove();var p=$("#pubbar");if(p)p.remove();}
 function changed(feedTxt,kind){dirty++;if(feedTxt){S.feed=S.feed||[];S.feed.unshift({t:now(),txt:feedTxt,k:kind||""});S.feed=S.feed.slice(0,80);}
+  ssSet("draft",{base:S.pub||0,n:dirty,S:S});
   var sc=$("#drawer")?$("#drawer").scrollTop:0;render();if(ui.drawer){renderDrawer();$("#drawer").scrollTop=sc;}}
 function getM(k){var s=S.acts[ui.adAct];var p=k.split("_");var ri=+p[0],mi=+p[1];return ri===4?s.br.pf:s.br.r[ri][mi];}
 function medalFeed(id){var rk=ranking(id);var a=AC[id];return rk[0]?"Médaille d'or en "+a.nom+" pour "+nm(rk[0])+(rk[1]?", argent pour "+nm(rk[1]):"")+(rk[2]?", bronze pour "+nm(rk[2]):""):null;}
@@ -752,13 +768,13 @@ function drawAnim(){
 
 async function publishNow(){
   if(!CAP.art){toast("Ce compte ne peut pas publier");return;}
-  S.pub=now();
+  var prevPub=S.pub;S.pub=now();var saved=ssGet("draft",null);ssSet("draft",null);
   var doc='<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+RESET+'</style></head><body>'+
    '<title>Retrolympique MCCI 2026</title>\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap">\n'+
    '<style id="css">'+$("#css").textContent+'</style>\n\n<div id="app"></div>\n<script type="application/json" id="state">'+JSON.stringify(S).replace(/</g,"\\u003c")+'<\/script>\n<script id="main">'+$("#main").textContent+'<\/script>\n</body></html>';
   var b=$("[data-do=publish]");if(b){b.disabled=true;b.textContent="Publication…";}
   try{await CAP.art.publish(doc);dirty=0;toast("Publié, tout le monde voit les nouveaux scores");}
-  catch(e){var c=e&&e.code;toast(c==="conflict"?"Un autre organisateur vient de publier. Refais ta modification.":c==="not_writer"||c==="not_granted"?"Ce compte ne peut pas publier les scores.":"Publication impossible pour le moment, réessaie.");if(b){b.disabled=false;b.textContent="Publier en direct";}}
+  catch(e){S.pub=prevPub;if(e&&e.code!=="conflict")ssSet("draft",saved);var c=e&&e.code;toast(c==="conflict"?"Un autre organisateur a publié juste avant toi. La page se recharge, refais ta dernière saisie.":c==="not_writer"||c==="not_granted"?"Ce compte ne peut pas publier les scores.":"Publication impossible pour le moment, réessaie.");if(b){b.disabled=false;b.textContent="Publier en direct";}}
 }
 
 async function compress(file,max,limit){
@@ -801,6 +817,7 @@ document.addEventListener("click",async function(e){
     case "backup":var txt=JSON.stringify(S);try{await navigator.clipboard.writeText(txt);toast("Sauvegarde copiée");}catch(err){toast("Copie refusée par ce navigateur");}break;
     case "logout":ui.admin=false;ssSet("admin",false);closeDrawer();render();break;
     case "publish":publishNow();break;
+    case "discard":if(!t.dataset.sure){t.dataset.sure="1";t.textContent="Confirmer l'annulation";break;}try{S=JSON.parse(document.getElementById("state").textContent)||defaultState();}catch(err){S=defaultState();}if(!S.links)S.links={photos:"",vote:""};if(!S.mb)S.mb={};dirty=0;ssSet("draft",null);render();renderDrawer();toast("Saisies annulées, retour à la version publiée");break;
   }
 });
 document.addEventListener("change",async function(e){
@@ -813,12 +830,13 @@ document.addEventListener("change",async function(e){
   if(t.id==="ad_l"){s.l=t.value.trim();changed();return;}
   if(t.id==="ad_fmt"){s.fmt=t.value;changed();return;}
   if(t.id==="ad_ann"){S.annonce=t.value.trim();changed();return;}
+  if(t.id==="ad_lph"||t.id==="ad_lvo"){var v=t.value.trim();if(v&&!/^https:\/\//.test(v)){toast("Le lien doit commencer par https://");return;}S.links[t.id==="ad_lph"?"photos":"vote"]=v;changed();return;}
   if(t.id==="ad_hok"){S.horairesOk=t.checked;changed();return;}
   if(t.dataset.rk!==undefined){s.rk=s.rk||[];s.rk[+t.dataset.rk]=t.value||null;changed(+t.dataset.rk===0&&t.value?"Médaille d'or en "+AC[ui.adAct].nom+" pour "+nm(t.value):null,"or");if(+t.dataset.rk===0&&t.value)confetti(140);return;}
   if(t.dataset.mst){var m=getM(t.dataset.mst);m.st=t.value;resync(s.br);var a=AC[ui.adAct];
     if(t.value==="fini"){var w=win(m);changed(w?a.nom+" · "+nm(w)+" bat "+nm(w===m.a?m.b:m.a)+" "+Math.max(m.sa,m.sb)+" à "+Math.min(m.sa,m.sb):null,"");var f=s.br.r[s.br.r.length-1][0];if(m===f&&win(f)){s.st="termine";changed(medalFeed(ui.adAct),"or");confetti(200);}}
     else changed(t.value==="encours"?a.nom+" · coup d'envoi "+nm(m.a)+" contre "+nm(m.b):null);return;}
-  if(t.id==="ad_photo"&&t.files.length){for(var i=0;i<t.files.length;i++){try{var u=await compress(t.files[i],1100,170000);if(safeImg(u))S.photos.unshift({src:u,cap:"",t:now()});}catch(err){toast("Photo illisible");}}changed("Nouvelles photos officielles sur le mur");return;}
+  if(t.id==="ad_photo"&&t.files.length){for(var i=0;i<t.files.length;i++){if(S.photos.length>=12){toast("12 photos maximum, retire en une pour en ajouter");break;}try{var u=await compress(t.files[i],1000,95000);if(safeImg(u))S.photos.unshift({src:u,cap:"",t:now()});}catch(err){toast("Photo illisible");}}changed("Nouvelles photos officielles sur le mur");return;}
 });
 document.addEventListener("submit",async function(e){
   e.preventDefault();var f=e.target;
@@ -834,9 +852,11 @@ document.addEventListener("submit",async function(e){
   }
 });
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeModal();tvClose();}});
+window.addEventListener("beforeunload",function(e){if(dirty&&ui.admin){e.preventDefault();e.returnValue="";}});
 window.addEventListener("hashchange",function(){var h=location.hash.replace("#","");if(h==="tv")tvOpen();else if(["accueil","direct","classement","epreuves","programme","classes","mur"].indexOf(h)>=0)go(h);});
 
 render();
+if(draftMsg)setTimeout(function(){toast(draftMsg);},700);
 if(location.hash==="#tv")tvOpen();
 /* célébration des nouvelles médailles depuis la dernière visite */
 var seen=lsGet("seenFeed",0);var fl=(S.feed||[]).filter(function(x){return x.k==="or";}).length;if(fl>seen){setTimeout(function(){confetti(150);},600);}lsSet("seenFeed",fl);
