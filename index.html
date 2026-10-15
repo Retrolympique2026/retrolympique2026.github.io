@@ -8,8 +8,12 @@
 <link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png">
 <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta name="theme-color" content="#F3E4CF">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'; manifest-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com; frame-src https://*.firebaseapp.com; form-action 'none'; base-uri 'none'; object-src 'none'; manifest-src 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<script src="config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <style>:root{color-scheme:light}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -320,13 +324,18 @@ if(!S.mb)S.mb={};
 if(S.v!==2){var d0=defaultState();ACTS.forEach(function(x){var o=S.acts&&S.acts[x.id]||{};d0.acts[x.id].h=o.h||x.h;d0.acts[x.id].l=o.l||x.l;});S.acts=d0.acts;S.fp={};S.mb={};S.v=2;}
 ACTS.forEach(function(x){if(!S.acts[x.id])S.acts[x.id]={st:"avenir",h:x.h,l:x.l,fmt:x.fmt,br:null,rk:[],ff:[]};});
 var dirty=0;
-var LIVE_URL="https://claude.ai/artifact/TM5u3ia4huTvBgUdNBzEaj";
+var LIVE_URL="";
 var ONCLAUDE=!!(window.claude&&window.claude.use);
-var MIRROR=!ONCLAUDE&&location.protocol!=="file:";
+var FBCFG=window.RETRO_FIREBASE||null;
+var FB=!ONCLAUDE&&!!(FBCFG&&FBCFG.apiKey&&window.firebase);
+var MIRROR=!ONCLAUDE&&location.protocol!=="file:"&&!FB;
+var FBS={db:null,user:null,ready:false,pending:false,touched:{},base:{},server:{},serverFeed:[],feedQ:[],unsub:null,photosAt:0,err:""};
+var FIELDS=["meta"].concat(ACTS.map(function(a){return "a_"+a.id;}));
+
 if(!S.links)S.links={photos:"",vote:""};
 /* brouillon arbitre, protège les saisies non publiées */
 var draftMsg="";
-(function(){var dr=ssGet("draft",null);if(!dr||!dr.S||!ssGet("admin",false))return;
+(function(){var dr=ssGet("draft",null);if(FB||!dr||!dr.S||!ssGet("admin",false))return;
   if((dr.base||0)===(S.pub||0)){S=dr.S;if(!S.links)S.links={photos:"",vote:""};dirty=dr.n||1;draftMsg="Tes saisies non publiées ont été récupérées. Pense à publier.";}
   else{ssSet("draft",null);draftMsg="Une nouvelle version a été publiée entre temps. Tes saisies non publiées n'ont pas été appliquées, vérifie et refais les.";}})();
 function hash(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return "h"+(h>>>0).toString(36);}
@@ -405,7 +414,7 @@ function step(){var d=devicePixelRatio;fxx.clearRect(0,0,fxc.width,fxc.height);
 var CAP={art:null,db:null,user:null,uid:null,canWrite:null,edit:false,ready:false};
 var LIVE={supports:{},myS:null,votes:{},myV:{},wall:[]};
 (async function(){
-  if(!window.claude||!window.claude.use){CAP.ready=true;CAP.edit=location.protocol==="file:";render();return;}
+  if(!window.claude||!window.claude.use){CAP.ready=true;CAP.edit=!FB&&location.protocol==="file:";if(FB)setTimeout(function(){fbStart();render();},0);render();return;}
   try{CAP.art=await window.claude.use("artifact");}catch(e){}
   try{CAP.user=await window.claude.use("user");}catch(e){}
   try{CAP.db=await window.claude.use("db");}catch(e){}
@@ -418,6 +427,76 @@ var LIVE={supports:{},myS:null,votes:{},myV:{},wall:[]};
   }
   refreshLive();render();
 })();
+
+/* ---------- Base temps réel Firebase, site public ---------- */
+function fieldVal(f){if(f==="meta")return {fp:S.fp||{},mb:S.mb||{},annonce:S.annonce||"",phase:S.phase||null,links:S.links||{photos:"",vote:""},horairesOk:!!S.horairesOk};
+  var s=S.acts[f.slice(2)];return {st:s.st,h:s.h,l:s.l,fmt:s.fmt,br:s.br||null,rk:s.rk||[],ff:s.ff||[]};}
+function fj(f){return JSON.stringify(fieldVal(f));}
+function applyField(f,j){var v;try{v=JSON.parse(j);}catch(e){return;}if(!v||typeof v!=="object")return;
+  if(f==="meta"){S.fp=v.fp&&typeof v.fp==="object"?v.fp:{};S.mb=v.mb&&typeof v.mb==="object"?v.mb:{};S.annonce=String(v.annonce||"").slice(0,120);S.phase=["avant","j2","live","apres"].indexOf(v.phase)>=0?v.phase:null;S.links={photos:safeUrl((v.links||{}).photos),vote:safeUrl((v.links||{}).vote)};S.horairesOk=!!v.horairesOk;return;}
+  var s=S.acts[f.slice(2)];if(!s)return;["st","h","l","fmt","br","rk","ff"].forEach(function(k){if(k in v)s[k]=v[k];});}
+function fbCount(){return Object.keys(FBS.touched).length+FBS.feedQ.length;}
+function fbAdmin(){return !!(FBS.user&&ui.admin);}
+function fbStart(){
+  try{firebase.initializeApp(FBCFG);}catch(e){}
+  FBS.db=firebase.firestore();
+  try{FBS.db.enablePersistence({synchronizeTabs:true}).catch(function(){});}catch(e){}
+  FIELDS.forEach(function(f){FBS.base[f]=fj(f);});
+  firebase.auth().onAuthStateChanged(function(u){FBS.user=u||null;CAP.edit=!!u;FBS.authKnown=true;
+    if(!u&&ui.admin){ui.admin=false;ssSet("admin",false);closeDrawer();}
+    if(u&&ssGet("admin",false)){ui.admin=true;ui.drawer=!!ssGet("drawer",false);}
+    render();});
+  fbListen();
+  document.addEventListener("visibilitychange",function(){if(document.hidden){if(FBS.unsub&&!fbAdmin()){FBS.unsub();FBS.unsub=null;}}else if(!FBS.unsub)fbListen();});
+  window.addEventListener("online",fbRerender);window.addEventListener("offline",fbRerender);
+}
+function fbListen(){
+  FBS.unsub=FBS.db.collection("live").doc("state").onSnapshot({includeMetadataChanges:true},function(d){
+    FBS.pending=d.metadata.hasPendingWrites;FBS.err="";
+    var v=d.exists?(d.data()||{}):{};
+    FIELDS.forEach(function(f){if(typeof v[f]==="string"){FBS.server[f]=v[f];if(!FBS.touched[f]){applyField(f,v[f]);FBS.base[f]=fj(f);}}});
+    FBS.serverFeed=(Array.isArray(v.feed)?v.feed:[]).filter(function(x){return x&&typeof x.txt==="string";}).map(function(x){return {t:+x.t||0,txt:x.txt.slice(0,200),k:x.k==="or"?"or":""};}).sort(function(a,b){return b.t-a.t;});
+    S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);
+    if(!FBS.ready){FBS.ready=true;fbRestoreDraft();}
+    dirty=fbCount();fbRerender();
+  },function(){FBS.err="Connexion au direct impossible pour le moment";fbRerender();});
+}
+var fbT;function fbRerender(){clearTimeout(fbT);fbT=setTimeout(function(){render();},120);}
+function fbTrack(feedTxt,kind){
+  if(feedTxt){FBS.feedQ.unshift({t:now(),txt:String(feedTxt).slice(0,200),k:kind==="or"?"or":""});S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);}
+  FIELDS.forEach(function(f){if(fj(f)!==FBS.base[f])FBS.touched[f]=1;else delete FBS.touched[f];});
+  dirty=fbCount();
+  var dv={};Object.keys(FBS.touched).forEach(function(f){dv[f]=fj(f);});ssSet("fbdraft",{v:dv,q:FBS.feedQ});
+}
+function fbRestoreDraft(){var dr=ssGet("fbdraft",null);if(!dr||!ssGet("admin",false))return;var n=0;
+  Object.keys(dr.v||{}).forEach(function(f){if(FIELDS.indexOf(f)>=0){applyField(f,dr.v[f]);if(fj(f)!==FBS.base[f]){FBS.touched[f]=1;n++;}}});
+  FBS.feedQ=Array.isArray(dr.q)?dr.q:[];n+=FBS.feedQ.length;S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);
+  if(n)setTimeout(function(){toast("Tes saisies non publiées ont été récupérées. Pense à publier.");},600);}
+function fbDiscard(){var keepPh=S.photos;S=defaultState();S.photos=keepPh;if(!S.links)S.links={photos:"",vote:""};
+  FIELDS.forEach(function(f){if(FBS.server[f])applyField(f,FBS.server[f]);FBS.base[f]=fj(f);});
+  FBS.touched={};FBS.feedQ=[];S.feed=FBS.serverFeed.slice(0,80);dirty=0;ssSet("fbdraft",null);}
+function fbPublish(){
+  if(!FBS.user){toast("Connecte toi d'abord");return;}
+  var upd={},n=0;Object.keys(FBS.touched).forEach(function(f){upd[f]=fj(f);n++;});
+  var q=FBS.feedQ.slice();
+  if(!n&&!q.length){toast("Rien à publier");return;}
+  upd.t=now();upd.by=FBS.user.email||"";
+  if(q.length){if(FBS.serverFeed.length+q.length>80)upd.feed=q.concat(FBS.serverFeed).slice(0,60);else upd.feed=firebase.firestore.FieldValue.arrayUnion.apply(null,q.slice().reverse());}
+  FBS.db.collection("live").doc("state").set(upd,{merge:true}).then(function(){fbRerender();}).catch(function(e){
+    if(e&&e.code==="permission-denied"){fbDiscard();render();}
+    toast(e&&e.code==="permission-denied"?"Ce compte n'a pas le droit de publier. Demande à Thomas de l'ajouter.":"Publication refusée par le serveur, réessaie.");});
+  Object.keys(upd).forEach(function(f){if(FIELDS.indexOf(f)>=0)FBS.base[f]=upd[f];});
+  FBS.touched={};FBS.feedQ=[];FBS.serverFeed=q.concat(FBS.serverFeed).slice(0,80);dirty=0;ssSet("fbdraft",null);
+  toast(navigator.onLine?"Publié, tout le monde voit les nouveaux scores":"Hors ligne, la publication partira dès le retour du réseau");
+  render();
+}
+function fbPhotos(force){if(!FB||!FBS.db)return;if(!force&&now()-FBS.photosAt<300000)return;FBS.photosAt=now();
+  FBS.db.collection("photos").orderBy("t","desc").limit(12).get().then(function(q){S.photos=q.docs.map(function(d){var v=d.data()||{};return {id:d.id,src:safeImg(v.src),cap:"",t:+v.t||0};}).filter(function(p){return p.src;});fbRerender();}).catch(function(){});}
+function fbStatus(){if(!FBS.ready)return FBS.err||"Connexion au direct…";var off=!navigator.onLine;
+  if(dirty)return (off?"Hors ligne · ":"")+dirty+" modification"+(dirty>1?"s":"")+" à publier";
+  if(FBS.pending)return off?"Hors ligne · envoi en attente":"Envoi en cours…";return "Tout est publié ✓";}
+function loginModal(){modal('<span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 10px">Connexion table de marque</h2><form id="loginf" class="form"><div class="field"><label for="lg_mail">Email</label><input class="in" id="lg_mail" type="email" autocomplete="username" required></div><div class="field"><label for="lg_pw">Mot de passe</label><input class="in" id="lg_pw" type="password" autocomplete="current-password" required></div><button class="btn" type="submit" id="lg_go">Se connecter</button><p class="muted small" style="margin:0">Réservé aux comptes créés par l\'organisation.</p></form>');}
+
 function safeImg(u){return typeof u==="string"&&u.length<120000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(u)?u:null;}
 function canPost(){return !!(CAP.db&&CAP.uid&&CAP.canWrite!==false);}
 
@@ -432,11 +511,12 @@ function render(){
    '<header class="nav"><div class="wrap"><a class="brand" href="#accueil" data-go="accueil"><i aria-hidden="true"></i><span><b>Retrolympique</b><small>MCCI Business School</small></span></a>'+
    '<nav class="tabs" aria-label="Sections">'+tabs.map(function(t){return '<button class="tab" data-go="'+t[0]+'" aria-current="'+(ui.tab===t[0])+'">'+(t[0]==="direct"&&liveNow?'<span class="dot"></span>':'')+t[1]+'</button>';}).join("")+'</nav>'+
    '<button class="iconbtn" data-do="tv" title="Mode écran géant">Écran</button>'+
-   (MIRROR?'<a class="iconbtn" style="background:var(--red);color:#fff;border-color:var(--red);text-decoration:none" href="'+LIVE_URL+'" target="_blank" rel="noopener">● <span class="lbl-long">Scores en direct</span><span class="lbl-short">Direct</span></a>':'')+(CAP.edit?'<button class="iconbtn" data-do="admin">'+(ui.admin?"Orga ●":"Orga")+'</button>':'')+'</div></header>'+
+   (MIRROR&&LIVE_URL?'<a class="iconbtn" style="background:var(--red);color:#fff;border-color:var(--red);text-decoration:none" href="'+LIVE_URL+'" target="_blank" rel="noopener">● <span class="lbl-long">Scores en direct</span><span class="lbl-short">Direct</span></a>':'')+(CAP.edit?'<button class="iconbtn" data-do="admin">'+(ui.admin?"Orga ●":"Orga")+'</button>':'')+'</div></header>'+
    '<main class="wrap" id="view">'+view()+'</main>'+
-   '<footer><div class="wrap row" style="justify-content:space-between"><div><b class="cond" style="font-size:1.1rem;text-transform:uppercase;letter-spacing:.05em">Journée Sportive MCCI Business School</b><div class="muted small">Vendredi 23 octobre 2026 au Racing Club. 40 ans au service de l\'éducation tertiaire.</div></div><div style="display:grid;gap:6px;justify-items:start"><a class="btn sm" style="text-decoration:none" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">Formulaire d\'inscription ↗</a><div class="muted small">Barème par épreuve, 10 · 7 · 5 · 3 points, plus 1 point de participation et les bonus</div></div></div></footer>';
-  if(!CAP.edit&&CAP.ready){ui.admin=false;ui.drawer=false;}
-  if(ui.admin&&ui.drawer&&CAP.edit)renderDrawer();
+   '<footer><div class="wrap row" style="justify-content:space-between"><div><b class="cond" style="font-size:1.1rem;text-transform:uppercase;letter-spacing:.05em">Journée Sportive MCCI Business School</b><div class="muted small">Vendredi 23 octobre 2026 au Racing Club. 40 ans au service de l\'éducation tertiaire.</div></div><div style="display:grid;gap:6px;justify-items:start"><a class="btn sm" style="text-decoration:none" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">Formulaire d\'inscription ↗</a><div class="muted small">Barème par épreuve, 10 · 7 · 5 · 3 points, plus 1 point de participation et les bonus</div>'+(FB&&!FBS.user?'<button class="tab" style="padding:4px 0;font-size:.85rem;color:var(--ink2)" data-do="admin">Accès organisation</button>':'')+'</div></div></footer>';
+  if(!CAP.edit&&CAP.ready&&(!FB||FBS.authKnown)){ui.admin=false;ui.drawer=false;}
+  if(ui.admin&&ui.drawer&&CAP.edit){var dw=$("#drawer"),ae=document.activeElement;if(dw&&ae&&dw.contains(ae)&&/INPUT|SELECT|TEXTAREA/.test(ae.tagName)){renderPub();}else{var sc1=dw?dw.scrollTop:0;renderDrawer();if($("#drawer"))$("#drawer").scrollTop=sc1;}}
+  if(FB&&(ui.tab==="mur"||phase()==="apres"||$("#tv")))fbPhotos();
   refreshLive();startClock();
 }
 function go(t){ui.tab=t;ssSet("tab",t);render();window.scrollTo({top:0,behavior:"smooth"});}
@@ -536,6 +616,7 @@ function teamsStrip(){
    CLASSES.map(function(c){return '<button class="tflag" data-me="'+c.id+'" aria-pressed="'+(ui.me===c.id)+'" style="--tc:'+c.col+';--tf:'+c.fg+'"><span>'+esc(c.coul)+'</span><b>'+esc(c.nom)+'</b><small>'+esc(c.cl)+'</small></button>';}).join("")+'</div></section>';
 }
 function supportBlock(){
+  if(!ONCLAUDE)return "";
   return '<section class="block card"><div class="head"><div><span class="eyebrow">Hype meter</span><h2 class="disp" style="font-size:1.6rem">Qui a le plus de supporters ?</h2></div><span class="pill" id="sup-total">0 supporters</span></div>'+
    '<div class="grid g2"><div><p class="muted small" style="margin-top:0">Un vote par personne. Soutiens une équipe, la tienne ou une autre.</p><div class="picks" id="sup-picks">'+CLASSES.map(function(c){return '<button class="pick" data-sup="'+c.id+'" aria-pressed="false">'+esc(lab(c))+'</button>';}).join("")+'</div><div class="note small" id="sup-note" style="margin-top:10px" hidden></div></div><div class="meter" id="sup-meter"></div></div></section>';
 }
@@ -591,7 +672,8 @@ function liveMatchesBlock(){
 }
 function feedHTML(n){var f=(S.feed||[]).slice(0,n||50);if(!f.length)return '<div class="note">Le fil d\'actu démarre avec le premier résultat.</div>';
   return '<div class="feed">'+f.map(function(x){return '<div class="it '+(x.k==="or"?"gold":"")+'"><time>'+hm(x.t)+'</time><div>'+esc(x.txt)+'</div></div>';}).join("")+'</div>';}
-function mirrorNote(){return MIRROR?'<section class="block cta" style="grid-template-columns:1fr auto"><div style="display:grid;gap:6px;min-width:0"><span class="eyebrow" style="color:#d9cdbd">Le direct se passe ailleurs</span><h2 class="disp" style="font-size:clamp(1.4rem,4vw,2rem)">Scores en temps réel</h2><p>Cette page est la vitrine de l\'événement. Les scores, le classement et les médailles sont mis à jour en direct sur le site officiel.</p></div><a class="go" href="'+LIVE_URL+'" target="_blank" rel="noopener">Ouvrir le direct ↗</a></section>':"";}
+function liveErr(){return FB&&FBS.err?'<section class="block note">'+esc(FBS.err)+'. Les scores réapparaîtront automatiquement.</section>':'';}
+function mirrorNote(){if(FB)return liveErr();if(MIRROR&&!LIVE_URL)return '<section class="block note">Les scores en direct apparaîtront ici le jour de l\'événement.</section>';return MIRROR?'<section class="block cta" style="grid-template-columns:1fr auto"><div style="display:grid;gap:6px;min-width:0"><span class="eyebrow" style="color:#d9cdbd">Le direct se passe ailleurs</span><h2 class="disp" style="font-size:clamp(1.4rem,4vw,2rem)">Scores en temps réel</h2><p>Cette page est la vitrine de l\'événement. Les scores, le classement et les médailles sont mis à jour en direct sur le site officiel.</p></div><a class="go" href="'+LIVE_URL+'" target="_blank" rel="noopener">Ouvrir le direct ↗</a></section>':"";}
 function vDirect(){
   return mirrorNote()+'<section class="block"><div class="head"><div><span class="eyebrow">'+(phase()==="live"?"Mis à jour par les arbitres":"Le direct ouvre le 23 octobre")+'</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le direct</h1></div><button class="btn alt" data-do="tv">Mode écran géant</button></div></section>'+
    liveMatchesBlock()+'<section class="block grid g2"><div class="card"><h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">Fil d\'actu</h2>'+feedHTML(40)+'</div><div>'+miniStandings(16)+'</div></section>';
@@ -685,7 +767,7 @@ function refreshLive(){
     document.querySelectorAll("[data-sup]").forEach(function(b){b.setAttribute("aria-pressed",String(LIVE.myS===b.dataset.sup));});
     var n=$("#sup-note");if(n){if(!CAP.ready){n.hidden=true;}else if(!canPost()){n.hidden=false;n.textContent="Le vote supporter s'ouvre aux comptes autorisés par l'organisation. Tu peux quand même suivre le compteur.";}else n.hidden=true;}
   }
-  CLASSES.forEach(function(c){var e=$("#sup-"+c.id);if(e)e.textContent=(LIVE.supports[c.id]||0)+" supporters";});
+  CLASSES.forEach(function(c){var e=$("#sup-"+c.id);if(e)e.textContent=ONCLAUDE?(LIVE.supports[c.id]||0)+" supporters":"";});
   // votes
   var vr=$("#votes-res");if(vr)vr.innerHTML=votesRes();
   document.querySelectorAll("[data-vote]").forEach(function(b){var p=b.dataset.vote.split(":");b.setAttribute("aria-pressed",String(LIVE.myV[p[0]]===p[1]));});
@@ -698,6 +780,7 @@ function refreshLive(){
 function postHTML(p){return '<article class="post">'+(p.img?'<img src="'+esc(p.img)+'" alt="Photo partagée par '+esc(p.nom||"un participant")+'" loading="lazy">':'')+'<div class="pb"><div class="by">'+esc(p.nom||"Anonyme")+' · '+esc(nm(p.c))+'</div>'+(p.txt?'<p style="margin:6px 0 0">'+esc(p.txt)+'</p>':'')+((ui.admin&&CAP.edit)||p.owner===CAP.uid?'<button class="btn sm alt" style="margin-top:8px" data-del="'+esc(p.owner+"|"+p.pid)+'">Retirer</button>':'')+'</div></article>';}
 
 function votesBlock(){
+  if(!ONCLAUDE){var vu=safeUrl(S.links&&S.links.vote);return '<section class="block card"><span class="eyebrow">Les prix du public</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 10px">Vote pour tes coups de cœur</h2><p class="muted" style="margin:0 0 12px">Meilleure ambiance et meilleure tenue rétro, élues par le public.</p>'+(vu?'<a class="btn" style="text-decoration:none;display:inline-block" href="'+esc(vu)+'" target="_blank" rel="noopener">Voter ↗</a>':'<p class="muted small" style="margin:0">Le vote ouvre à la fin de la journée.</p>')+'</section>';}
   return '<section class="block card"><span class="eyebrow">Les prix du public</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 10px">Vote pour tes coups de cœur</h2><div class="grid g2"><div>'+
    [["amb","Meilleure ambiance"],["ten","Meilleure tenue rétro"]].map(function(v){return '<div style="margin-bottom:14px"><div class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:6px">'+v[1]+'</div><div class="picks">'+CLASSES.map(function(c){return '<button class="pick" data-vote="'+v[0]+':'+c.id+'" aria-pressed="false">'+esc(c.nom)+'</button>';}).join("")+'</div></div>';}).join("")+
    '<div class="note small" id="vote-note" hidden></div>'+(safeUrl(S.links&&S.links.vote)?'<a class="btn" style="text-decoration:none;display:inline-block;margin-top:6px" href="'+esc(safeUrl(S.links.vote))+'" target="_blank" rel="noopener">Voter sans compte ↗</a>':'')+'</div><div id="votes-res"></div></div></section>';
@@ -722,6 +805,7 @@ function tvDraw(){var d=$("#tv");if(!d)return;var st=standings();var lv=allMatch
 
 /* ---------- Espace organisation ---------- */
 function adminOpen(){
+  if(FB){if(!FBS.user){loginModal();return;}ui.admin=true;ssSet("admin",true);ui.drawer=true;render();return;}
   if(!CAP.edit){toast("Espace réservé à l'organisation");return;}
   if(ui.admin){ui.drawer=true;renderDrawer();return;}
   modal('<span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 10px">Code arbitre</h2><form id="pinf" class="form"><div class="field"><label for="pin">Code à 4 chiffres</label><input class="in" id="pin" inputmode="numeric" autocomplete="off" maxlength="8"></div><button class="btn" type="submit">Entrer</button><p class="muted small" style="margin:0">Seul un compte autorisé à modifier ce site peut publier les scores.</p></form>');
@@ -730,7 +814,8 @@ function renderDrawer(){
   ssSet("drawer",true);var d=$("#drawer");if(!d){d=document.createElement("aside");d.id="drawer";d.className="drawer adm";d.setAttribute("aria-label","Espace organisation");document.body.appendChild(d);var p=document.createElement("div");p.id="pubbar";p.className="pubbar";document.body.appendChild(p);}
   var a=AC[ui.adAct],s=S.acts[ui.adAct];
   var h='<div class="row" style="justify-content:space-between"><div><span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.5rem">Table de marque</h2></div><button class="btn sm alt" data-do="dclose">Fermer</button></div>';
-  if(CAP.ready&&!CAP.art)h+='<div class="note small" style="margin-top:10px">Ce compte ne peut pas publier. Tes modifications restent visibles sur cet écran seulement.</div>';
+  if(FB)h+='<div class="note small" style="margin-top:10px">Connecté en tant que '+esc(FBS.user&&FBS.user.email||"")+'. Tes saisies restent en attente jusqu\'à ce que tu appuies sur Publier.</div>';
+  if(!FB&&CAP.ready&&!CAP.art)h+='<div class="note small" style="margin-top:10px">Ce compte ne peut pas publier. Tes modifications restent visibles sur cet écran seulement.</div>';
   h+='<h3>Épreuve</h3><select class="in" id="ad_act">'+ACTS.map(function(x){return '<option value="'+x.id+'" '+(x.id===ui.adAct?"selected":"")+'>'+x.nom+'</option>';}).join("")+'</select>';
   h+='<div class="row" style="margin-top:10px"><div class="field" style="flex:1;min-width:120px"><label for="ad_st">Statut</label><select class="in" id="ad_st">'+[["avenir","À venir"],["encours","En cours"],["termine","Terminée"]].map(function(o){return '<option value="'+o[0]+'" '+(s.st===o[0]?"selected":"")+'>'+o[1]+'</option>';}).join("")+'</select></div><div class="field" style="width:90px"><label for="ad_h">Heure</label><input class="in" id="ad_h" value="'+esc(s.h)+'"></div><div class="field" style="flex:1;min-width:120px"><label for="ad_l">Lieu</label><input class="in" id="ad_l" value="'+esc(s.l)+'"></div></div>';
   h+='<div class="field" style="margin-top:10px"><label for="ad_fmt">Format</label><select class="in" id="ad_fmt"><option value="tableau" '+(s.fmt==="tableau"?"selected":"")+'>Tableau à élimination directe</option><option value="classement" '+(s.fmt==="classement"?"selected":"")+'>Classement final saisi</option></select></div>';
@@ -754,12 +839,14 @@ function renderDrawer(){
   h+='<h3>Photos officielles</h3><input class="in" type="file" id="ad_photo" accept="image/*" multiple><div class="muted small" style="margin-top:4px">'+(S.photos||[]).length+' sur 12 photos publiées. Elles sont intégrées au site, garde les plus belles.</div>'+((S.photos||[]).length?'<div class="grid" style="grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px">'+S.photos.map(function(p,i){return '<button class="pick" style="padding:0;overflow:hidden;border-radius:8px" data-delph="'+i+'" title="Retirer"><img src="'+p.src+'" alt="Retirer cette photo" style="display:block;aspect-ratio:1;object-fit:cover"></button>';}).join("")+'</div><div class="muted small">Touche une photo pour la retirer.</div>':'');
   h+='<h3>Liens pour le public sans compte</h3><div class="field"><label for="ad_lph">Lien pour envoyer des photos</label><input class="in" id="ad_lph" placeholder="https://… OneDrive, Google Drive ou Forms" value="'+esc(S.links.photos||"")+'"></div><div class="field" style="margin-top:8px"><label for="ad_lvo">Lien du vote du public</label><input class="in" id="ad_lvo" placeholder="https://forms.cloud.microsoft/…" value="'+esc(S.links.vote||"")+'"></div><p class="muted small">Ces boutons remplacent le mur et le vote pour les visiteurs qui n\'ont pas de compte autorisé.</p>';
   h+='<h3>Phase affichée</h3><div class="picks">'+[[null,"Automatique"]].concat(PHASES.map(function(p){return [p[0],p[1]];})).map(function(p){return '<button class="pick" data-phase="'+(p[0]||"")+'" aria-pressed="'+(S.phase===p[0])+'">'+p[1]+'</button>';}).join("")+'</div><p class="muted small">Automatique suit la date, 48h avant le 21 octobre, direct le 23 octobre à 6h00, après à 18h00.</p>';
-  h+='<h3>Réglages</h3><label class="row small" style="gap:8px"><input type="checkbox" id="ad_hok" '+(S.horairesOk?"checked":"")+'> Horaires confirmés</label><div class="row" style="margin-top:8px"><input class="in" id="ad_pin" style="flex:1;min-width:120px" inputmode="numeric" placeholder="Nouveau code arbitre"><button class="btn sm alt" data-do="setpin">Changer le code</button></div><div class="row" style="margin-top:8px"><button class="btn sm alt" data-do="backup">Copier une sauvegarde</button><button class="btn sm alt" data-do="discard">Annuler mes saisies non publiées</button><button class="btn sm alt" data-do="logout">Quitter le mode orga</button></div>';
+  h+='<h3>Réglages</h3><label class="row small" style="gap:8px"><input type="checkbox" id="ad_hok" '+(S.horairesOk?"checked":"")+'> Horaires confirmés</label>'+(FB?'':'<div class="row" style="margin-top:8px"><input class="in" id="ad_pin" style="flex:1;min-width:120px" inputmode="numeric" placeholder="Nouveau code arbitre"><button class="btn sm alt" data-do="setpin">Changer le code</button></div>')+'<div class="row" style="margin-top:8px"><button class="btn sm alt" data-do="backup">Copier une sauvegarde</button><button class="btn sm alt" data-do="discard">Annuler mes saisies non publiées</button><button class="btn sm alt" data-do="logout">Quitter le mode orga</button></div>';
   d.innerHTML=h;
+  if(FB){$("#pubbar").innerHTML='<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:0">'+esc(fbStatus())+'</span><button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" '+(dirty?"":"disabled")+'>Publier en direct</button>';return;}
   $("#pubbar").innerHTML='<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em">'+(dirty?dirty+" modification"+(dirty>1?"s":"")+" en attente":"Tout est publié")+'</span><button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" '+(dirty&&CAP.art?"":"disabled")+'>Publier en direct</button>';
 }
+function renderPub(){if(!$("#pubbar"))return;if(FB){$("#pubbar").innerHTML='<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:0">'+esc(fbStatus())+'</span><button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" '+(dirty?"":"disabled")+'>Publier en direct</button>';}}
 function closeDrawer(){ui.drawer=false;ssSet("drawer",false);var d=$("#drawer");if(d)d.remove();var p=$("#pubbar");if(p)p.remove();}
-function changed(feedTxt,kind){dirty++;if(feedTxt){S.feed=S.feed||[];S.feed.unshift({t:now(),txt:feedTxt,k:kind||""});S.feed=S.feed.slice(0,80);}
+function changed(feedTxt,kind){if(FB){fbTrack(feedTxt,kind);var sc0=$("#drawer")?$("#drawer").scrollTop:0;render();if(ui.drawer&&$("#drawer"))$("#drawer").scrollTop=sc0;return;}dirty++;if(feedTxt){S.feed=S.feed||[];S.feed.unshift({t:now(),txt:feedTxt,k:kind||""});S.feed=S.feed.slice(0,80);}
   ssSet("draft",{base:S.pub||0,n:dirty,S:S});
   var sc=$("#drawer")?$("#drawer").scrollTop:0;render();if(ui.drawer){renderDrawer();$("#drawer").scrollTop=sc;}}
 function getM(k){var s=S.acts[ui.adAct];var p=k.split("_");var ri=+p[0],mi=+p[1];return ri===4?s.br.pf:s.br.r[ri][mi];}
@@ -810,7 +897,7 @@ document.addEventListener("click",async function(e){
   if(d.fp){var f=d.fp.split(":");S.fp=S.fp||{};S.fp[f[0]]=Math.max(0,Math.min(5,(S.fp[f[0]]||0)+(+f[1])));changed(+f[1]>0?"Bonus fair play pour "+nm(f[0]):null);return;}
   if(d.mb){var g=d.mb.split(":");S.mb=S.mb||{};var before=S.mb[g[0]]||0;S.mb[g[0]]=Math.max(0,Math.min(10,before+(+g[1])));changed(+g[1]>0&&S.mb[g[0]]>before?"Bonus créativité pour "+nm(g[0])+", mascottes et drapeau":null);return;}
   if(d.phase!==undefined){S.phase=d.phase||null;changed();return;}
-  if(d.delph){S.photos.splice(+d.delph,1);changed();return;}
+  if(d.delph){if(FB){var ph=S.photos[+d.delph];if(ph&&ph.id)FBS.db.collection("photos").doc(ph.id).delete().then(function(){fbPhotos(true);}).catch(function(){toast("Suppression refusée");});return;}S.photos.splice(+d.delph,1);changed();return;}
   switch(d.do){
     case "close":closeModal();break;
     case "tv":tvOpen();break;
@@ -823,9 +910,9 @@ document.addEventListener("click",async function(e){
     case "addmsg":var mm=$("#ad_msg").value.trim();if(mm)changed(mm);break;
     case "setpin":var np=$("#ad_pin").value.trim();if(np.length>=4){S.pin=hash(np);changed();toast("Nouveau code enregistré, publie pour l'appliquer");}else toast("Le code doit faire au moins 4 chiffres");break;
     case "backup":var txt=JSON.stringify(S);try{await navigator.clipboard.writeText(txt);toast("Sauvegarde copiée");}catch(err){toast("Copie refusée par ce navigateur");}break;
-    case "logout":ui.admin=false;ssSet("admin",false);closeDrawer();render();break;
-    case "publish":publishNow();break;
-    case "discard":if(!t.dataset.sure){t.dataset.sure="1";t.textContent="Confirmer l'annulation";break;}try{S=JSON.parse(document.getElementById("state").textContent)||defaultState();}catch(err){S=defaultState();}if(!S.links)S.links={photos:"",vote:""};if(!S.mb)S.mb={};dirty=0;ssSet("draft",null);render();renderDrawer();toast("Saisies annulées, retour à la version publiée");break;
+    case "logout":ui.admin=false;ssSet("admin",false);closeDrawer();if(FB){if(dirty){toast("Publie ou annule tes saisies avant de te déconnecter");ui.admin=true;ssSet("admin",true);ui.drawer=true;render();break;}firebase.auth().signOut();}render();break;
+    case "publish":if(FB)fbPublish();else publishNow();break;
+    case "discard":if(!t.dataset.sure){t.dataset.sure="1";t.textContent="Confirmer l'annulation";break;}if(FB){fbDiscard();render();toast("Saisies annulées, retour à la version publiée");break;}try{S=JSON.parse(document.getElementById("state").textContent)||defaultState();}catch(err){S=defaultState();}if(!S.links)S.links={photos:"",vote:""};if(!S.mb)S.mb={};dirty=0;ssSet("draft",null);render();renderDrawer();toast("Saisies annulées, retour à la version publiée");break;
   }
 });
 document.addEventListener("change",async function(e){
@@ -844,10 +931,13 @@ document.addEventListener("change",async function(e){
   if(t.dataset.mst){var m=getM(t.dataset.mst);m.st=t.value;resync(s.br);var a=AC[ui.adAct];
     if(t.value==="fini"){var w=win(m);changed(w?a.nom+" · "+nm(w)+" bat "+nm(w===m.a?m.b:m.a)+" "+Math.max(m.sa,m.sb)+" à "+Math.min(m.sa,m.sb):null,"");var f=s.br.r[s.br.r.length-1][0];if(m===f&&win(f)){s.st="termine";changed(medalFeed(ui.adAct),"or");confetti(200);}}
     else changed(t.value==="encours"?a.nom+" · coup d'envoi "+nm(m.a)+" contre "+nm(m.b):null);return;}
-  if(t.id==="ad_photo"&&t.files.length){for(var i=0;i<t.files.length;i++){if(S.photos.length>=12){toast("12 photos maximum, retire en une pour en ajouter");break;}try{var u=await compress(t.files[i],1000,95000);if(safeImg(u))S.photos.unshift({src:u,cap:"",t:now()});}catch(err){toast("Photo illisible");}}changed("Nouvelles photos officielles sur le mur");return;}
+  if(t.id==="ad_photo"&&t.files.length){for(var i=0;i<t.files.length;i++){if(S.photos.length>=12){toast("12 photos maximum, retire en une pour en ajouter");break;}try{var u=await compress(t.files[i],1000,95000);if(safeImg(u)){if(FB){await FBS.db.collection("photos").add({src:u,t:now()}).catch(function(){toast("Envoi de la photo refusé");});}else S.photos.unshift({src:u,cap:"",t:now()});}}catch(err){toast("Photo illisible");}}if(FB)fbPhotos(true);changed("Nouvelles photos officielles sur le mur");return;}
 });
 document.addEventListener("submit",async function(e){
   e.preventDefault();var f=e.target;
+  if(f.id==="loginf"){var b=$("#lg_go");b.disabled=true;b.textContent="Connexion…";
+    firebase.auth().signInWithEmailAndPassword($("#lg_mail").value.trim(),$("#lg_pw").value).then(function(){closeModal();ui.admin=true;ssSet("admin",true);ui.drawer=true;render();toast("Connecté, bienvenue à la table de marque");})
+    .catch(function(err){b.disabled=false;b.textContent="Se connecter";var c=err&&err.code||"";toast(/network/.test(c)?"Pas de réseau, réessaie":/too-many/.test(c)?"Trop d'essais, attends quelques minutes":"Email ou mot de passe incorrect");});return;}
   if(f.id==="pinf"){var v=$("#pin").value.trim();if(hash(v)===S.pin){ui.admin=true;ssSet("admin",true);closeModal();ui.drawer=true;render();toast("Mode organisation activé");}else{toast("Code incorrect");}return;}
   if(f.id==="postf"){
     if(!canPost()){toast("Publication réservée aux comptes autorisés");return;}
@@ -860,8 +950,8 @@ document.addEventListener("submit",async function(e){
   }
 });
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeModal();tvClose();}});
-window.addEventListener("beforeunload",function(e){if(dirty&&ui.admin){e.preventDefault();e.returnValue="";}});
-window.addEventListener("hashchange",function(){var h=location.hash.replace("#","");if(h==="tv")tvOpen();else if(["accueil","direct","classement","epreuves","programme","classes","mur"].indexOf(h)>=0)go(h);});
+window.addEventListener("beforeunload",function(e){if((dirty||(FB&&FBS.pending))&&ui.admin){e.preventDefault();e.returnValue="";}});
+window.addEventListener("hashchange",function(){var h=location.hash.replace("#","");if(h==="orga")adminOpen();else if(h==="tv")tvOpen();else if(["accueil","direct","classement","epreuves","programme","classes","mur"].indexOf(h)>=0)go(h);});
 
 render();
 if(draftMsg)setTimeout(function(){toast(draftMsg);},700);
