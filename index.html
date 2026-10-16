@@ -702,7 +702,7 @@ document.addEventListener("submit",async function(e){
   e.preventDefault();var f=e.target;
   if(f.id==="loginf"){var b=$("#lg_go");b.disabled=true;b.textContent="Connexion…";
     firebase.auth().signInWithEmailAndPassword($("#lg_mail").value.trim(),$("#lg_pw").value).then(function(){closeModal();ui.admin=true;ssSet("admin",true);ui.drawer=true;render();toast("Connecté, bienvenue à la table de marque");})
-    .catch(function(err){b.disabled=false;b.textContent="Se connecter";var c=err&&err.code||"";toast(/network/.test(c)?"Pas de réseau, réessaie":/too-many/.test(c)?"Trop d'essais, attends quelques minutes":"Email ou mot de passe incorrect");});return;}
+    .catch(function(err){b.disabled=false;b.textContent="Se connecter";console.error("Erreur Firebase Auth:",err);var c=err&&err.code||"";toast(/unauthorized-domain/.test(c)?"Domaine non autorisé sur Firebase":/network/.test(c)?"Pas de réseau, réessaie":/too-many/.test(c)?"Trop d'essais, attends quelques minutes":/user-not-found|wrong-password|invalid-credential/.test(c)?"Email ou mot de passe incorrect":(err&&err.message)||"Erreur ("+c+")");});return;}
   if(f.id==="pinf"){var v=$("#pin").value.trim();if(hash(v)===S.pin){ui.admin=true;ssSet("admin",true);closeModal();ui.drawer=true;render();toast("Mode organisation activé");}else{toast("Code incorrect");}return;}
   if(f.id==="postf"){
     if(!canPost()){toast("Publication réservée aux comptes autorisés");return;}
