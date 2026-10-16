@@ -605,8 +605,16 @@ function renderDrawer(){
   h+='<h3>Phase affichée</h3><div class="picks">'+[[null,"Automatique"]].concat(PHASES.map(function(p){return [p[0],p[1]];})).map(function(p){return '<button class="pick" data-phase="'+(p[0]||"")+'" aria-pressed="'+(S.phase===p[0])+'">'+p[1]+'</button>';}).join("")+'</div><p class="muted small">Automatique suit la date, 48h avant le 21 octobre, direct le 23 octobre à 6h00, après à 18h00.</p>';
   h+='<h3>Réglages</h3><label class="row small" style="gap:8px"><input type="checkbox" id="ad_hok" '+(S.horairesOk?"checked":"")+'> Horaires confirmés</label>'+(FB?'':'<div class="row" style="margin-top:8px"><input class="in" id="ad_pin" style="flex:1;min-width:120px" inputmode="numeric" placeholder="Nouveau code arbitre"><button class="btn sm alt" data-do="setpin">Changer le code</button></div>')+'<div class="row" style="margin-top:8px"><button class="btn sm alt" data-do="backup">Copier une sauvegarde</button><button class="btn sm alt" data-do="discard">Annuler mes saisies non publiées</button><button class="btn sm alt" data-do="logout">Quitter le mode orga</button></div>';
   d.innerHTML=h;
-  if(FB){$("#pubbar").innerHTML='<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:0">'+esc(fbStatus())+'</span><button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" '+(dirty?"":"disabled")+'>Publier en direct</button>';return;}
-  $("#pubbar").innerHTML='<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em">'+(dirty?dirty+" modification"+(dirty>1?"s":"")+" en attente":"Tout est publié")+'</span><button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" '+(dirty&&CAP.art?"":"disabled")+'>Publier en direct</button>';
+
+  if(FB){
+    $("#pubbar").innerHTML = '<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:0">' + esc(fbStatus()) + '</span>' +
+      (dirty ? '<button class="btn sm alt" data-do="discard" style="background:#fff;color:var(--ink);border:2px solid var(--ink);margin-right:6px">Effacer</button>' : '') +
+      '<button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" ' + (dirty ? "" : "disabled") + '>Publier en direct</button>';
+    return;
+  }
+  $("#pubbar").innerHTML = '<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em">' + (dirty ? dirty + " modification" + (dirty > 1 ? "s" : "") + " en attente" : "Tout est publié") + '</span>' +
+    (dirty ? '<button class="btn sm alt" data-do="discard" style="background:#fff;color:var(--ink);border:2px solid var(--ink);margin-right:6px">Effacer</button>' : '') +
+    '<button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" ' + (dirty && CAP.art ? "" : "disabled") + '>Publier en direct</button>';
 }
 function renderPub(){if(!$("#pubbar"))return;if(FB){$("#pubbar").innerHTML='<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:0">'+esc(fbStatus())+'</span><button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" '+(dirty?"":"disabled")+'>Publier en direct</button>';}}
 function closeDrawer(){ui.drawer=false;ssSet("drawer",false);var d=$("#drawer");if(d)d.remove();var p=$("#pubbar");if(p)p.remove();}
