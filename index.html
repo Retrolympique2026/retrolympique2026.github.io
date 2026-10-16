@@ -476,7 +476,7 @@ return '<section class="block"><div class="head"><div><span class="eyebrow">Vend
 '<div class="grid" style="gap:14px;align-content:start"><div class="card"><span class="eyebrow">Plan du site</span><h2 class="cond" style="font-weight:800;text-transform:uppercase;margin:4px 0 10px">Où se passe quoi</h2>'+mapSVG()+'</div><div class="card"><span class="eyebrow">Infos pratiques</span><ul style="margin:8px 0 0;padding-left:18px"><li>Lieu, Racing Club</li><li>Arrive avec ton équipe, en couleur, pour le défilé de 8h30</li><li>Eau et crème solaire conseillées</li><li>Les scores sont publiés ici en direct</li></ul></div></div></div></section>';
 }
 function mapSVG(){
-var Z=[["Terrain A","Football",20,20,150,90,"#59AC9A"],["Terrain B","Basketball",185,20,110,90,"#59AC9A"],["Terrain C","Volleyball",310,20,110,90,"#59AC9A"],["Pelouse","Prisonnier, corde",20,125,200,85,"#E7363C"],["Piste","Relais",235,125,185,40,"#E7363C"],["Pétanque","Doublettes",235,175,90,35,"#E7363C"],["Club house","Uno, domino, échecs",335,175,85,75,"#FCAA20"],["Scène","Chaise, freeze",20,225,140,45,"#F56438"],["Entrée","Accueil",175,225,145,45,"#FBF4E8"]];
+var Z=[["Terrain A","Football",20,20,150,90,"#59AC9A"],["Terrain B","Basketball",185,20,110,90,"#59AC9A"],["Terrain C","Volleyball",310,20,110,90,"#59AC9A"],["Pelouse","Prisonnier, corde",20,125,200,85,"#E7363C"],["Piste","Relais",235,125,185,40,"#E7363C"],["Pétanque","Doublettes",235,175,90,35,"#E7363C"],["Club house","Uno, domino, échecs",335,175,85,75,"#FCAA20"],["Scène","",20,225,140,45,"#F56438"],["Entrée","Accueil",175,225,145,45,"#FBF4E8"]];
 return '<svg viewBox="0 0 440 290" role="img" aria-label="Plan schématique du Racing Club" style="width:100%;height:auto;display:block"><rect x="4" y="4" width="432" height="282" rx="16" fill="#FBF4E8" stroke="#1F1A16" stroke-width="2"/>'+
 Z.map(function(z){return '<g><rect x="'+z[2]+'" y="'+z[3]+'" width="'+z[4]+'" height="'+z[5]+'" rx="8" fill="'+z[6]+'" fill-opacity="'+(z[6]==="#FBF4E8"?1:.55)+'" stroke="#1F1A16" stroke-width="1.5"/><text x="'+(z[2]+8)+'" y="'+(z[3]+18)+'" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="14" fill="#1F1A16">'+z[0].toUpperCase()+'</text><text x="'+(z[2]+8)+'" y="'+(z[3]+33)+'" font-family="Barlow,sans-serif" font-size="11" fill="#1F1A16">'+z[1]+'</text></g>';}).join("")+'</svg><p class="muted small" style="margin:8px 0 0">Plan indicatif, l\'implantation exacte est confirmée sur place.</p>';
 }
@@ -616,16 +616,16 @@ var newAct={id:newId,nom:nom,fam:$("#af_fam").value,fmt:$("#af_fmt").value,h:$("
 ACTS.push(newAct);AC[newId]=newAct;
 S.acts[newId]={st:"avenir",h:newAct.h,l:newAct.l,fmt:newAct.fmt,br:null,rk:[],ff:[]};
 rebuildFields();if(FB)FBS.base["a_"+newId]=fj("a_"+newId);
-saveCustomActs();if(FB)fbTrack("Nouvelle épreuve : "+nom,"or");toast("Épreuve créée : "+nom);
+saveCustomActs();toast("Épreuve créée : "+nom);
 }else{var a=AC[id];a.nom=nom;a.fam=$("#af_fam").value;a.fmt=$("#af_fmt").value;a.eq=$("#af_eq").value;a.r=$("#af_r").value;
 var s=S.acts[id];s.h=$("#af_h").value;s.l=$("#af_l").value;s.fmt=$("#af_fmt").value;if($("#af_st"))s.st=$("#af_st").value;
-saveCustomActs();if(FB)fbTrack("Épreuve modifiée : "+nom,null);toast("Épreuve modifiée");}
+saveCustomActs();toast("Épreuve modifiée");}
 dirty++;closeModal();render();if(ui.drawer)renderDrawer();}
 
 function deleteAct(id){if(!confirm("Supprimer définitivement l'épreuve \""+AC[id].nom+"\" ?"))return;
 var nom=AC[id].nom;ACTS=ACTS.filter(function(a){return a.id!==id;});delete AC[id];delete S.acts[id];
 FIELDS=FIELDS.filter(function(f){return f!=="a_"+id;});if(FB){delete FBS.base["a_"+id];delete FBS.touched["a_"+id];}
-saveCustomActs();if(FB)fbTrack("Épreuve supprimée : "+nom,null);toast("Épreuve supprimée");dirty++;closeModal();render();if(ui.drawer)renderDrawer();}
+saveCustomActs();toast("Épreuve supprimée");dirty++;closeModal();render();if(ui.drawer)renderDrawer();}
 
 function drawAnim(){
 var order=CLASSES.map(function(c){return c.id;});for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t;}while(order.length<8)order.push(null);
