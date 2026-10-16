@@ -444,6 +444,7 @@ function fbStart(){
   try{FBS.db.enablePersistence({synchronizeTabs:true}).catch(function(){});}catch(e){}
   FIELDS.forEach(function(f){FBS.base[f]=fj(f);});
   firebase.auth().onAuthStateChanged(function(u){FBS.user=u||null;CAP.edit=!!u;FBS.authKnown=true;
+    if(u)fbRestoreDraft();else FBS.restored=false;
     if(!u&&ui.admin){ui.admin=false;ssSet("admin",false);closeDrawer();}
     if(u&&ssGet("admin",false)){ui.admin=true;ui.drawer=!!ssGet("drawer",false);}
     render();});
@@ -463,16 +464,25 @@ function fbListen(){
   },function(){FBS.err="Connexion au direct impossible pour le moment";fbRerender();});
 }
 var fbT;function fbRerender(){clearTimeout(fbT);fbT=setTimeout(function(){render();},120);}
+function fbSaveDraft(){var dv={};Object.keys(FBS.touched).forEach(function(f){dv[f]=fj(f);});lsSet("fbdraft",{u:FBS.user?FBS.user.uid:null,v:dv,q:FBS.feedQ});}
 function fbTrack(feedTxt,kind){
   if(feedTxt){FBS.feedQ.unshift({t:now(),txt:String(feedTxt).slice(0,200),k:kind==="or"?"or":""});S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);}
   FIELDS.forEach(function(f){if(fj(f)!==FBS.base[f])FBS.touched[f]=1;else delete FBS.touched[f];});
-  dirty=fbCount();
-  var dv={};Object.keys(FBS.touched).forEach(function(f){dv[f]=fj(f);});ssSet("fbdraft",{v:dv,q:FBS.feedQ});
+  dirty=fbCount();fbSaveDraft();
 }
-function fbRestoreDraft(){var dr=ssGet("fbdraft",null);if(!dr||!ssGet("admin",false))return;var n=0;
+function fbRestoreDraft(){
+  if(FBS.restored||!FBS.ready||!FBS.user)return;
+  FBS.restored=true;
+  var dr=lsGet("fbdraft",null);
+  if(!dr||dr.u!==FBS.user.uid)return;
+  var n=0;
   Object.keys(dr.v||{}).forEach(function(f){if(FIELDS.indexOf(f)>=0){applyField(f,dr.v[f]);if(fj(f)!==FBS.base[f]){FBS.touched[f]=1;n++;}}});
-  FBS.feedQ=Array.isArray(dr.q)?dr.q:[];n+=FBS.feedQ.length;S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);
-  if(n)setTimeout(function(){toast("Tes saisies non publiées ont été récupérées. Pense à publier.");},600);}
+  FBS.feedQ=(Array.isArray(dr.q)?dr.q:[]).filter(function(x){return x&&typeof x.txt==="string";}).slice(0,40);
+  n+=FBS.feedQ.length;
+  S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);dirty=fbCount();
+  if(n){ui.admin=true;ssSet("admin",true);ui.drawer=true;ssSet("drawer",true);fbRerender();
+    setTimeout(function(){toast("Tes saisies non publiées ont été récupérées. Pense à publier.");},600);}
+}
 function fbDiscard(){var keepPh=S.photos;S=defaultState();S.photos=keepPh;if(!S.links)S.links={photos:"",vote:""};
   FIELDS.forEach(function(f){if(FBS.server[f])applyField(f,FBS.server[f]);FBS.base[f]=fj(f);});
   FBS.touched={};FBS.feedQ=[];S.feed=FBS.serverFeed.slice(0,80);dirty=0;ssSet("fbdraft",null);}
@@ -481,13 +491,20 @@ function fbPublish(){
   var upd={},n=0;Object.keys(FBS.touched).forEach(function(f){upd[f]=fj(f);n++;});
   var q=FBS.feedQ.slice();
   if(!n&&!q.length){toast("Rien à publier");return;}
+  var prevBase={},prevTouched=Object.assign({},FBS.touched),prevFeed=FBS.serverFeed.slice();
+  Object.keys(upd).forEach(function(f){prevBase[f]=FBS.base[f];});
   upd.t=now();upd.by=FBS.user.email||"";
   if(q.length){if(FBS.serverFeed.length+q.length>80)upd.feed=q.concat(FBS.serverFeed).slice(0,60);else upd.feed=firebase.firestore.FieldValue.arrayUnion.apply(null,q.slice().reverse());}
   FBS.db.collection("live").doc("state").set(upd,{merge:true}).then(function(){fbRerender();}).catch(function(e){
-    if(e&&e.code==="permission-denied"){fbDiscard();render();}
-    toast(e&&e.code==="permission-denied"?"Ce compte n'a pas le droit de publier. Demande à Thomas de l'ajouter.":"Publication refusée par le serveur, réessaie.");});
+    Object.keys(prevBase).forEach(function(f){FBS.base[f]=prevBase[f];});
+    FBS.touched=Object.assign(prevTouched,FBS.touched);
+    FBS.feedQ=q.concat(FBS.feedQ);FBS.serverFeed=prevFeed;
+    S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);
+    dirty=fbCount();fbSaveDraft();
+    toast(e&&e.code==="permission-denied"?"Ce compte n'a pas le droit de publier. Tes saisies sont gardées, préviens Thomas.":"Publication refusée par le serveur, réessaie.");
+    render();});
   Object.keys(upd).forEach(function(f){if(FIELDS.indexOf(f)>=0)FBS.base[f]=upd[f];});
-  FBS.touched={};FBS.feedQ=[];FBS.serverFeed=q.concat(FBS.serverFeed).slice(0,80);dirty=0;ssSet("fbdraft",null);
+  FBS.touched={};FBS.feedQ=[];FBS.serverFeed=q.concat(FBS.serverFeed).slice(0,80);dirty=0;lsSet("fbdraft",null);
   toast(navigator.onLine?"Publié, tout le monde voit les nouveaux scores":"Hors ligne, la publication partira dès le retour du réseau");
   render();
 }
@@ -495,7 +512,8 @@ function fbPhotos(force){if(!FB||!FBS.db)return;if(!force&&now()-FBS.photosAt<30
   FBS.db.collection("photos").orderBy("t","desc").limit(12).get().then(function(q){S.photos=q.docs.map(function(d){var v=d.data()||{};return {id:d.id,src:safeImg(v.src),cap:"",t:+v.t||0};}).filter(function(p){return p.src;});fbRerender();}).catch(function(){});}
 function fbStatus(){if(!FBS.ready)return FBS.err||"Connexion au direct…";var off=!navigator.onLine;
   if(dirty)return (off?"Hors ligne · ":"")+dirty+" modification"+(dirty>1?"s":"")+" à publier";
-  if(FBS.pending)return off?"Hors ligne · envoi en attente":"Envoi en cours…";return "Tout est publié ✓";}
+  if(FBS.pending)return off?"Hors ligne · envoi en attente":"Envoi en cours…";
+  return off?"Hors ligne":"Tout est publié ✓";}
 function loginModal(){modal('<span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 10px">Connexion table de marque</h2><form id="loginf" class="form"><div class="field"><label for="lg_mail">Email</label><input class="in" id="lg_mail" type="email" autocomplete="username" required></div><div class="field"><label for="lg_pw">Mot de passe</label><input class="in" id="lg_pw" type="password" autocomplete="current-password" required></div><button class="btn" type="submit" id="lg_go">Se connecter</button><p class="muted small" style="margin:0">Réservé aux comptes créés par l\'organisation.</p></form>');}
 
 function safeImg(u){return typeof u==="string"&&u.length<120000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(u)?u:null;}
@@ -517,7 +535,7 @@ function render(){
    '<footer><div class="wrap row" style="justify-content:space-between"><div><b class="cond" style="font-size:1.1rem;text-transform:uppercase;letter-spacing:.05em">Journée Sportive MCCI Business School</b><div class="muted small">Vendredi 23 octobre 2026 au Racing Club. 40 ans au service de l\'éducation tertiaire.</div></div><div style="display:grid;gap:6px;justify-items:start"><a class="btn sm" style="text-decoration:none" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">Formulaire d\'inscription ↗</a><div class="muted small">Barème par épreuve, 10 · 7 · 5 · 3 points, plus 1 point de participation et les bonus</div>'+(FB&&!FBS.user?'<button class="tab" style="padding:4px 0;font-size:.85rem;color:var(--ink2)" data-do="admin">Accès organisation</button>':'')+'</div></div></footer>';
   if(!CAP.edit&&CAP.ready&&(!FB||FBS.authKnown)){ui.admin=false;ui.drawer=false;}
   if(ui.admin&&ui.drawer&&CAP.edit){var dw=$("#drawer"),ae=document.activeElement;if(dw&&ae&&dw.contains(ae)&&/INPUT|SELECT|TEXTAREA/.test(ae.tagName)){renderPub();}else{var sc1=dw?dw.scrollTop:0;renderDrawer();if($("#drawer"))$("#drawer").scrollTop=sc1;}}
-  if(FB&&(ui.tab==="mur"||phase()==="apres"||$("#tv")))fbPhotos();
+  if(FB&&(ui.tab==="mur"||phase()==="apres"||$("#tv")||(ui.admin&&ui.drawer)))fbPhotos();
   refreshLive();startClock();
 }
 function go(t){ui.tab=t;ssSet("tab",t);render();window.scrollTo({top:0,behavior:"smooth"});}
@@ -928,11 +946,11 @@ document.addEventListener("change",async function(e){
   if(t.id==="ad_ann"){S.annonce=t.value.trim();changed();return;}
   if(t.id==="ad_lph"||t.id==="ad_lvo"){var v=t.value.trim();if(v&&!/^https:\/\//.test(v)){toast("Le lien doit commencer par https://");return;}S.links[t.id==="ad_lph"?"photos":"vote"]=v;changed();return;}
   if(t.id==="ad_hok"){S.horairesOk=t.checked;changed();return;}
-  if(t.dataset.rk!==undefined){s.rk=s.rk||[];s.rk[+t.dataset.rk]=t.value||null;changed(+t.dataset.rk===0&&t.value?"Médaille d'or en "+AC[ui.adAct].nom+" pour "+nm(t.value):null,"or");if(+t.dataset.rk===0&&t.value)confetti(140);return;}
+  if(t.dataset.rk!==undefined){s.rk=s.rk||[];s.rk[+t.dataset.rk]=t.value||null;changed();return;}
   if(t.dataset.mst){var m=getM(t.dataset.mst);m.st=t.value;resync(s.br);var a=AC[ui.adAct];
     if(t.value==="fini"){var w=win(m);changed(w?a.nom+" · "+nm(w)+" bat "+nm(w===m.a?m.b:m.a)+" "+Math.max(m.sa,m.sb)+" à "+Math.min(m.sa,m.sb):null,"");var f=s.br.r[s.br.r.length-1][0];if(m===f&&win(f)){s.st="termine";changed(medalFeed(ui.adAct),"or");confetti(200);}}
     else changed(t.value==="encours"?a.nom+" · coup d'envoi "+nm(m.a)+" contre "+nm(m.b):null);return;}
-  if(t.id==="ad_photo"&&t.files.length){for(var i=0;i<t.files.length;i++){if(S.photos.length>=12){toast("12 photos maximum, retire en une pour en ajouter");break;}try{var u=await compress(t.files[i],1000,95000);if(safeImg(u)){if(FB){await FBS.db.collection("photos").add({src:u,t:now()}).catch(function(){toast("Envoi de la photo refusé");});}else S.photos.unshift({src:u,cap:"",t:now()});}}catch(err){toast("Photo illisible");}}if(FB)fbPhotos(true);changed("Nouvelles photos officielles sur le mur");return;}
+  if(t.id==="ad_photo"&&t.files.length){for(var i=0;i<t.files.length;i++){if(S.photos.length>=12){toast("12 photos maximum, retire en une pour en ajouter");break;}try{var u=await compress(t.files[i],1000,95000);if(safeImg(u)){if(FB){await FBS.db.collection("photos").add({src:u,t:now()}).catch(function(){toast("Envoi de la photo refusé");});}else S.photos.unshift({src:u,cap:"",t:now()});}}catch(err){toast("Photo illisible");}}if(FB)fbPhotos(true);changed();return;}
 });
 document.addEventListener("submit",async function(e){
   e.preventDefault();var f=e.target;
