@@ -20,54 +20,54 @@
 <body>
 <title>Retrolympique MCCI 2026</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap">
-
 <div id="app"></div>
 <script type="application/json" id="state">null</script>
 <script id="main">
 (function(){
 "use strict";
-/* ---------- Données de base ---------- */
+
 var CLASSES=[
- ["POS","Poséidon","BTS MCO","Bleu","#3F4573","#FFFFFF","POS"],
- ["ART","Artémis","BTS GPME + Alternance","Vert","#5BAE9A","#1F1A16","ART"],
- ["ARE","Arès","BTS SIO","Noir","#141414","#FFFFFF","ARÈS"],
- ["HES","Hestia","BTS COMM","Rose","#F55A7A","#1F1A16","HES"],
- ["RHE","Rhéa","Licence","Violet","#7765AE","#FFFFFF","RHÉA"],
- ["APH","Aphrodite","Master","Rouge","#E7363C","#FFFFFF","APH"],
- ["HER","Hermès","Admin","Orange","#F56438","#1F1A16","HER"]
+["POS","Poséidon","BTS MCO","Bleu","#3F4573","#FFFFFF","POS"],
+["ART","Artémis","BTS GPME + Alternance","Vert","#5BAE9A","#1F1A16","ART"],
+["ARE","Arès","BTS SIO","Noir","#141414","#FFFFFF","ARÈS"],
+["HES","Hestia","BTS COMM","Rose","#F55A7A","#1F1A16","HES"],
+["RHE","Rhéa","Licence","Violet","#7765AE","#FFFFFF","RHÉA"],
+["APH","Aphrodite","Master","Rouge","#E7363C","#FFFFFF","APH"],
+["HER","Hermès","Admin","Orange","#F56438","#1F1A16","HER"]
 ].map(function(c){return {id:c[0],nom:c[1],cl:c[2],coul:c[3],col:c[4],fg:c[5],ab:c[6]};});
 var NT=CLASSES.length;
 var CL={};CLASSES.forEach(function(c){CL[c.id]=c;});
 var FAM={collectif:"Sports collectifs",plateau:"Jeux de table",ambiance:"Jeux d'ambiance",force:"Force et relais"};
 var ACTS=[
- {id:"foot",nom:"Football",fam:"collectif",fmt:"tableau",h:"9h00",l:"Terrain A",eq:"7 joueurs par équipe",r:"Matchs de 10 minutes. En cas d'égalité, séance de 3 tirs au but."},
- {id:"basket",nom:"Basketball",fam:"collectif",fmt:"tableau",h:"9h30",l:"Terrain B",eq:"5 joueurs par équipe",r:"Matchs de 8 minutes en continu. Égalité, premier panier marqué gagne."},
- {id:"volley",nom:"Volleyball",fam:"collectif",fmt:"tableau",h:"10h00",l:"Terrain C",eq:"6 joueurs par équipe",r:"Un set de 15 points, 2 points d'écart ou plafond à 21."},
- {id:"prison",nom:"Ballon prisonnier",fam:"collectif",fmt:"tableau",h:"11h00",l:"Pelouse",eq:"8 joueurs par équipe",r:"Manches de 6 minutes. L'équipe avec le plus de joueurs encore en jeu gagne."},
- {id:"corde",nom:"Tir à la corde",fam:"force",fmt:"tableau",h:"13h00",l:"Pelouse",eq:"8 tireurs par équipe",r:"Duel en 2 manches gagnantes. Le ruban doit franchir la ligne de son camp."},
- {id:"relais",nom:"Relais avec épreuve",fam:"force",fmt:"classement",h:"14h00",l:"Piste",eq:"4 relayeurs par équipe",r:"Chaque relayeur réalise une épreuve surprise avant de passer le témoin. Classement au chrono."},
- {id:"uno",nom:"Uno",fam:"plateau",fmt:"classement",h:"9h30",l:"Club house",eq:"2 joueurs par équipe",r:"Tables de 4, les deux premiers montent au tour suivant jusqu'à la table finale."},
- {id:"domino",nom:"Domino",fam:"plateau",fmt:"classement",h:"10h30",l:"Club house",eq:"2 joueurs par équipe",r:"Parties en duo, premier binôme à 100 points. Système suisse en 4 rondes."},
- {id:"echecs",nom:"Échecs",fam:"plateau",fmt:"classement",h:"9h00",l:"Club house",eq:"1 joueur par équipe",r:"Parties rapides de 10 minutes. Système suisse en 4 rondes."},
- {id:"chaise",nom:"Chaise musicale",fam:"ambiance",fmt:"classement",h:"12h00",l:"Scène",eq:"2 joueurs par équipe",r:"Une chaise retirée à chaque arrêt de la musique. Le dernier assis l'emporte."},
- {id:"freeze",nom:"Mère glacée",fam:"ambiance",fmt:"classement",h:"12h30",l:"Scène",eq:"3 joueurs par équipe",r:"Freeze dès que la musique s'arrête. Le moindre mouvement élimine."},
- {id:"petanque",nom:"Pétanque",fam:"force",fmt:"tableau",h:"10h00",l:"Espace pétanque",eq:"Doublette par équipe",r:"Parties en 11 points, durée maximale de 20 minutes."}
+{id:"foot",nom:"Football",fam:"collectif",fmt:"tableau",h:"9h00",l:"Terrain A",eq:"7 joueurs par équipe",r:"Matchs de 10 minutes. En cas d'égalité, séance de 3 tirs au but."},
+{id:"basket",nom:"Basketball",fam:"collectif",fmt:"tableau",h:"9h30",l:"Terrain B",eq:"5 joueurs par équipe",r:"Matchs de 8 minutes en continu. Égalité, premier panier marqué gagne."},
+{id:"volley",nom:"Volleyball",fam:"collectif",fmt:"tableau",h:"10h00",l:"Terrain C",eq:"6 joueurs par équipe",r:"Un set de 15 points, 2 points d'écart ou plafond à 21."},
+{id:"prison",nom:"Ballon prisonnier",fam:"collectif",fmt:"tableau",h:"11h00",l:"Pelouse",eq:"8 joueurs par équipe",r:"Manches de 6 minutes. L'équipe avec le plus de joueurs encore en jeu gagne."},
+{id:"corde",nom:"Tir à la corde",fam:"force",fmt:"tableau",h:"13h00",l:"Pelouse",eq:"8 tireurs par équipe",r:"Duel en 2 manches gagnantes. Le ruban doit franchir la ligne de son camp."},
+{id:"relais",nom:"Relais avec épreuve",fam:"force",fmt:"classement",h:"14h00",l:"Piste",eq:"4 relayeurs par équipe",r:"Chaque relayeur réalise une épreuve surprise avant de passer le témoin. Classement au chrono."},
+{id:"uno",nom:"Uno",fam:"plateau",fmt:"classement",h:"9h30",l:"Club house",eq:"2 joueurs par équipe",r:"Tables de 4, les deux premiers montent au tour suivant jusqu'à la table finale."},
+{id:"domino",nom:"Domino",fam:"plateau",fmt:"classement",h:"10h30",l:"Club house",eq:"2 joueurs par équipe",r:"Parties en duo, premier binôme à 100 points. Système suisse en 4 rondes."},
+{id:"echecs",nom:"Échecs",fam:"plateau",fmt:"classement",h:"9h00",l:"Club house",eq:"1 joueur par équipe",r:"Parties rapides de 10 minutes. Système suisse en 4 rondes."},
+,{id:"pingpong",nom:"Ping Pong",fam:"plateau",fmt:"tableau",h:"10h30",l:"Club house",eq:"2 joueurs par équipe",r:"Matchs en 11 points, 2 manches gagnantes."}
 ];
 var AC={};ACTS.forEach(function(a){AC[a.id]=a;});
+function saveCustomActs(){var custom=ACTS.map(function(a){return {id:a.id,nom:a.nom,fam:a.fam,fmt:a.fmt,h:a.h,l:a.l,eq:a.eq,r:a.r};});lsSet("customActs",custom);}
+function loadCustomActs(){var saved=lsGet("customActs",null);if(!saved||!Array.isArray(saved))return;ACTS=saved.map(function(a){return {id:a.id,nom:a.nom,fam:a.fam,fmt:a.fmt,h:a.h,l:a.l,eq:a.eq||"",r:a.r||""};});AC={};ACTS.forEach(function(a){AC[a.id]=a;});}
 var PTS=[10,7,5,3], PART=1;
 var T_J2=Date.parse("2026-10-21T00:00:00+04:00"), T_GO=Date.parse("2026-10-23T08:00:00+04:00"), T_LIVE=Date.parse("2026-10-23T06:00:00+04:00"), T_END=Date.parse("2026-10-23T18:00:00+04:00");
 var PHASES=[["avant","Avant","Échauffement"],["j2","48h avant","Compte à rebours final"],["live","Jour J","Scores en direct"],["apres","Après","Souvenirs et palmarès"]];
 var RESET=":root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}";
 
-/* ---------- Etat ---------- */
 function defaultState(){
-  var a={};ACTS.forEach(function(x){a[x.id]={st:"avenir",h:x.h,l:x.l,fmt:x.fmt,br:null,rk:[],ff:[]};});
-  return {v:2,phase:null,pin:hash("2310"),annonce:"",acts:a,fp:{},mb:{},feed:[],photos:[],horairesOk:false,pub:null};
+var a={};ACTS.forEach(function(x){a[x.id]={st:"avenir",h:x.h,l:x.l,fmt:x.fmt,br:null,rk:[],ff:[]};});
+return {v:2,phase:null,pin:hash("2310"),annonce:"",acts:a,fp:{},mb:{},feed:[],photos:[],horairesOk:false,pub:null};
 }
 var S;try{S=JSON.parse(document.getElementById("state").textContent);}catch(e){S=null;}
 if(!S)S=defaultState();
 if(!S.mb)S.mb={};
 if(S.v!==2){var d0=defaultState();ACTS.forEach(function(x){var o=S.acts&&S.acts[x.id]||{};d0.acts[x.id].h=o.h||x.h;d0.acts[x.id].l=o.l||x.l;});S.acts=d0.acts;S.fp={};S.mb={};S.v=2;}
+ACTS.forEach(function(x){if(!S.acts[x.id])S.acts[x.id]={st:"avenir",h:x.h,l:x.l,fmt:x.fmt,br:null,rk:[],ff:[]};});
+loadCustomActs();
 ACTS.forEach(function(x){if(!S.acts[x.id])S.acts[x.id]={st:"avenir",h:x.h,l:x.l,fmt:x.fmt,br:null,rk:[],ff:[]};});
 var dirty=0;
 var LIVE_URL="";
@@ -77,26 +77,22 @@ var FB=!ONCLAUDE&&!!(FBCFG&&FBCFG.apiKey&&window.firebase);
 var MIRROR=!ONCLAUDE&&location.protocol!=="file:"&&!FB;
 var FBS={db:null,user:null,ready:false,pending:false,touched:{},base:{},server:{},serverFeed:[],feedQ:[],unsub:null,photosAt:0,err:""};
 var FIELDS=["meta"].concat(ACTS.map(function(a){return "a_"+a.id;}));
-
+function rebuildFields(){FIELDS=["meta"].concat(ACTS.map(function(a){return "a_"+a.id;}));}
 if(!S.links)S.links={photos:"",vote:""};
-/* brouillon arbitre, protège les saisies non publiées */
 var draftMsg="";
 (function(){var dr=ssGet("draft",null);if(FB||!dr||!dr.S||!ssGet("admin",false))return;
-  if((dr.base||0)===(S.pub||0)){S=dr.S;if(!S.links)S.links={photos:"",vote:""};dirty=dr.n||1;draftMsg="Tes saisies non publiées ont été récupérées. Pense à publier.";}
-  else{ssSet("draft",null);draftMsg="Une nouvelle version a été publiée entre temps. Tes saisies non publiées n'ont pas été appliquées, vérifie et refais les.";}})();
+if((dr.base||0)===(S.pub||0)){S=dr.S;if(!S.links)S.links={photos:"",vote:""};dirty=dr.n||1;draftMsg="Tes saisies non publiées ont été récupérées. Pense à publier.";}
+else{ssSet("draft",null);draftMsg="Une nouvelle version a été publiée entre temps. Tes saisies non publiées n'ont pas été appliquées, vérifie et refais les.";}})();
 function hash(s){var h=5381;for(var i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return "h"+(h>>>0).toString(36);}
 
-/* ---------- Stockage local ---------- */
 function lsGet(k,d){try{var v=localStorage.getItem("retro26_"+k);return v==null?d:JSON.parse(v);}catch(e){return d;}}
 function lsSet(k,v){try{localStorage.setItem("retro26_"+k,JSON.stringify(v));}catch(e){}}
 function ssGet(k,d){try{var v=sessionStorage.getItem("retro26_"+k);return v==null?d:JSON.parse(v);}catch(e){return d;}}
 function ssSet(k,v){try{sessionStorage.setItem("retro26_"+k,JSON.stringify(v));}catch(e){}}
-
 var ui={tab:ssGet("tab","accueil"),admin:ssGet("admin",false)&&true,drawer:!!(ssGet("admin",false)&&ssGet("drawer",false)),adAct:ssGet("adAct","foot"),me:lsGet("me",null),peek:null};
 var hashTab=(location.hash||"").replace("#","");
 if(["accueil","direct","classement","epreuves","programme","classes","mur"].indexOf(hashTab)>=0)ui.tab=hashTab;
 
-/* ---------- Utilitaires ---------- */
 function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
 function $(s,r){return (r||document).querySelector(s);}
 function nm(id){return id&&CL[id]?CL[id].nom:"";}
@@ -105,622 +101,632 @@ function tname(id){var c=CL[id];if(!c)return "";return '<span style="min-width:0
 function lab(c){return c.nom+" · "+c.cl;}
 function now(){return Date.now();}
 function phase(){
-  if(ui.peek)return ui.peek;
-  if(S.phase)return S.phase;
-  var t=now();if(t<T_J2)return "avant";if(t<T_LIVE)return "j2";if(t<T_END)return "live";return "apres";
+if(ui.peek)return ui.peek;
+if(S.phase)return S.phase;
+var t=now();if(t<T_J2)return "avant";if(t<T_LIVE)return "j2";if(t<T_END)return "live";return "apres";
 }
 function hm(t){var d=new Date(t);var mu=new Date(d.getTime()+(4*60+d.getTimezoneOffset())*60000);return mu.getHours()+"h"+String(mu.getMinutes()).padStart(2,"0");}
 function toast(msg){var t=document.createElement("div");t.className="toast";t.setAttribute("role","status");t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove();},3200);}
 function stLabel(st){return st==="encours"?'<span class="pill live">En direct</span>':st==="termine"?'<span class="pill done">Terminé</span>':'<span class="pill soon">À venir</span>';}
 
-/* ---------- Tableau éliminatoire ---------- */
 var RN=["Quarts","Demies","Finale"];
 function emptyBr(order){var r0=[];for(var i=0;i<4;i++){var m=mk(order[2*i],order[2*i+1]);if(m.a&&!m.b)m.st="fini";r0.push(m);}return {r:[r0,[mk(),mk()],[mk()]],pf:mk()};}
 function mk(a,b){return {a:a||null,b:b||null,sa:0,sb:0,st:"avenir",w:null};}
 function win(m){if(!m||m.st!=="fini"||!m.a)return null;if(!m.b)return m.a;if(m.sa>m.sb)return m.a;if(m.sb>m.sa)return m.b;return m.w;}
 function lose(m){var w=win(m);if(!w||!m.b)return null;return w===m.a?m.b:m.a;}
 function resync(br){
-  var L=br.r.length;for(var r=1;r<L;r++){br.r[r].forEach(function(m,i){var a=win(br.r[r-1][2*i]),b=win(br.r[r-1][2*i+1]);if(m.a!==a||m.b!==b){m.a=a;m.b=b;m.sa=0;m.sb=0;m.st="avenir";m.w=null;}});}
-  var a=lose(br.r[L-2][0]),b=lose(br.r[L-2][1]);var p=br.pf;if(p.a!==a||p.b!==b){p.a=a;p.b=b;p.sa=0;p.sb=0;p.st="avenir";p.w=null;}
+var L=br.r.length;for(var r=1;r<L;r++){br.r[r].forEach(function(m,i){var a=win(br.r[r-1][2*i]),b=win(br.r[r-1][2*i+1]);if(m.a!==a||m.b!==b){m.a=a;m.b=b;m.sa=0;m.sb=0;m.st="avenir";m.w=null;}});}
+var a=lose(br.r[L-2][0]),b=lose(br.r[L-2][1]);var p=br.pf;if(p.a!==a||p.b!==b){p.a=a;p.b=b;p.sa=0;p.sb=0;p.st="avenir";p.w=null;}
 }
 function ranking(id){
-  var s=S.acts[id];
-  if(s.fmt==="tableau"){if(!s.br)return [];var f=s.br.r[s.br.r.length-1][0],p=s.br.pf;return [win(f),lose(f),win(p),lose(p)];}
-  return (s.rk||[]).slice(0,4);
+var s=S.acts[id];
+if(s.fmt==="tableau"){if(!s.br)return [];var f=s.br.r[s.br.r.length-1][0],p=s.br.pf;return [win(f),lose(f),win(p),lose(p)];}
+return (s.rk||[]).slice(0,4);
 }
+function adjustRank(id,cid,delta){var s=S.acts[id];if(!s)return;
+if(s.fmt==="classement"){var rk=(s.rk||[]).slice();var idx=rk.indexOf(cid);
+if(delta>0){if(idx>0){rk.splice(idx,1);rk.splice(idx-1,0,cid);}else if(idx<0&&rk.length<4){rk.push(cid);}}
+else if(delta<0){if(idx>=0&&idx<rk.length-1){rk.splice(idx,1);rk.splice(idx+1,0,cid);}else if(idx===rk.length-1){rk.splice(idx,1);}}
+s.rk=rk.slice(0,4);
+}else if(s.fmt==="tableau"&&s.br){s.br.r.forEach(function(rd){rd.forEach(function(m){if(m.a===cid)m.sa=Math.max(0,m.sa+delta);if(m.b===cid)m.sb=Math.max(0,m.sb+delta);});});
+var pf=s.br.pf;if(pf.a===cid)pf.sa=Math.max(0,pf.sa+delta);if(pf.b===cid)pf.sb=Math.max(0,pf.sb+delta);resync(s.br);}
+if(FB)fbTrack("Points ajustés · "+(AC[id]?AC[id].nom:id)+" · "+nm(cid),null);dirty++;render();}
 function allMatches(){var out=[];ACTS.forEach(function(a){var s=S.acts[a.id];if(s.fmt!=="tableau"||!s.br)return;s.br.r.forEach(function(rd,ri){rd.forEach(function(m,mi){out.push({act:a,m:m,rn:RN[ri],ri:ri,mi:mi});});});out.push({act:a,m:s.br.pf,rn:"Petite finale",ri:4,mi:0});});return out;}
 
-/* ---------- Classement ---------- */
 function standings(){
-  var t={};CLASSES.forEach(function(c){t[c.id]={id:c.id,p:0,g:0,s:0,b:0,f:0};});
-  ACTS.forEach(function(a){var s=S.acts[a.id];var rk=ranking(a.id);
-    rk.forEach(function(cid,i){if(cid&&t[cid]){t[cid].p+=PTS[i];if(i===0)t[cid].g++;if(i===1)t[cid].s++;if(i===2)t[cid].b++;if(i===3)t[cid].f++;}});
-    if(s.st==="termine"){CLASSES.forEach(function(c){if(rk.indexOf(c.id)<0&&(s.ff||[]).indexOf(c.id)<0)t[c.id].p+=PART;});}
-  });
-  Object.keys(S.fp||{}).forEach(function(k){if(t[k])t[k].p+=S.fp[k]||0;});
-  Object.keys(S.mb||{}).forEach(function(k){if(t[k])t[k].p+=S.mb[k]||0;});
-  return Object.keys(t).map(function(k){return t[k];}).sort(function(x,y){return y.p-x.p||y.g-x.g||y.s-x.s||y.b-x.b||nm(x.id).localeCompare(nm(y.id));});
+var t={};CLASSES.forEach(function(c){t[c.id]={id:c.id,p:0,g:0,s:0,b:0,f:0};});
+ACTS.forEach(function(a){var s=S.acts[a.id];var rk=ranking(a.id);
+rk.forEach(function(cid,i){if(cid&&t[cid]){t[cid].p+=PTS[i];if(i===0)t[cid].g++;if(i===1)t[cid].s++;if(i===2)t[cid].b++;if(i===3)t[cid].f++;}});
+if(s.st==="termine"){CLASSES.forEach(function(c){if(rk.indexOf(c.id)<0&&(s.ff||[]).indexOf(c.id)<0)t[c.id].p+=PART;});}
+});
+Object.keys(S.fp||{}).forEach(function(k){if(t[k])t[k].p+=S.fp[k]||0;});
+Object.keys(S.mb||{}).forEach(function(k){if(t[k])t[k].p+=S.mb[k]||0;});
+return Object.keys(t).map(function(k){return t[k];}).sort(function(x,y){return y.p-x.p||y.g-x.g||y.s-x.s||y.b-x.b||nm(x.id).localeCompare(nm(y.id));});
 }
 
-/* ---------- Effets ---------- */
 var fxc,fxx,parts=[],fxOn=false;
 function confetti(n){
-  if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-  if(!fxc){fxc=document.createElement("canvas");fxc.id="fx";document.body.appendChild(fxc);fxx=fxc.getContext("2d");}
-  fxc.width=innerWidth*devicePixelRatio;fxc.height=innerHeight*devicePixelRatio;
-  var cols=["#59AC9A","#FCAA20","#F56438","#E7363C","#1F1A16"];
-  for(var i=0;i<(n||140);i++)parts.push({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,r:Math.random()*6+4,c:cols[i%5],a:Math.random()*6,va:(Math.random()-.5)*.3,life:0});
-  if(!fxOn){fxOn=true;requestAnimationFrame(step);}
+if(window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+if(!fxc){fxc=document.createElement("canvas");fxc.id="fx";document.body.appendChild(fxc);fxx=fxc.getContext("2d");}
+fxc.width=innerWidth*devicePixelRatio;fxc.height=innerHeight*devicePixelRatio;
+var cols=["#59AC9A","#FCAA20","#F56438","#E7363C","#1F1A16"];
+for(var i=0;i<(n||140);i++)parts.push({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,r:Math.random()*6+4,c:cols[i%5],a:Math.random()*6,va:(Math.random()-.5)*.3,life:0});
+if(!fxOn){fxOn=true;requestAnimationFrame(step);}
 }
 function step(){var d=devicePixelRatio;fxx.clearRect(0,0,fxc.width,fxc.height);
-  parts=parts.filter(function(p){p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;p.life++;fxx.save();fxx.translate(p.x*d,p.y*d);fxx.rotate(p.a);fxx.fillStyle=p.c;fxx.fillRect(-p.r*d/2,-p.r*d/4,p.r*d,p.r*d/2);fxx.restore();return p.y<innerHeight+40&&p.life<240;});
-  if(parts.length)requestAnimationFrame(step);else{fxOn=false;fxx.clearRect(0,0,fxc.width,fxc.height);}}
+parts=parts.filter(function(p){p.vy+=.35;p.vx*=.99;p.x+=p.vx;p.y+=p.vy;p.a+=p.va;p.life++;fxx.save();fxx.translate(p.x*d,p.y*d);fxx.rotate(p.a);fxx.fillStyle=p.c;fxx.fillRect(-p.r*d/2,-p.r*d/4,p.r*d,p.r*d/2);fxx.restore();return p.y<innerHeight+40&&p.life<240;});
+if(parts.length)requestAnimationFrame(step);else{fxOn=false;fxx.clearRect(0,0,fxc.width,fxc.height);}}
 
-/* ---------- Capacités de la plateforme ---------- */
 var CAP={art:null,db:null,user:null,uid:null,canWrite:null,edit:false,ready:false};
 var LIVE={supports:{},myS:null,votes:{},myV:{},wall:[]};
 (async function(){
-  if(!window.claude||!window.claude.use){CAP.ready=true;CAP.edit=!FB&&location.protocol==="file:";if(FB)setTimeout(function(){fbStart();render();},0);render();return;}
-  try{CAP.art=await window.claude.use("artifact");}catch(e){}
-  try{CAP.user=await window.claude.use("user");}catch(e){}
-  try{CAP.db=await window.claude.use("db");}catch(e){}
-  if(CAP.user){try{CAP.uid=await CAP.user.id();}catch(e){}try{CAP.canWrite=await CAP.user.can("data.write");}catch(e){}try{CAP.edit=await CAP.user.canEdit();}catch(e){CAP.edit=false;}}
-  CAP.ready=true;
-  if(CAP.db){
-    CAP.db.collection("supports").onSnapshot(function(q){var c={};LIVE.myS=null;q.docs.forEach(function(d){var v=d.data()||{};if(CL[v.c])c[v.c]=(c[v.c]||0)+1;if(d.id===CAP.uid)LIVE.myS=v.c;});LIVE.supports=c;refreshLive();},function(){});
-    CAP.db.collection("votes").onSnapshot(function(q){var c={amb:{},ten:{}};LIVE.myV={};q.docs.forEach(function(d){var v=d.data()||{};["amb","ten"].forEach(function(k){if(CL[v[k]])c[k][v[k]]=(c[k][v[k]]||0)+1;});if(d.id===CAP.uid)LIVE.myV=v;});LIVE.votes=c;refreshLive();},function(){});
-    CAP.db.collection("wall").limit(500).onSnapshot(function(q){var all=[];LIVE.myPosts=[];q.docs.forEach(function(d){var v=d.data()||{};var ps=Array.isArray(v.posts)?v.posts.slice(0,3):[];if(d.id===CAP.uid)LIVE.myPosts=ps.slice();ps.forEach(function(x){if(x&&typeof x==="object")all.push({owner:d.id,pid:String(x.id||""),nom:String(x.nom||"").slice(0,30),c:x.c,txt:String(x.txt||"").slice(0,400),img:safeImg(x.img),t:+x.t||0});});});all.sort(function(a,b){return b.t-a.t;});LIVE.wall=all.slice(0,200);refreshLive();},function(){});
-  }
-  refreshLive();render();
+if(!window.claude||!window.claude.use){CAP.ready=true;CAP.edit=!FB&&location.protocol==="file:";if(FB)setTimeout(function(){fbStart();render();},0);render();return;}
+try{CAP.art=await window.claude.use("artifact");}catch(e){}
+try{CAP.user=await window.claude.use("user");}catch(e){}
+try{CAP.db=await window.claude.use("db");}catch(e){}
+if(CAP.user){try{CAP.uid=await CAP.user.id();}catch(e){}try{CAP.canWrite=await CAP.user.can("data.write");}catch(e){}try{CAP.edit=await CAP.user.canEdit();}catch(e){CAP.edit=false;}}
+CAP.ready=true;
+if(CAP.db){
+CAP.db.collection("supports").onSnapshot(function(q){var c={};LIVE.myS=null;q.docs.forEach(function(d){var v=d.data()||{};if(CL[v.c])c[v.c]=(c[v.c]||0)+1;if(d.id===CAP.uid)LIVE.myS=v.c;});LIVE.supports=c;refreshLive();},function(){});
+CAP.db.collection("votes").onSnapshot(function(q){var c={amb:{},ten:{}};LIVE.myV={};q.docs.forEach(function(d){var v=d.data()||{};["amb","ten"].forEach(function(k){if(CL[v[k]])c[k][v[k]]=(c[k][v[k]]||0)+1;});if(d.id===CAP.uid)LIVE.myV=v;});LIVE.votes=c;refreshLive();},function(){});
+CAP.db.collection("wall").limit(500).onSnapshot(function(q){var all=[];LIVE.myPosts=[];q.docs.forEach(function(d){var v=d.data()||{};var ps=Array.isArray(v.posts)?v.posts.slice(0,3):[];if(d.id===CAP.uid)LIVE.myPosts=ps.slice();ps.forEach(function(x){if(x&&typeof x==="object")all.push({owner:d.id,pid:String(x.id||""),nom:String(x.nom||"").slice(0,30),c:x.c,txt:String(x.txt||"").slice(0,400),img:safeImg(x.img),t:+x.t||0});});});all.sort(function(a,b){return b.t-a.t;});LIVE.wall=all.slice(0,200);refreshLive();},function(){});
+}
+refreshLive();render();
 })();
 
-/* ---------- Base temps réel Firebase, site public ---------- */
 function fieldVal(f){if(f==="meta")return {fp:S.fp||{},mb:S.mb||{},annonce:S.annonce||"",phase:S.phase||null,links:S.links||{photos:"",vote:""},horairesOk:!!S.horairesOk};
-  var s=S.acts[f.slice(2)];return {st:s.st,h:s.h,l:s.l,fmt:s.fmt,br:s.br||null,rk:s.rk||[],ff:s.ff||[]};}
+var s=S.acts[f.slice(2)];return {st:s.st,h:s.h,l:s.l,fmt:s.fmt,br:s.br||null,rk:s.rk||[],ff:s.ff||[]};}
 function fj(f){return JSON.stringify(fieldVal(f));}
 function applyField(f,j){var v;try{v=JSON.parse(j);}catch(e){return;}if(!v||typeof v!=="object")return;
-  if(f==="meta"){S.fp=v.fp&&typeof v.fp==="object"?v.fp:{};S.mb=v.mb&&typeof v.mb==="object"?v.mb:{};S.annonce=String(v.annonce||"").slice(0,120);S.phase=["avant","j2","live","apres"].indexOf(v.phase)>=0?v.phase:null;S.links={photos:safeUrl((v.links||{}).photos),vote:safeUrl((v.links||{}).vote)};S.horairesOk=!!v.horairesOk;return;}
-  var s=S.acts[f.slice(2)];if(!s)return;["st","h","l","fmt","br","rk","ff"].forEach(function(k){if(k in v)s[k]=v[k];});}
+if(f==="meta"){S.fp=v.fp&&typeof v.fp==="object"?v.fp:{};S.mb=v.mb&&typeof v.mb==="object"?v.mb:{};S.annonce=String(v.annonce||"").slice(0,120);S.phase=["avant","j2","live","apres"].indexOf(v.phase)>=0?v.phase:null;S.links={photos:safeUrl((v.links||{}).photos),vote:safeUrl((v.links||{}).vote)};S.horairesOk=!!v.horairesOk;return;}
+var s=S.acts[f.slice(2)];if(!s)return;["st","h","l","fmt","br","rk","ff"].forEach(function(k){if(k in v)s[k]=v[k];});}
 function fbCount(){return Object.keys(FBS.touched).length+FBS.feedQ.length;}
 function fbAdmin(){return !!(FBS.user&&ui.admin);}
 function fbStart(){
-  try{firebase.initializeApp(FBCFG);}catch(e){}
-  FBS.db=firebase.firestore();
-  try{FBS.db.enablePersistence({synchronizeTabs:true}).catch(function(){});}catch(e){}
-  FIELDS.forEach(function(f){FBS.base[f]=fj(f);});
-  firebase.auth().onAuthStateChanged(function(u){FBS.user=u||null;CAP.edit=!!u;FBS.authKnown=true;
-    if(u)fbRestoreDraft();else FBS.restored=false;
-    if(!u&&ui.admin){ui.admin=false;ssSet("admin",false);closeDrawer();}
-    if(u&&ssGet("admin",false)){ui.admin=true;ui.drawer=!!ssGet("drawer",false);}
-    render();});
-  fbListen();
-  document.addEventListener("visibilitychange",function(){if(document.hidden){if(FBS.unsub&&!fbAdmin()){FBS.unsub();FBS.unsub=null;}}else if(!FBS.unsub)fbListen();});
-  window.addEventListener("online",fbRerender);window.addEventListener("offline",fbRerender);
+try{firebase.initializeApp(FBCFG);}catch(e){}
+FBS.db=firebase.firestore();
+try{FBS.db.enablePersistence({synchronizeTabs:true}).catch(function(){});}catch(e){}
+FIELDS.forEach(function(f){FBS.base[f]=fj(f);});
+firebase.auth().onAuthStateChanged(function(u){FBS.user=u||null;CAP.edit=!!u;FBS.authKnown=true;
+if(u)fbRestoreDraft();else FBS.restored=false;
+if(!u&&ui.admin){ui.admin=false;ssSet("admin",false);closeDrawer();}
+if(u&&ssGet("admin",false)){ui.admin=true;ui.drawer=!!ssGet("drawer",false);}
+render();});
+fbListen();
+document.addEventListener("visibilitychange",function(){if(document.hidden){if(FBS.unsub&&!fbAdmin()){FBS.unsub();FBS.unsub=null;}}else if(!FBS.unsub)fbListen();});
+window.addEventListener("online",fbRerender);window.addEventListener("offline",fbRerender);
 }
 function fbListen(){
-  FBS.unsub=FBS.db.collection("live").doc("state").onSnapshot({includeMetadataChanges:true},function(d){
-    FBS.pending=d.metadata.hasPendingWrites;FBS.err="";
-    var v=d.exists?(d.data()||{}):{};
-    FIELDS.forEach(function(f){if(typeof v[f]==="string"){FBS.server[f]=v[f];if(!FBS.touched[f]){applyField(f,v[f]);FBS.base[f]=fj(f);}}});
-    FBS.serverFeed=(Array.isArray(v.feed)?v.feed:[]).filter(function(x){return x&&typeof x.txt==="string";}).map(function(x){return {t:+x.t||0,txt:x.txt.slice(0,200),k:x.k==="or"?"or":""};}).sort(function(a,b){return b.t-a.t;});
-    S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);
-    if(!FBS.ready){FBS.ready=true;fbRestoreDraft();}
-    dirty=fbCount();fbRerender();
-  },function(){FBS.err="Connexion au direct impossible pour le moment";fbRerender();});
+FBS.unsub=FBS.db.collection("live").doc("state").onSnapshot({includeMetadataChanges:true},function(d){
+FBS.pending=d.metadata.hasPendingWrites;FBS.err="";
+var v=d.exists?(d.data()||{}):{};
+FIELDS.forEach(function(f){if(typeof v[f]==="string"){FBS.server[f]=v[f];if(!FBS.touched[f]){applyField(f,v[f]);FBS.base[f]=fj(f);}}});
+FBS.serverFeed=(Array.isArray(v.feed)?v.feed:[]).filter(function(x){return x&&typeof x.txt==="string";}).map(function(x){return {t:+x.t||0,txt:x.txt.slice(0,200),k:x.k==="or"?"or":""};}).sort(function(a,b){return b.t-a.t;});
+S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);
+if(!FBS.ready){FBS.ready=true;fbRestoreDraft();}
+dirty=fbCount();fbRerender();
+},function(){FBS.err="Connexion au direct impossible pour le moment";fbRerender();});
 }
 var fbT;function fbRerender(){clearTimeout(fbT);fbT=setTimeout(function(){render();},120);}
 function fbSaveDraft(){var dv={};Object.keys(FBS.touched).forEach(function(f){dv[f]=fj(f);});lsSet("fbdraft",{u:FBS.user?FBS.user.uid:null,v:dv,q:FBS.feedQ});}
 function fbTrack(feedTxt,kind){
-  if(feedTxt){FBS.feedQ.unshift({t:now(),txt:String(feedTxt).slice(0,200),k:kind==="or"?"or":""});S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);}
-  FIELDS.forEach(function(f){if(fj(f)!==FBS.base[f])FBS.touched[f]=1;else delete FBS.touched[f];});
-  dirty=fbCount();fbSaveDraft();
+if(feedTxt){FBS.feedQ.unshift({t:now(),txt:String(feedTxt).slice(0,200),k:kind==="or"?"or":""});S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);}
+FIELDS.forEach(function(f){if(fj(f)!==FBS.base[f])FBS.touched[f]=1;else delete FBS.touched[f];});
+dirty=fbCount();fbSaveDraft();
 }
 function fbRestoreDraft(){
-  if(FBS.restored||!FBS.ready||!FBS.user)return;
-  FBS.restored=true;
-  var dr=lsGet("fbdraft",null);
-  if(!dr||dr.u!==FBS.user.uid)return;
-  var n=0;
-  Object.keys(dr.v||{}).forEach(function(f){if(FIELDS.indexOf(f)>=0){applyField(f,dr.v[f]);if(fj(f)!==FBS.base[f]){FBS.touched[f]=1;n++;}}});
-  FBS.feedQ=(Array.isArray(dr.q)?dr.q:[]).filter(function(x){return x&&typeof x.txt==="string";}).slice(0,40);
-  n+=FBS.feedQ.length;
-  S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);dirty=fbCount();
-  if(n){ui.admin=true;ssSet("admin",true);ui.drawer=true;ssSet("drawer",true);fbRerender();
-    setTimeout(function(){toast("Tes saisies non publiées ont été récupérées. Pense à publier.");},600);}
+if(FBS.restored||!FBS.ready||!FBS.user)return;
+FBS.restored=true;
+var dr=lsGet("fbdraft",null);
+if(!dr||dr.u!==FBS.user.uid)return;
+var n=0;
+Object.keys(dr.v||{}).forEach(function(f){if(FIELDS.indexOf(f)>=0){applyField(f,dr.v[f]);if(fj(f)!==FBS.base[f]){FBS.touched[f]=1;n++;}}});
+FBS.feedQ=(Array.isArray(dr.q)?dr.q:[]).filter(function(x){return x&&typeof x.txt==="string";}).slice(0,40);
+n+=FBS.feedQ.length;
+S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);dirty=fbCount();
+if(n){ui.admin=true;ssSet("admin",true);ui.drawer=true;ssSet("drawer",true);fbRerender();
+setTimeout(function(){toast("Tes saisies non publiées ont été récupérées. Pense à publier.");},600);}
 }
 function fbDiscard(){var keepPh=S.photos;S=defaultState();S.photos=keepPh;if(!S.links)S.links={photos:"",vote:""};
-  FIELDS.forEach(function(f){if(FBS.server[f])applyField(f,FBS.server[f]);FBS.base[f]=fj(f);});
-  FBS.touched={};FBS.feedQ=[];S.feed=FBS.serverFeed.slice(0,80);dirty=0;ssSet("fbdraft",null);}
+FIELDS.forEach(function(f){if(FBS.server[f])applyField(f,FBS.server[f]);FBS.base[f]=fj(f);});
+FBS.touched={};FBS.feedQ=[];S.feed=FBS.serverFeed.slice(0,80);dirty=0;ssSet("fbdraft",null);}
 function fbPublish(){
-  if(!FBS.user){toast("Connecte toi d'abord");return;}
-  var upd={},n=0;Object.keys(FBS.touched).forEach(function(f){upd[f]=fj(f);n++;});
-  var q=FBS.feedQ.slice();
-  if(!n&&!q.length){toast("Rien à publier");return;}
-  var prevBase={},prevTouched=Object.assign({},FBS.touched),prevFeed=FBS.serverFeed.slice();
-  Object.keys(upd).forEach(function(f){prevBase[f]=FBS.base[f];});
-  upd.t=now();upd.by=FBS.user.email||"";
-  if(q.length){if(FBS.serverFeed.length+q.length>80)upd.feed=q.concat(FBS.serverFeed).slice(0,60);else upd.feed=firebase.firestore.FieldValue.arrayUnion.apply(null,q.slice().reverse());}
-  FBS.db.collection("live").doc("state").set(upd,{merge:true}).then(function(){fbRerender();}).catch(function(e){
-    Object.keys(prevBase).forEach(function(f){FBS.base[f]=prevBase[f];});
-    FBS.touched=Object.assign(prevTouched,FBS.touched);
-    FBS.feedQ=q.concat(FBS.feedQ);FBS.serverFeed=prevFeed;
-    S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);
-    dirty=fbCount();fbSaveDraft();
-    toast(e&&e.code==="permission-denied"?"Ce compte n'a pas le droit de publier. Tes saisies sont gardées, préviens Thomas.":"Publication refusée par le serveur, réessaie.");
-    render();});
-  Object.keys(upd).forEach(function(f){if(FIELDS.indexOf(f)>=0)FBS.base[f]=upd[f];});
-  FBS.touched={};FBS.feedQ=[];FBS.serverFeed=q.concat(FBS.serverFeed).slice(0,80);dirty=0;lsSet("fbdraft",null);
-  toast(navigator.onLine?"Publié, tout le monde voit les nouveaux scores":"Hors ligne, la publication partira dès le retour du réseau");
-  render();
+if(!FBS.user){toast("Connecte toi d'abord");return;}
+var upd={},n=0;Object.keys(FBS.touched).forEach(function(f){upd[f]=fj(f);n++;});
+var q=FBS.feedQ.slice();
+if(!n&&!q.length){toast("Rien à publier");return;}
+var prevBase={},prevTouched=Object.assign({},FBS.touched),prevFeed=FBS.serverFeed.slice();
+Object.keys(upd).forEach(function(f){prevBase[f]=FBS.base[f];});
+upd.t=now();upd.by=FBS.user.email||"";
+if(q.length){if(FBS.serverFeed.length+q.length>80)upd.feed=q.concat(FBS.serverFeed).slice(0,60);else upd.feed=firebase.firestore.FieldValue.arrayUnion.apply(null,q.slice().reverse());}
+FBS.db.collection("live").doc("state").set(upd,{merge:true}).then(function(){fbRerender();}).catch(function(e){
+Object.keys(prevBase).forEach(function(f){FBS.base[f]=prevBase[f];});
+FBS.touched=Object.assign(prevTouched,FBS.touched);
+FBS.feedQ=q.concat(FBS.feedQ);FBS.serverFeed=prevFeed;
+S.feed=FBS.feedQ.concat(FBS.serverFeed).slice(0,80);
+dirty=fbCount();fbSaveDraft();
+toast(e&&e.code==="permission-denied"?"Ce compte n'a pas le droit de publier. Tes saisies sont gardées, préviens Thomas.":"Publication refusée par le serveur, réessaie.");
+render();});
+Object.keys(upd).forEach(function(f){if(FIELDS.indexOf(f)>=0)FBS.base[f]=upd[f];});
+FBS.touched={};FBS.feedQ=[];FBS.serverFeed=q.concat(FBS.serverFeed).slice(0,80);dirty=0;lsSet("fbdraft",null);
+toast(navigator.onLine?"Publié, tout le monde voit les nouveaux scores":"Hors ligne, la publication partira dès le retour du réseau");
+render();
 }
 function fbPhotos(force){if(!FB||!FBS.db)return;if(!force&&now()-FBS.photosAt<300000)return;FBS.photosAt=now();
-  FBS.db.collection("photos").orderBy("t","desc").limit(12).get().then(function(q){S.photos=q.docs.map(function(d){var v=d.data()||{};return {id:d.id,src:safeImg(v.src),cap:"",t:+v.t||0};}).filter(function(p){return p.src;});fbRerender();}).catch(function(){});}
+FBS.db.collection("photos").orderBy("t","desc").limit(12).get().then(function(q){S.photos=q.docs.map(function(d){var v=d.data()||{};return {id:d.id,src:safeImg(v.src),cap:"",t:+v.t||0};}).filter(function(p){return p.src;});fbRerender();}).catch(function(){});}
 function fbStatus(){if(!FBS.ready)return FBS.err||"Connexion au direct…";var off=!navigator.onLine;
-  if(dirty)return (off?"Hors ligne · ":"")+dirty+" modification"+(dirty>1?"s":"")+" à publier";
-  if(FBS.pending)return off?"Hors ligne · envoi en attente":"Envoi en cours…";
-  return off?"Hors ligne":"Tout est publié ✓";}
+if(dirty)return (off?"Hors ligne · ":"")+dirty+" modification"+(dirty>1?"s":"")+" à publier";
+if(FBS.pending)return off?"Hors ligne · envoi en attente":"Envoi en cours…";
+return off?"Hors ligne":"Tout est publié ✓";}
 function loginModal(){modal('<span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 10px">Connexion table de marque</h2><form id="loginf" class="form"><div class="field"><label for="lg_mail">Email</label><input class="in" id="lg_mail" type="email" autocomplete="username" required></div><div class="field"><label for="lg_pw">Mot de passe</label><input class="in" id="lg_pw" type="password" autocomplete="current-password" required></div><button class="btn" type="submit" id="lg_go">Se connecter</button><p class="muted small" style="margin:0">Réservé aux comptes créés par l\'organisation.</p></form>');}
-
 function safeImg(u){return typeof u==="string"&&u.length<120000&&/^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+\/=]+$/.test(u)?u:null;}
 function canPost(){return !!(CAP.db&&CAP.uid&&CAP.canWrite!==false);}
 
-/* ---------- Rendu principal ---------- */
 function render(){
-  var app=$("#app");var ph=phase();
-  var tabs=[["accueil","Accueil"],["direct","Direct"],["classement","Classement"],["epreuves","Épreuves"],["programme","Programme"],["classes","Équipes"],["mur","Le Mur"]];
-  var liveNow=ph==="live";
-  var tick=tickerItems();
-  app.innerHTML=
-   '<div class="ticker" aria-label="Fil info"><div class="run">'+tick.map(function(x){return '<span class="'+(x.hot?"hot":"")+'">'+esc(x.t)+'</span>';}).join("")+'</div></div>'+
-   '<header class="nav"><div class="wrap"><a class="brand" href="#accueil" data-go="accueil"><i aria-hidden="true"></i><span><b>Retrolympique</b><small>MCCI Business School</small></span></a>'+
-   '<nav class="tabs" aria-label="Sections">'+tabs.map(function(t){return '<button class="tab" data-go="'+t[0]+'" aria-current="'+(ui.tab===t[0])+'">'+(t[0]==="direct"&&liveNow?'<span class="dot"></span>':'')+t[1]+'</button>';}).join("")+'</nav>'+
-   '<button class="iconbtn" data-do="tv" title="Mode écran géant">Écran</button>'+
-   (MIRROR&&LIVE_URL?'<a class="iconbtn" style="background:var(--red);color:#fff;border-color:var(--red);text-decoration:none" href="'+LIVE_URL+'" target="_blank" rel="noopener">● <span class="lbl-long">Scores en direct</span><span class="lbl-short">Direct</span></a>':'')+(CAP.edit?'<button class="iconbtn" data-do="admin">'+(ui.admin?"Orga ●":"Orga")+'</button>':'')+'</div></header>'+
-   '<main class="wrap" id="view">'+view()+'</main>'+
-   '<footer><div class="wrap row" style="justify-content:space-between"><div><b class="cond" style="font-size:1.1rem;text-transform:uppercase;letter-spacing:.05em">Journée Sportive MCCI Business School</b><div class="muted small">Vendredi 23 octobre 2026 au Racing Club. 40 ans au service de l\'éducation tertiaire.</div></div><div style="display:grid;gap:6px;justify-items:start"><a class="btn sm" style="text-decoration:none" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">Formulaire d\'inscription ↗</a><div class="muted small">Barème par épreuve, 10 · 7 · 5 · 3 points, plus 1 point de participation et les bonus</div>'+(FB&&!FBS.user?'<button class="tab" style="padding:4px 0;font-size:.85rem;color:var(--ink2)" data-do="admin">Accès organisation</button>':'')+'</div></div></footer>';
-  if(!CAP.edit&&CAP.ready&&(!FB||FBS.authKnown)){ui.admin=false;ui.drawer=false;}
-  if(ui.admin&&ui.drawer&&CAP.edit){var dw=$("#drawer"),ae=document.activeElement;if(dw&&ae&&dw.contains(ae)&&/INPUT|SELECT|TEXTAREA/.test(ae.tagName)){renderPub();}else{var sc1=dw?dw.scrollTop:0;renderDrawer();if($("#drawer"))$("#drawer").scrollTop=sc1;}}
-  if(FB&&(ui.tab==="mur"||phase()==="apres"||$("#tv")||(ui.admin&&ui.drawer)))fbPhotos();
-  refreshLive();startClock();
+var app=$("#app");var ph=phase();
+var tabs=[["accueil","Accueil"],["direct","Direct"],["classement","Classement"],["epreuves","Épreuves"],["programme","Programme"],["classes","Équipes"],["mur","Le Mur"]];
+var liveNow=ph==="live";
+var tick=tickerItems();
+app.innerHTML=
+'<div class="ticker" aria-label="Fil info"><div class="run">'+tick.map(function(x){return '<span class="'+(x.hot?"hot":"")+'">'+esc(x.t)+'</span>';}).join("")+'</div></div>'+
+'<header class="nav"><div class="wrap"><a class="brand" href="#accueil" data-go="accueil"><i aria-hidden="true"></i><span><b>Retrolympique</b><small>MCCI Business School</small></span></a>'+
+'<nav class="tabs" aria-label="Sections">'+tabs.map(function(t){return '<button class="tab" data-go="'+t[0]+'" aria-current="'+(ui.tab===t[0])+'">'+(t[0]==="direct"&&liveNow?'<span class="dot"></span>':'')+t[1]+'</button>';}).join("")+'</nav>'+
+'<button class="iconbtn" data-do="tv" title="Mode écran géant">Écran</button>'+
+(MIRROR&&LIVE_URL?'<a class="iconbtn" style="background:var(--red);color:#fff;border-color:var(--red);text-decoration:none" href="'+LIVE_URL+'" target="_blank" rel="noopener">● <span class="lbl-long">Scores en direct</span><span class="lbl-short">Direct</span></a>':'')+(CAP.edit?'<button class="iconbtn" data-do="admin">'+(ui.admin?"Orga ●":"Orga")+'</button>':'')+'</div></header>'+
+'<main class="wrap" id="view">'+view()+'</main>'+
+'<footer><div class="wrap row" style="justify-content:space-between"><div><b class="cond" style="font-size:1.1rem;text-transform:uppercase;letter-spacing:.05em">Journée Sportive MCCI Business School</b><div class="muted small">Vendredi 23 octobre 2026 au Racing Club. 40 ans au service de l\'éducation tertiaire.</div></div><div style="display:grid;gap:6px;justify-items:start"><a class="btn sm" style="text-decoration:none" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">Formulaire d\'inscription ↗</a><div class="muted small">Barème par épreuve, 10 · 7 · 5 · 3 points, plus 1 point de participation et les bonus</div>'+(FB&&!FBS.user?'<button class="tab" style="padding:4px 0;font-size:.85rem;color:var(--ink2)" data-do="admin">Accès organisation</button>':'')+'</div></div></footer>';
+if(!CAP.edit&&CAP.ready&&(!FB||FBS.authKnown)){ui.admin=false;ui.drawer=false;}
+if(ui.admin&&ui.drawer&&CAP.edit){var dw=$("#drawer"),ae=document.activeElement;if(dw&&ae&&dw.contains(ae)&&/INPUT|SELECT|TEXTAREA/.test(ae.tagName)){renderPub();}else{var sc1=dw?dw.scrollTop:0;renderDrawer();if($("#drawer"))$("#drawer").scrollTop=sc1;}}
+if(FB&&(ui.tab==="mur"||phase()==="apres"||$("#tv")||(ui.admin&&ui.drawer)))fbPhotos();
+refreshLive();startClock();
 }
 function go(t){ui.tab=t;ssSet("tab",t);render();window.scrollTo({top:0,behavior:"smooth"});}
-
 function tickerItems(){
-  var it=[];if(S.annonce)it.push({t:S.annonce,hot:true});
-  var lv=allMatches().filter(function(x){return x.m.st==="encours";});
-  lv.forEach(function(x){it.push({t:"En direct · "+x.act.nom+" · "+nm(x.m.a)+" "+x.m.sa+" · "+x.m.sb+" "+nm(x.m.b),hot:true});});
-  (S.feed||[]).slice(0,6).forEach(function(f){it.push({t:f.txt});});
-  if(it.length<3){it.push({t:"Vendredi 23 octobre 2026 · Racing Club"});it.push({t:"7 équipes · 7 dieux de l'Olympe · 12 épreuves"});it.push({t:"Tenue rétro fortement conseillée"});}
-  return it;
+var it=[];if(S.annonce)it.push({t:S.annonce,hot:true});
+var lv=allMatches().filter(function(x){return x.m.st==="encours";});
+lv.forEach(function(x){it.push({t:"En direct · "+x.act.nom+" · "+nm(x.m.a)+" "+x.m.sa+" · "+x.m.sb+" "+nm(x.m.b),hot:true});});
+(S.feed||[]).slice(0,6).forEach(function(f){it.push({t:f.txt});});
+if(it.length<3){it.push({t:"Vendredi 23 octobre 2026 · Racing Club"});it.push({t:"7 équipes · 7 dieux de l'Olympe · 12 épreuves"});it.push({t:"Tenue rétro fortement conseillée"});}
+return it;
 }
-
 function view(){
-  switch(ui.tab){
-    case "direct":return vDirect();
-    case "classement":return vClassement();
-    case "epreuves":return vEpreuves();
-    case "programme":return vProgramme();
-    case "classes":return vClasses();
-    case "mur":return vMur();
-    default:return vAccueil();
-  }
+switch(ui.tab){
+case "direct":return vDirect();
+case "classement":return vClassement();
+case "epreuves":return vEpreuves();
+case "programme":return vProgramme();
+case "classes":return vClasses();
+case "mur":return vMur();
+default:return vAccueil();
+}
 }
 
-/* ---------- Accueil, selon la phase ---------- */
 function phaseRail(){var ph=phase(),idx=PHASES.findIndex(function(p){return p[0]===ph;});
-  return '<div class="phases" role="list">'+PHASES.map(function(p,i){return '<div role="listitem" class="ph '+(i===idx?"on":i<idx?"past":"")+'"><b>'+p[1]+'</b><span>'+p[2]+'</span></div>';}).join("")+'</div>';}
+return '<div class="phases" role="list">'+PHASES.map(function(p,i){return '<div role="listitem" class="ph '+(i===idx?"on":i<idx?"past":"")+'"><b>'+p[1]+'</b><span>'+p[2]+'</span></div>';}).join("")+'</div>';}
 function hero(title,sub,extra){
-  return '<div class="hero"><div class="stripes" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="copy">'+
-   '<span class="eyebrow">MCCI Business School présente</span><h1 class="disp retro">'+title+'</h1><span class="datebar">'+sub+'</span>'+(extra||"")+
-   '</div><div class="badge" role="img" aria-label="Logo Retrolympique"></div></div>';
+return '<div class="hero"><div class="stripes" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="copy">'+
+'<span class="eyebrow">MCCI Business School présente</span><h1 class="disp retro">'+title+'</h1><span class="datebar">'+sub+'</span>'+(extra||"")+
+'</div><div class="badge" role="img" aria-label="Logo Retrolympique"></div></div>';
 }
 function countHTML(){return '<div class="count" id="count" aria-live="off"><div><b data-k="d">0</b><small>Jours</small></div><div><b data-k="h">0</b><small>Heures</small></div><div><b data-k="m">0</b><small>Minutes</small></div><div><b data-k="s">0</b><small>Secondes</small></div></div>';}
 var clk;function startClock(){clearInterval(clk);var el=$("#count");if(!el)return;function u(){var d=Math.max(0,T_GO-now());var v={d:Math.floor(d/864e5),h:Math.floor(d/36e5)%24,m:Math.floor(d/6e4)%60,s:Math.floor(d/1e3)%60};el.querySelectorAll("b").forEach(function(b){b.textContent=String(v[b.dataset.k]).padStart(2,"0");});}u();clk=setInterval(u,1000);}
-
 function vAccueil(){
-  var ph=phase(),h="";
-  h+=phaseRail();
-  if(ph==="avant"){
-    h+=hero("Retro<br>lympiques","Vendredi 23 octobre 2026 · Racing Club",'<p class="lead">Le 23 octobre, on pose les stylos et on enfile les baskets pour les <b>Retrolympiques</b>, l\'événement qui mélange le meilleur du rétro et l\'esprit olympique. L\'objectif, donner le meilleur de soi même sur le terrain, représenter fièrement sa filière et viser la victoire dans une ambiance sportive, conviviale et pleine d\'énergie.</p>'+countHTML()+'<div class="row"><a class="btn" style="text-decoration:none" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">S\'inscrire</a><button class="btn alt" data-go="classes">Choisir mon équipe</button></div>');
-    h+=ctaBlock();
-    h+=meBlock();
-    h+=teamsStrip();
-    h+=creaBlock();
-    h+=supportBlock();
-    h+='<section class="block"><div class="head"><div><span class="eyebrow">Le principe</span><h2 class="disp">Une journée, un champion</h2></div></div><div class="grid g3">'+
-      rule("7 équipes en lice","Chaque filière défend les couleurs d'un dieu de l'Olympe. Même l'administration entre dans l'arène avec Hermès.","var(--teal)")+
-      rule("Des médailles à chaque épreuve","Or 10 points, argent 7, bronze 5, quatrième 3. Chaque équipe présente gagne 1 point de participation.","var(--mustard)")+
-      rule("Le fair play compte","Les arbitres peuvent offrir jusqu'à 5 points bonus à une équipe exemplaire.","var(--orange)")+
-      rule("Mascottes et drapeaux","2 mascottes et 1 drapeau par team, des points bonus pour les plus créatives.","var(--red)")+'</div></section>';
-    h+=actsTeaser();
-  } else if(ph==="j2"){
-    h+=hero("Plus que<br>48 heures","Vendredi 23 octobre · Accueil dès 8h00",countHTML()+'<div class="row"><button class="btn" data-go="programme">Le programme</button><button class="btn alt" data-do="pronos">Faire mes pronos</button></div>');
-    h+=meBlock();
-    h+=ctaBlock();
-    h+=teamsStrip();
-    h+='<section class="block grid g2"><div class="card"><span class="eyebrow">Sac de sport</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 12px">La checklist</h2>'+checklist()+'</div>'+pronoCard()+'</section>';
-    h+=supportBlock();
-    h+=creaBlock();
-    h+=drawBlock();
-  } else if(ph==="live"){
-    h+=mirrorNote();
-    h+=liveHero();
-    h+='<section class="block grid g2"><div>'+miniStandings(6)+'</div><div class="card"><div class="head"><h2 class="cond" style="font-weight:800;text-transform:uppercase">Dernières nouvelles</h2><button class="btn sm alt" data-go="direct">Tout le direct</button></div>'+feedHTML(6)+'</div></section>';
-    h+=liveMatchesBlock();
-  } else {
-    h+=hero("Merci<br>à tous","Retrolympique 2026 · Le palmarès",'<div class="row"><button class="btn" data-go="mur">Poster une photo</button><button class="btn alt" data-go="classement">Classement final</button></div>');
-    h+=podiumBlock();
-    h+=votesBlock();
-    h+=creaBlock();
-    h+='<section class="block"><div class="head"><div><span class="eyebrow">Souvenirs</span><h2 class="disp">Le mur</h2></div><button class="btn sm" data-go="mur">Ouvrir le mur</button></div><div class="wall" id="wall-mini"></div></section>';
-    h+=pronoScore();
-  }
-  return h;
+var ph=phase(),h="";
+h+=phaseRail();
+if(ph==="avant"){
+h+=hero("Retro<br>lympiques","Vendredi 23 octobre 2026 · Racing Club",'<p class="lead">Le 23 octobre, on pose les stylos et on enfile les baskets pour les <b>Retrolympiques</b>, l\'événement qui mélange le meilleur du rétro et l\'esprit olympique. L\'objectif, donner le meilleur de soi même sur le terrain, représenter fièrement sa filière et viser la victoire dans une ambiance sportive, conviviale et pleine d\'énergie.</p>'+countHTML()+'<div class="row"><a class="btn" style="text-decoration:none" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">S\'inscrire</a><button class="btn alt" data-go="classes">Choisir mon équipe</button></div>');
+h+=ctaBlock();
+h+=meBlock();
+h+=teamsStrip();
+h+=creaBlock();
+h+=supportBlock();
+h+='<section class="block"><div class="head"><div><span class="eyebrow">Le principe</span><h2 class="disp">Une journée, un champion</h2></div></div><div class="grid g3">'+
+rule("7 équipes en lice","Chaque filière défend les couleurs d'un dieu de l'Olympe. Même l'administration entre dans l'arène avec Hermès.","var(--teal)")+
+rule("Des médailles à chaque épreuve","Or 10 points, argent 7, bronze 5, quatrième 3. Chaque équipe présente gagne 1 point de participation.","var(--mustard)")+
+rule("Le fair play compte","Les arbitres peuvent offrir jusqu'à 5 points bonus à une équipe exemplaire.","var(--orange)")+
+rule("Mascottes et drapeaux","2 mascottes et 1 drapeau par team, des points bonus pour les plus créatives.","var(--red)")+'</div></section>';
+h+=actsTeaser();
+} else if(ph==="j2"){
+h+=hero("Plus que<br>48 heures","Vendredi 23 octobre · Accueil dès 8h00",countHTML()+'<div class="row"><button class="btn" data-go="programme">Le programme</button><button class="btn alt" data-do="pronos">Faire mes pronos</button></div>');
+h+=meBlock();
+h+=ctaBlock();
+h+=teamsStrip();
+h+='<section class="block grid g2"><div class="card"><span class="eyebrow">Sac de sport</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 12px">La checklist</h2>'+checklist()+'</div>'+pronoCard()+'</section>';
+h+=supportBlock();
+h+=creaBlock();
+h+=drawBlock();
+} else if(ph==="live"){
+h+=mirrorNote();
+h+=liveHero();
+h+='<section class="block grid g2"><div>'+miniStandings(6)+'</div><div class="card"><div class="head"><h2 class="cond" style="font-weight:800;text-transform:uppercase">Dernières nouvelles</h2><button class="btn sm alt" data-go="direct">Tout le direct</button></div>'+feedHTML(6)+'</div></section>';
+h+=liveMatchesBlock();
+} else {
+h+=hero("Merci<br>à tous","Retrolympique 2026 · Le palmarès",'<div class="row"><button class="btn" data-go="mur">Poster une photo</button><button class="btn alt" data-go="classement">Classement final</button></div>');
+h+=podiumBlock();
+h+=votesBlock();
+h+=creaBlock();
+h+='<section class="block"><div class="head"><div><span class="eyebrow">Souvenirs</span><h2 class="disp">Le mur</h2></div><button class="btn sm" data-go="mur">Ouvrir le mur</button></div><div class="wall" id="wall-mini"></div></section>';
+h+=pronoScore();
+}
+return h;
 }
 function rule(t,d,c){return '<div class="card" style="border-top:10px solid '+c+'"><h3 class="cond" style="font-weight:800;font-size:1.3rem;text-transform:uppercase">'+t+'</h3><p class="muted" style="margin:6px 0 0">'+d+'</p></div>';}
 function meBlock(){
-  if(!(ui.me&&CL[ui.me]))return "";var st=standings();var pos=st.findIndex(function(x){return x.id===ui.me;})+1;var c=CL[ui.me];
-  return '<section class="block card row" style="justify-content:space-between;border-left:16px solid '+c.col+'"><div class="cls">'+chip(ui.me)+'<div><span class="eyebrow">Ton équipe</span><div class="disp" style="font-size:1.5rem">'+esc(c.nom)+'</div><div class="muted small">'+esc(c.cl)+' · couleur '+esc(c.coul.toLowerCase())+'</div></div></div><div class="row"><span class="pill">Rang '+pos+' sur '+NT+'</span><button class="btn sm alt" data-go="classes">Changer</button></div></section>';
+if(!(ui.me&&CL[ui.me]))return "";var st=standings();var pos=st.findIndex(function(x){return x.id===ui.me;})+1;var c=CL[ui.me];
+return '<section class="block card row" style="justify-content:space-between;border-left:16px solid '+c.col+'"><div class="cls">'+chip(ui.me)+'<div><span class="eyebrow">Ton équipe</span><div class="disp" style="font-size:1.5rem">'+esc(c.nom)+'</div><div class="muted small">'+esc(c.cl)+' · couleur '+esc(c.coul.toLowerCase())+'</div></div></div><div class="row"><span class="pill">Rang '+pos+' sur '+NT+'</span><button class="btn sm alt" data-go="classes">Changer</button></div></section>';
 }
 function ctaBlock(){
-  return '<section class="block cta"><div style="display:grid;gap:10px;position:relative;min-width:0"><span class="eyebrow" style="color:#d9cdbd">Inscriptions ouvertes</span><h2 class="disp">À vous de jouer !</h2><p>N\'attendez plus pour rejoindre l\'aventure. Inscrivez vous dès maintenant et préparez vous à représenter fièrement votre team lors des Retrolympiques. Votre énergie, votre esprit d\'équipe et votre envie de gagner feront toute la différence.</p></div><a class="go" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">Je m\'inscris ↗</a></section>';
+return '<section class="block cta"><div style="display:grid;gap:10px;position:relative;min-width:0"><span class="eyebrow" style="color:#d9cdbd">Inscriptions ouvertes</span><h2 class="disp">À vous de jouer !</h2><p>N\'attendez plus pour rejoindre l\'aventure. Inscrivez vous dès maintenant et préparez vous à représenter fièrement votre team lors des Retrolympiques. Votre énergie, votre esprit d\'équipe et votre envie de gagner feront toute la différence.</p></div><a class="go" href="https://forms.cloud.microsoft/r/YyLtpDmbAM?origin=lprLink" target="_blank" rel="noopener">Je m\'inscris ↗</a></section>';
 }
 function creaBlock(){
-  var mb=S.mb||{};var any=Object.keys(mb).some(function(k){return mb[k]>0;});
-  return '<section class="block"><div class="head"><div><span class="eyebrow">Place à la créativité</span><h2 class="disp">Mascottes et drapeaux</h2></div><span class="pill" style="background:var(--mustard)">Points bonus à la clé</span></div>'+
-   '<p class="lead" style="margin-bottom:14px">Chaque team devra préparer</p><div class="crea">'+
-   '<div class="it" style="border-top:10px solid var(--teal)"><span class="big">1</span><h3>Mascotte rétro</h3><p class="muted" style="margin:0">Vintage, années 70 à 90, chaussettes hautes et bandeaux bienvenus.</p></div>'+
-   '<div class="it" style="border-top:10px solid var(--mustard)"><span class="big">1</span><h3>Mascotte olympique</h3><p class="muted" style="margin:0">L\'esprit des Jeux, flamme, anneaux, podium, à votre façon.</p></div>'+
-   '<div class="it" style="border-top:10px solid var(--orange)"><span class="big">1</span><h3>Drapeau personnalisé</h3><p class="muted" style="margin:0">Aux couleurs de votre team, reflétant son identité et l\'univers des Retrolympiques.</p></div>'+
-   '<div class="it" style="border-top:10px solid var(--red);background:var(--ink);color:var(--paper)"><span class="big" style="color:var(--mustard)">+</span><h3>Bonus à la clé</h3><p style="margin:0;color:#efe4d3">Des points bonus pour les teams qui se démarquent. Originalité, créativité et esprit d\'équipe feront la différence.</p></div></div>'+
-   (any?'<div class="card" style="margin-top:14px"><span class="eyebrow">Bonus créativité attribués</span><div class="grid" style="gap:6px;margin-top:8px">'+CLASSES.filter(function(c){return mb[c.id]>0;}).sort(function(a,b){return mb[b.id]-mb[a.id];}).map(function(c){return '<div class="cls">'+chip(c.id)+tname(c.id)+'<span class="pill" style="margin-left:auto">+'+mb[c.id]+' pts</span></div>';}).join("")+'</div></div>':'<p class="muted small" style="margin:12px 0 0">Chaque détail compte pour faire grimper votre team au classement. Préparez vos stratégies, mobilisez vos équipes et venez défendre fièrement vos couleurs.</p>')+'</section>';
+var mb=S.mb||{};var any=Object.keys(mb).some(function(k){return mb[k]>0;});
+return '<section class="block"><div class="head"><div><span class="eyebrow">Place à la créativité</span><h2 class="disp">Mascottes et drapeaux</h2></div><span class="pill" style="background:var(--mustard)">Points bonus à la clé</span></div>'+
+'<p class="lead" style="margin-bottom:14px">Chaque team devra préparer</p><div class="crea">'+
+'<div class="it" style="border-top:10px solid var(--teal)"><span class="big">1</span><h3>Mascotte rétro</h3><p class="muted" style="margin:0">Vintage, années 70 à 90, chaussettes hautes et bandeaux bienvenus.</p></div>'+
+'<div class="it" style="border-top:10px solid var(--mustard)"><span class="big">1</span><h3>Mascotte olympique</h3><p class="muted" style="margin:0">L\'esprit des Jeux, flamme, anneaux, podium, à votre façon.</p></div>'+
+'<div class="it" style="border-top:10px solid var(--orange)"><span class="big">1</span><h3>Drapeau personnalisé</h3><p class="muted" style="margin:0">Aux couleurs de votre team, reflétant son identité et l\'univers des Retrolympiques.</p></div>'+
+'<div class="it" style="border-top:10px solid var(--red);background:var(--ink);color:var(--paper)"><span class="big" style="color:var(--mustard)">+</span><h3>Bonus à la clé</h3><p style="margin:0;color:#efe4d3">Des points bonus pour les teams qui se démarquent. Originalité, créativité et esprit d\'équipe feront la différence.</p></div></div>'+
+(any?'<div class="card" style="margin-top:14px"><span class="eyebrow">Bonus créativité attribués</span><div class="grid" style="gap:6px;margin-top:8px">'+CLASSES.filter(function(c){return mb[c.id]>0;}).sort(function(a,b){return mb[b.id]-mb[a.id];}).map(function(c){return '<div class="cls">'+chip(c.id)+tname(c.id)+'<span class="pill" style="margin-left:auto">+'+mb[c.id]+' pts</span></div>';}).join("")+'</div></div>':'<p class="muted small" style="margin:12px 0 0">Chaque détail compte pour faire grimper votre team au classement. Préparez vos stratégies, mobilisez vos équipes et venez défendre fièrement vos couleurs.</p>')+'</section>';
 }
 function teamsStrip(){
-  return '<section class="block"><div class="head"><div><span class="eyebrow">'+(ui.me?"Les forces en présence":"Touche ton équipe pour la suivre partout")+'</span><h2 class="disp">7 équipes, 7 dieux</h2></div><button class="btn sm alt" data-go="classes">Fiches équipes</button></div><div class="tstrip">'+
-   CLASSES.map(function(c){return '<button class="tflag" data-me="'+c.id+'" aria-pressed="'+(ui.me===c.id)+'" style="--tc:'+c.col+';--tf:'+c.fg+'"><span>'+esc(c.coul)+'</span><b>'+esc(c.nom)+'</b><small>'+esc(c.cl)+'</small></button>';}).join("")+'</div></section>';
+return '<section class="block"><div class="head"><div><span class="eyebrow">'+(ui.me?"Les forces en présence":"Touche ton équipe pour la suivre partout")+'</span><h2 class="disp">7 équipes, 7 dieux</h2></div><button class="btn sm alt" data-go="classes">Fiches équipes</button></div><div class="tstrip">'+
+CLASSES.map(function(c){return '<button class="tflag" data-me="'+c.id+'" aria-pressed="'+(ui.me===c.id)+'" style="--tc:'+c.col+';--tf:'+c.fg+'"><span>'+esc(c.coul)+'</span><b>'+esc(c.nom)+'</b><small>'+esc(c.cl)+'</small></button>';}).join("")+'</div></section>';
 }
 function supportBlock(){
-  if(!ONCLAUDE)return "";
-  return '<section class="block card"><div class="head"><div><span class="eyebrow">Hype meter</span><h2 class="disp" style="font-size:1.6rem">Qui a le plus de supporters ?</h2></div><span class="pill" id="sup-total">0 supporters</span></div>'+
-   '<div class="grid g2"><div><p class="muted small" style="margin-top:0">Un vote par personne. Soutiens une équipe, la tienne ou une autre.</p><div class="picks" id="sup-picks">'+CLASSES.map(function(c){return '<button class="pick" data-sup="'+c.id+'" aria-pressed="false">'+esc(lab(c))+'</button>';}).join("")+'</div><div class="note small" id="sup-note" style="margin-top:10px" hidden></div></div><div class="meter" id="sup-meter"></div></div></section>';
+if(!ONCLAUDE)return "";
+return '<section class="block card"><div class="head"><div><span class="eyebrow">Hype meter</span><h2 class="disp" style="font-size:1.6rem">Qui a le plus de supporters ?</h2></div><span class="pill" id="sup-total">0 supporters</span></div>'+
+'<div class="grid g2"><div><p class="muted small" style="margin-top:0">Un vote par personne. Soutiens une équipe, la tienne ou une autre.</p><div class="picks" id="sup-picks">'+CLASSES.map(function(c){return '<button class="pick" data-sup="'+c.id+'" aria-pressed="false">'+esc(lab(c))+'</button>';}).join("")+'</div><div class="note small" id="sup-note" style="margin-top:10px" hidden></div></div><div class="meter" id="sup-meter"></div></div></section>';
 }
 function actsTeaser(){
-  return '<section class="block"><div class="head"><div><span class="eyebrow">Au programme</span><h2 class="disp">12 épreuves</h2></div>'+legend()+'</div><div class="grid g4">'+ACTS.map(actCard).join("")+'</div></section>';
+return '<section class="block"><div class="head"><div><span class="eyebrow">Au programme</span><h2 class="disp">10 épreuves</h2></div>'+legend()+'</div><div class="grid g4">'+ACTS.map(actCard).join("")+'</div></section>';
 }
 function legend(){return '<div class="legend">'+Object.keys(FAM).map(function(k){return '<span class="fam-'+k+'"><i></i>'+FAM[k]+'</span>';}).join("")+'</div>';}
 function actCard(a){var s=S.acts[a.id];var rk=ranking(a.id);
-  return '<button class="card act fam-'+a.fam+'" data-act="'+a.id+'"><span class="eyebrow">'+FAM[a.fam]+'</span><h3>'+a.nom+'</h3><div class="meta">'+stLabel(s.st)+'<span class="pill">'+esc(s.h)+'</span><span class="pill">'+esc(s.l)+'</span></div>'+(rk[0]?'<div class="cls small">'+chip(rk[0])+'<span>Or pour '+esc(nm(rk[0]))+'</span></div>':'')+'</button>';}
-
+return '<button class="card act fam-'+a.fam+'" data-act="'+a.id+'"><span class="eyebrow">'+FAM[a.fam]+'</span><h3>'+a.nom+'</h3><div class="meta">'+stLabel(s.st)+'<span class="pill">'+esc(s.h)+'</span><span class="pill">'+esc(s.l)+'</span></div>'+(rk[0]?'<div class="cls small">'+chip(rk[0])+'<span>Or pour '+esc(nm(rk[0]))+'</span></div>':'')+'</button>';}
 function checklist(){var items=["Tenue rétro, bandeau et chaussettes hautes","Baskets propres et bien lacées","Gourde remplie","Crème solaire et casquette","Carte étudiante","Les 2 mascottes et le drapeau de ta team","Le cri de guerre de ta team"];var done=lsGet("check",{});
-  return '<div class="check">'+items.map(function(t,i){return '<label><input type="checkbox" data-chk="'+i+'" '+(done[i]?"checked":"")+'>'+t+'</label>';}).join("")+'</div>';}
-
+return '<div class="check">'+items.map(function(t,i){return '<label><input type="checkbox" data-chk="'+i+'" '+(done[i]?"checked":"")+'>'+t+'</label>';}).join("")+'</div>';}
 function drawBlock(){
-  var any=ACTS.some(function(a){return S.acts[a.id].fmt==="tableau"&&S.acts[a.id].br;});
-  if(!any)return '<section class="block card"><span class="eyebrow">Tirage au sort</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 6px">Les tableaux arrivent</h2><p class="muted" style="margin:0">Le tirage des quarts de finale sera révélé ici par l\'organisation. Reste connecté.</p></section>';
-  return '<section class="block"><div class="head"><div><span class="eyebrow">Tirage au sort</span><h2 class="disp">Les affiches des quarts</h2></div><button class="btn sm alt" data-go="epreuves">Tous les tableaux</button></div><div class="grid g3">'+
-    ACTS.filter(function(a){return S.acts[a.id].br;}).map(function(a){var br=S.acts[a.id].br;return '<div class="card fam-'+a.fam+'" style="border-top:10px solid var(--fam)"><h3 class="cond" style="font-weight:800;text-transform:uppercase;font-size:1.3rem;margin-bottom:8px">'+a.nom+'</h3>'+br.r[0].map(function(m){return '<div class="small" style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid var(--line)"><b>'+esc(nm(m.a))+'</b><span class="muted">contre</span><b style="text-align:right">'+esc(nm(m.b)||"Exempt")+'</b></div>';}).join("")+'</div>';}).join("")+'</div></section>';
+var any=ACTS.some(function(a){return S.acts[a.id].fmt==="tableau"&&S.acts[a.id].br;});
+if(!any)return '<section class="block card"><span class="eyebrow">Tirage au sort</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 6px">Les tableaux arrivent</h2><p class="muted" style="margin:0">Le tirage des quarts de finale sera révélé ici par l\'organisation. Reste connecté.</p></section>';
+return '<section class="block"><div class="head"><div><span class="eyebrow">Tirage au sort</span><h2 class="disp">Les affiches des quarts</h2></div><button class="btn sm alt" data-go="epreuves">Tous les tableaux</button></div><div class="grid g3">'+
+ACTS.filter(function(a){return S.acts[a.id].br;}).map(function(a){var br=S.acts[a.id].br;return '<div class="card fam-'+a.fam+'" style="border-top:10px solid var(--fam)"><h3 class="cond" style="font-weight:800;text-transform:uppercase;font-size:1.3rem;margin-bottom:8px">'+a.nom+'</h3>'+br.r[0].map(function(m){return '<div class="small" style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid var(--line)"><b>'+esc(nm(m.a))+'</b><span class="muted">contre</span><b style="text-align:right">'+esc(nm(m.b)||"Exempt")+'</b></div>';}).join("")+'</div>';}).join("")+'</div></section>';
 }
 
-/* Pronostics locaux */
 function pronoCard(){
-  var P=lsGet("pronos",{});var open=now()<T_LIVE||S.phase==="j2"||S.phase==="avant";
-  var list=[{k:"champion",t:"Équipe championne"}].concat(ACTS.filter(function(a){return S.acts[a.id].fmt==="tableau";}).map(function(a){return {k:a.id,t:"Vainqueur "+a.nom};}));
-  return '<div class="card"><span class="eyebrow">Jeu des pronostics</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 6px">Tes pronos</h2><p class="muted small" style="margin:0 0 10px">'+(open?"Tes pronostics restent sur ton téléphone. Fais tes choix avant le coup d'envoi, ton score s'affichera après l'événement.":"Les pronostics sont fermés. Rendez vous après la journée pour ton score.")+'</p><div class="grid" style="gap:8px">'+
-   list.map(function(x){return '<div class="field"><label for="pr_'+x.k+'">'+x.t+'</label><select class="in" id="pr_'+x.k+'" data-prono="'+x.k+'" '+(open?"":"disabled")+'><option value="">Choisir</option>'+CLASSES.map(function(c){return '<option value="'+c.id+'" '+(P[x.k]===c.id?"selected":"")+'>'+esc(lab(c))+'</option>';}).join("")+'</select></div>';}).join("")+'</div></div>';
+var P=lsGet("pronos",{});var open=now()<T_LIVE||S.phase==="j2"||S.phase==="avant";
+var list=[{k:"champion",t:"Équipe championne"}].concat(ACTS.filter(function(a){return S.acts[a.id].fmt==="tableau";}).map(function(a){return {k:a.id,t:"Vainqueur "+a.nom};}));
+return '<div class="card"><span class="eyebrow">Jeu des pronostics</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 6px">Tes pronos</h2><p class="muted small" style="margin:0 0 10px">'+(open?"Tes pronostics restent sur ton téléphone. Fais tes choix avant le coup d'envoi, ton score s'affichera après l'événement.":"Les pronostics sont fermés. Rendez vous après la journée pour ton score.")+'</p><div class="grid" style="gap:8px">'+
+list.map(function(x){return '<div class="field"><label for="pr_'+x.k+'">'+x.t+'</label><select class="in" id="pr_'+x.k+'" data-prono="'+x.k+'" '+(open?"":"disabled")+'><option value="">Choisir</option>'+CLASSES.map(function(c){return '<option value="'+c.id+'" '+(P[x.k]===c.id?"selected":"")+'>'+esc(lab(c))+'</option>';}).join("")+'</select></div>';}).join("")+'</div></div>';
 }
 function pronoScore(){
-  var P=lsGet("pronos",{});var keys=Object.keys(P).filter(function(k){return P[k];});if(!keys.length)return "";
-  var st=standings();var ok=0,tot=0;keys.forEach(function(k){var real=k==="champion"?st[0].id:ranking(k)[0];if(!real)return;tot++;if(real===P[k])ok+=(k==="champion"?3:1);});
-  return '<section class="block card" style="border-top:10px solid var(--teal)"><span class="eyebrow">Jeu des pronostics</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0">Ton score, '+ok+' points</h2><p class="muted" style="margin:0">'+tot+' pronostics vérifiés. Le champion trouvé vaut 3 points, chaque vainqueur d\'épreuve 1 point.</p></section>';
+var P=lsGet("pronos",{});var keys=Object.keys(P).filter(function(k){return P[k];});if(!keys.length)return "";
+var st=standings();var ok=0,tot=0;keys.forEach(function(k){var real=k==="champion"?st[0].id:ranking(k)[0];if(!real)return;tot++;if(real===P[k])ok+=(k==="champion"?3:1);});
+return '<section class="block card" style="border-top:10px solid var(--teal)"><span class="eyebrow">Jeu des pronostics</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0">Ton score, '+ok+' points</h2><p class="muted" style="margin:0">'+tot+' pronostics vérifiés. Le champion trouvé vaut 3 points, chaque vainqueur d\'épreuve 1 point.</p></section>';
 }
 
-/* ---------- Direct ---------- */
 function liveHero(){
-  var lv=allMatches().filter(function(x){return x.m.st==="encours";});
-  var top=standings()[0];
-  return '<div class="hero" style="min-height:0"><div class="stripes" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="copy"><span class="pill live" style="justify-self:start">C\'est parti</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,4rem)">Jour J<br>en direct</h1><span class="datebar">'+lv.length+' match'+(lv.length>1?"s":"")+' en cours · '+(top&&top.p?"En tête, "+esc(nm(top.id)):"Tout reste à jouer")+'</span><div class="row"><button class="btn red" data-go="direct">Voir les scores</button><button class="btn alt" data-do="tv">Mode écran géant</button></div></div><div class="badge" role="img" aria-label="Logo Retrolympique"></div></div>';
+var lv=allMatches().filter(function(x){return x.m.st==="encours";});
+var top=standings()[0];
+return '<div class="hero" style="min-height:0"><div class="stripes" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="copy"><span class="pill live" style="justify-self:start">C\'est parti</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,4rem)">Jour J<br>en direct</h1><span class="datebar">'+lv.length+' match'+(lv.length>1?"s":"")+' en cours · '+(top&&top.p?"En tête, "+esc(nm(top.id)):"Tout reste à jouer")+'</span><div class="row"><button class="btn red" data-go="direct">Voir les scores</button><button class="btn alt" data-do="tv">Mode écran géant</button></div></div><div class="badge" role="img" aria-label="Logo Retrolympique"></div></div>';
 }
 function matchCard(x){var m=x.m;var w=win(m);
-  return '<div class="card livecard fam-'+x.act.fam+'" style="border-top:10px solid var(--fam)"><div class="row" style="justify-content:space-between"><span class="eyebrow">'+x.act.nom+' · '+x.rn+'</span>'+(m.st==="encours"?'<span class="pill live">En direct</span>':m.st==="fini"?'<span class="pill done">Terminé</span>':'<span class="pill soon">À venir</span>')+'</div>'+
-   '<div class="score"><div class="t">'+esc(nm(m.a)||"À définir")+'</div><div class="s num"><span>'+m.sa+'</span><span class="muted">·</span><span>'+m.sb+'</span></div><div class="t">'+esc(nm(m.b)||"À définir")+'</div></div>'+(w?'<div class="small" style="text-align:center"><b>Qualifié, '+esc(nm(w))+'</b></div>':'')+'<div class="muted small">'+esc(S.acts[x.act.id].l)+'</div></div>';}
+return '<div class="card livecard fam-'+x.act.fam+'" style="border-top:10px solid var(--fam)"><div class="row" style="justify-content:space-between"><span class="eyebrow">'+x.act.nom+' · '+x.rn+'</span>'+(m.st==="encours"?'<span class="pill live">En direct</span>':m.st==="fini"?'<span class="pill done">Terminé</span>':'<span class="pill soon">À venir</span>')+'</div>'+
+'<div class="score"><div class="t">'+esc(nm(m.a)||"À définir")+'</div><div class="s num"><span>'+m.sa+'</span><span class="muted">·</span><span>'+m.sb+'</span></div><div class="t">'+esc(nm(m.b)||"À définir")+'</div></div>'+(w?'<div class="small" style="text-align:center"><b>Qualifié, '+esc(nm(w))+'</b></div>':'')+'<div class="muted small">'+esc(S.acts[x.act.id].l)+'</div></div>';}
 function liveMatchesBlock(){
-  var all=allMatches();var lv=all.filter(function(x){return x.m.st==="encours";});
-  var next=all.filter(function(x){return x.m.st==="avenir"&&x.m.a&&x.m.b;}).slice(0,6);
-  var h='<section class="block"><div class="head"><div><span class="eyebrow">Sur les terrains</span><h2 class="disp">En ce moment</h2></div></div>';
-  h+=lv.length?'<div class="grid g3">'+lv.map(matchCard).join("")+'</div>':'<div class="note">Aucun match en cours pour le moment. Les scores apparaissent ici dès qu\'un arbitre lance une rencontre.</div>';
-  h+='</section>';
-  if(next.length)h+='<section class="block"><div class="head"><div><span class="eyebrow">Prochaines affiches</span><h2 class="disp" style="font-size:1.6rem">À suivre</h2></div></div><div class="grid g3">'+next.map(matchCard).join("")+'</div></section>';
-  var other=ACTS.filter(function(a){return S.acts[a.id].fmt==="classement";});
-  h+='<section class="block"><div class="head"><div><span class="eyebrow">Épreuves au classement</span><h2 class="disp" style="font-size:1.6rem">Jeux et relais</h2></div></div><div class="grid g4">'+other.map(actCard).join("")+'</div></section>';
-  return h;
+var all=allMatches();var lv=all.filter(function(x){return x.m.st==="encours";});
+var next=all.filter(function(x){return x.m.st==="avenir"&&x.m.a&&x.m.b;}).slice(0,6);
+var h='<section class="block"><div class="head"><div><span class="eyebrow">Sur les terrains</span><h2 class="disp">En ce moment</h2></div></div>';
+h+=lv.length?'<div class="grid g3">'+lv.map(matchCard).join("")+'</div>':'<div class="note">Aucun match en cours pour le moment. Les scores apparaissent ici dès qu\'un arbitre lance une rencontre.</div>';
+h+='</section>';
+if(next.length)h+='<section class="block"><div class="head"><div><span class="eyebrow">Prochaines affiches</span><h2 class="disp" style="font-size:1.6rem">À suivre</h2></div></div><div class="grid g3">'+next.map(matchCard).join("")+'</div></section>';
+var other=ACTS.filter(function(a){return S.acts[a.id].fmt==="classement";});
+h+='<section class="block"><div class="head"><div><span class="eyebrow">Épreuves au classement</span><h2 class="disp" style="font-size:1.6rem">Jeux et relais</h2></div></div><div class="grid g4">'+other.map(actCard).join("")+'</div></section>';
+return h;
 }
 function feedHTML(n){var f=(S.feed||[]).slice(0,n||50);if(!f.length)return '<div class="note">Le fil d\'actu démarre avec le premier résultat.</div>';
-  return '<div class="feed">'+f.map(function(x){return '<div class="it '+(x.k==="or"?"gold":"")+'"><time>'+hm(x.t)+'</time><div>'+esc(x.txt)+'</div></div>';}).join("")+'</div>';}
+return '<div class="feed">'+f.map(function(x){return '<div class="it '+(x.k==="or"?"gold":"")+'"><time>'+hm(x.t)+'</time><div>'+esc(x.txt)+'</div></div>';}).join("")+'</div>';}
 function liveErr(){return FB&&FBS.err?'<section class="block note">'+esc(FBS.err)+'. Les scores réapparaîtront automatiquement.</section>':'';}
 function mirrorNote(){if(FB)return liveErr();if(MIRROR&&!LIVE_URL)return '<section class="block note">Les scores en direct apparaîtront ici le jour de l\'événement.</section>';return MIRROR?'<section class="block cta" style="grid-template-columns:1fr auto"><div style="display:grid;gap:6px;min-width:0"><span class="eyebrow" style="color:#d9cdbd">Le direct se passe ailleurs</span><h2 class="disp" style="font-size:clamp(1.4rem,4vw,2rem)">Scores en temps réel</h2><p>Cette page est la vitrine de l\'événement. Les scores, le classement et les médailles sont mis à jour en direct sur le site officiel.</p></div><a class="go" href="'+LIVE_URL+'" target="_blank" rel="noopener">Ouvrir le direct ↗</a></section>':"";}
 function vDirect(){
-  return mirrorNote()+'<section class="block"><div class="head"><div><span class="eyebrow">'+(phase()==="live"?"Mis à jour par les arbitres":"Le direct ouvre le 23 octobre")+'</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le direct</h1></div><button class="btn alt" data-do="tv">Mode écran géant</button></div></section>'+
-   liveMatchesBlock()+'<section class="block grid g2"><div class="card"><h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">Fil d\'actu</h2>'+feedHTML(40)+'</div><div>'+miniStandings(16)+'</div></section>';
+return mirrorNote()+'<section class="block"><div class="head"><div><span class="eyebrow">'+(phase()==="live"?"Mis à jour par les arbitres":"Le direct ouvre le 23 octobre")+'</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le direct</h1></div><button class="btn alt" data-do="tv">Mode écran géant</button></div></section>'+
+liveMatchesBlock()+'<section class="block grid g2"><div class="card"><h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">Fil d\'actu</h2>'+feedHTML(40)+'</div><div>'+miniStandings(16)+'</div></section>';
 }
 
-/* ---------- Classement ---------- */
 function miniStandings(n){var st=standings();var max=Math.max(1,st[0].p);
-  return '<div class="card"><div class="head"><h2 class="cond" style="font-weight:800;text-transform:uppercase">Classement général</h2><button class="btn sm alt" data-go="classement">Détail</button></div><div class="scroll"><table class="table"><tbody>'+
-   st.slice(0,n).map(function(r,i){return '<tr class="'+(r.id===ui.me?"me":"")+'"><td class="rank num">'+(i+1)+'</td><td><div class="cls">'+chip(r.id)+'<div style="min-width:0;flex:1"><div>'+tname(r.id)+'</div><div class="bar"><i style="width:'+Math.round(r.p/max*100)+'%;background:'+CL[r.id].col+'"></i></div></div></div></td><td class="pts num">'+r.p+'</td></tr>';}).join("")+'</tbody></table></div></div>';}
+return '<div class="card"><div class="head"><h2 class="cond" style="font-weight:800;text-transform:uppercase">Classement général</h2><button class="btn sm alt" data-go="classement">Détail</button></div><div class="scroll"><table class="table"><tbody>'+
+st.slice(0,n).map(function(r,i){return '<tr class="'+(r.id===ui.me?"me":"")+'"><td class="rank num">'+(i+1)+'</td><td><div class="cls">'+chip(r.id)+'<div style="min-width:0;flex:1"><div>'+tname(r.id)+'</div><div class="bar"><i style="width:'+Math.round(r.p/max*100)+'%;background:'+CL[r.id].col+'"></i></div></div></div></td><td class="pts num">'+r.p+'</td></tr>';}).join("")+'</tbody></table></div></div>';}
 function vClassement(){
-  var st=standings();
-  return mirrorNote()+'<section class="block"><div class="head"><div><span class="eyebrow">Mis à jour en direct</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Classement</h1></div></div>'+
-   podiumBlock(true)+
-   '<div class="card scroll"><table class="table"><thead><tr><th>Rang</th><th>Équipe</th><th class="colm">Médailles</th><th style="text-align:right">Points</th></tr></thead><tbody>'+
-   st.map(function(r,i){return '<tr class="'+(r.id===ui.me?"me":"")+'" style="box-shadow:inset 6px 0 0 '+CL[r.id].col+'"><td class="rank num">'+(i+1)+'</td><td><div class="cls">'+chip(r.id)+tname(r.id)+'</div></td><td class="colm"><div class="medals num"><span class="m g"><i></i>'+r.g+'</span><span class="m s"><i></i>'+r.s+'</span><span class="m b"><i></i>'+r.b+'</span></div></td><td class="pts num">'+r.p+'</td></tr>';}).join("")+
-   '</tbody></table></div><p class="muted small">Départage par nombre de médailles d\'or, puis d\'argent, puis de bronze. Bonus fair play inclus dans les points.</p></section>';
+var st=standings();
+return mirrorNote()+'<section class="block"><div class="head"><div><span class="eyebrow">Mis à jour en direct</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Classement</h1></div></div>'+
+podiumBlock(true)+
+'<div class="card scroll"><table class="table"><thead><tr><th>Rang</th><th>Équipe</th><th class="colm">Médailles</th><th style="text-align:right">Points</th></tr></thead><tbody>'+
+st.map(function(r,i){return '<tr class="'+(r.id===ui.me?"me":"")+'" style="box-shadow:inset 6px 0 0 '+CL[r.id].col+'"><td class="rank num">'+(i+1)+'</td><td><div class="cls">'+chip(r.id)+tname(r.id)+'</div></td><td class="colm"><div class="medals num"><span class="m g"><i></i>'+r.g+'</span><span class="m s"><i></i>'+r.s+'</span><span class="m b"><i></i>'+r.b+'</span></div></td><td class="pts num">'+r.p+'</td></tr>';}).join("")+
+'</tbody></table></div><p class="muted small">Départage par nombre de médailles d\'or, puis d\'argent, puis de bronze. Bonus fair play inclus dans les points.</p></section>';
 }
 function podiumBlock(compact){var st=standings();if(!st[0].p)return compact?"":'<section class="block note">Le podium final s\'affichera ici dès les premiers résultats.</section>';
-  var o=[st[1],st[0],st[2]];var cls=["p2","p1","p3"];var lab=["2e","1er","3e"];
-  return '<section class="block"><span class="eyebrow">'+(phase()==="apres"?"Palmarès final":"Podium provisoire")+'</span><div class="podium">'+o.map(function(r,i){return '<div class="pod '+cls[i]+'"><b>'+lab[i]+'</b>'+'<div style="justify-self:center">'+chip(r.id)+'</div><div class="disp">'+esc(nm(r.id))+'</div><div class="small" style="font-weight:700">'+esc(CL[r.id].cl)+'</div><div class="num cond" style="font-weight:800">'+r.p+' pts</div></div>';}).join("")+'</div></section>';}
+var o=[st[1],st[0],st[2]];var cls=["p2","p1","p3"];var lab=["2e","1er","3e"];
+return '<section class="block"><span class="eyebrow">'+(phase()==="apres"?"Palmarès final":"Podium provisoire")+'</span><div class="podium">'+o.map(function(r,i){return '<div class="pod '+cls[i]+'"><b>'+lab[i]+'</b>'+'<div style="justify-self:center">'+chip(r.id)+'</div><div class="disp">'+esc(nm(r.id))+'</div><div class="small" style="font-weight:700">'+esc(CL[r.id].cl)+'</div><div class="num cond" style="font-weight:800">'+r.p+' pts</div></div>';}).join("")+'</div></section>';}
 
-/* ---------- Épreuves ---------- */
 function vEpreuves(){
-  return '<section class="block"><div class="head"><div><span class="eyebrow">Règles, formats, résultats</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Les épreuves</h1></div>'+legend()+'</div><div class="grid g4">'+ACTS.map(actCard).join("")+'</div></section>';
+return '<section class="block"><div class="head"><div><span class="eyebrow">Règles, formats, résultats</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Les épreuves</h1></div>'+legend()+'</div><div class="grid g4">'+ACTS.map(actCard).join("")+'</div></section>';
 }
 function actModal(id){
-  var a=AC[id],s=S.acts[id];var rk=ranking(id);
-  var h='<div class="row" style="justify-content:space-between"><span class="eyebrow">'+FAM[a.fam]+'</span>'+stLabel(s.st)+'</div><h2 class="disp" style="font-size:2rem;margin:6px 0 10px">'+a.nom+'</h2>'+
-   '<div class="row" style="margin-bottom:10px"><span class="pill">'+esc(s.h)+'</span><span class="pill">'+esc(s.l)+'</span><span class="pill">'+esc(a.eq)+'</span></div><p style="margin:0 0 6px">'+esc(a.r)+'</p><p class="muted small" style="margin:0 0 14px">Format '+(s.fmt==="tableau"?"tableau à 8 places, une équipe exemptée au premier tour tirée au sort, petite finale pour le bronze.":"classement final saisi par l'arbitre.")+(S.horairesOk?"":" Horaires provisoires.")+'</p>';
-  if(rk.some(Boolean))h+='<div class="grid" style="gap:6px;margin-bottom:14px">'+rk.map(function(c,i){return c?'<div class="cls">'+'<span class="pill">'+["Or","Argent","Bronze","4e"][i]+'</span>'+chip(c)+'<span>'+esc(nm(c))+'</span></div>':"";}).join("")+'</div>';
-  if(s.fmt==="tableau"){h+=s.br?bracketHTML(s.br):'<div class="note">Le tableau sera révélé après le tirage au sort.</div>';}
-  return h;
+var a=AC[id],s=S.acts[id];var rk=ranking(id);
+var h='<div class="row" style="justify-content:space-between"><span class="eyebrow">'+FAM[a.fam]+'</span>'+stLabel(s.st)+'</div><h2 class="disp" style="font-size:2rem;margin:6px 0 10px">'+a.nom+'</h2>'+
+'<div class="row" style="margin-bottom:10px"><span class="pill">'+esc(s.h)+'</span><span class="pill">'+esc(s.l)+'</span><span class="pill">'+esc(a.eq)+'</span></div><p style="margin:0 0 6px">'+esc(a.r)+'</p><p class="muted small" style="margin:0 0 14px">Format '+(s.fmt==="tableau"?"tableau à 8 places, une équipe exemptée au premier tour tirée au sort, petite finale pour le bronze.":"classement final saisi par l'arbitre.")+(S.horairesOk?"":" Horaires provisoires.")+'</p>';
+if(rk.some(Boolean))h+='<div class="grid" style="gap:6px;margin-bottom:14px">'+rk.map(function(c,i){return c?'<div class="cls"><span class="pill">'+["Or","Argent","Bronze","4e"][i]+'</span>'+chip(c)+'<span>'+esc(nm(c))+'</span><div class="row" style="margin-left:auto;gap:4px"><button class="btn sm" data-adj="'+id+':'+c+':-1" title="Retirer">−</button><button class="btn sm" data-adj="'+id+':'+c+':1" title="Ajouter">+</button></div></div>':"";}).join("")+'</div>';
+if(s.fmt==="classement"){var unranked=CLASSES.filter(function(c){return rk.indexOf(c.id)<0;});if(unranked.length)h+='<div style="margin-bottom:14px"><span class="eyebrow">Ajouter au classement</span><div class="picks" style="margin-top:6px">'+unranked.map(function(c){return '<button class="pick" data-adj="'+id+':'+c.id+':1">+ '+esc(c.nom)+'</button>';}).join("")+'</div></div>';}
+if(s.fmt==="tableau"){h+=s.br?bracketHTML(s.br):'<div class="note">Le tableau sera révélé après le tirage au sort.</div>';}
+return h;
 }
 function bracketHTML(br){
-  var col=function(t,ms){return '<div class="round"><h4>'+t+'</h4>'+ms.map(function(m){var w=win(m);return '<div class="match '+(m.st==="encours"?"live":"")+'">'+['a','b'].map(function(k){var c=m[k];return '<div class="mrow '+(w&&w===c?"win":"")+'">'+(c?'<span>'+esc(nm(c))+'</span>':'<span class="tbd">'+(t===RN[0]?"Exempt":"À définir")+'</span>')+'<span class="sc num">'+(m.st==="avenir"?"":m["s"+k])+'</span></div>';}).join("")+'</div>';}).join("")+'</div>';};
-  return '<div class="bracket">'+br.r.map(function(rd,i){return col(RN[i],rd);}).join("")+col("Petite finale",[br.pf])+'</div>';
+var col=function(t,ms){return '<div class="round"><h4>'+t+'</h4>'+ms.map(function(m){var w=win(m);return '<div class="match '+(m.st==="encours"?"live":"")+'">'+['a','b'].map(function(k){var c=m[k];return '<div class="mrow '+(w&&w===c?"win":"")+'">'+(c?'<span>'+esc(nm(c))+'</span>':'<span class="tbd">'+(t===RN[0]?"Exempt":"À définir")+'</span>')+'<span class="sc num">'+(m.st==="avenir"?"":m["s"+k])+'</span></div>';}).join("")+'</div>';}).join("")+'</div>';};
+return '<div class="bracket">'+br.r.map(function(rd,i){return col(RN[i],rd);}).join("")+col("Petite finale",[br.pf])+'</div>';
 }
 
-/* ---------- Programme ---------- */
 function vProgramme(){
-  var toMin=function(h){var p=String(h).toLowerCase().split("h");return (+p[0]||0)*60+(+p[1]||0);};
-  var items=[{h:"8h00",w:"Accueil des teams",l:"Entrée du Racing Club",fam:null},{h:"8h30",w:"Cérémonie d'ouverture et défilé rétro",l:"Pelouse centrale",fam:null}]
-   .concat(ACTS.map(function(a){return {h:S.acts[a.id].h,w:a.nom,l:S.acts[a.id].l,fam:a.fam,id:a.id};}))
-   .concat([{h:"15h30",w:"Finales sur les terrains",l:"Terrains A, B, C",fam:null},{h:"16h30",w:"Remise des médailles et photo de famille",l:"Pelouse centrale",fam:null}]);
-  items.sort(function(x,y){return toMin(x.h)-toMin(y.h);});
-  var filt=ui.me?'<span class="pill" style="background:var(--mustard)">Ton équipe, '+esc(nm(ui.me))+'</span>':"";
-  return '<section class="block"><div class="head"><div><span class="eyebrow">Vendredi 23 octobre 2026</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le programme</h1></div>'+filt+'</div>'+(S.horairesOk?"":'<div class="note" style="margin-bottom:14px">Horaires provisoires, confirmés par l\'organisation avant le jour J.</div>')+
-   '<div class="grid g2"><div class="card"><div class="timeline">'+items.map(function(x){return '<div class="slot '+(x.fam?"fam-"+x.fam:"")+'"><div class="h num">'+esc(x.h)+'</div><div><div class="w">'+esc(x.w)+(x.id?' '+stLabel(S.acts[x.id].st):'')+'</div><div class="muted small">'+esc(x.l)+'</div></div></div>';}).join("")+'</div></div>'+
-   '<div class="grid" style="gap:14px;align-content:start"><div class="card"><span class="eyebrow">Plan du site</span><h2 class="cond" style="font-weight:800;text-transform:uppercase;margin:4px 0 10px">Où se passe quoi</h2>'+mapSVG()+'</div><div class="card"><span class="eyebrow">Infos pratiques</span><ul style="margin:8px 0 0;padding-left:18px"><li>Lieu, Racing Club</li><li>Arrive avec ton équipe, en couleur, pour le défilé de 8h30</li><li>Eau et crème solaire conseillées</li><li>Les scores sont publiés ici en direct</li></ul></div></div></div></section>';
+var toMin=function(h){var p=String(h).toLowerCase().split("h");return (+p[0]||0)*60+(+p[1]||0);};
+var items=[{h:"8h00",w:"Accueil des teams",l:"Entrée du Racing Club",fam:null},{h:"8h30",w:"Cérémonie d'ouverture et défilé rétro",l:"Pelouse centrale",fam:null}]
+.concat(ACTS.map(function(a){return {h:S.acts[a.id].h,w:a.nom,l:S.acts[a.id].l,fam:a.fam,id:a.id};}))
+.concat([{h:"15h30",w:"Finales sur les terrains",l:"Terrains A, B, C",fam:null},{h:"16h30",w:"Remise des médailles et photo de famille",l:"Pelouse centrale",fam:null}]);
+items.sort(function(x,y){return toMin(x.h)-toMin(y.h);});
+var filt=ui.me?'<span class="pill" style="background:var(--mustard)">Ton équipe, '+esc(nm(ui.me))+'</span>':"";
+return '<section class="block"><div class="head"><div><span class="eyebrow">Vendredi 23 octobre 2026</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le programme</h1></div>'+filt+'</div>'+(S.horairesOk?"":'<div class="note" style="margin-bottom:14px">Horaires provisoires, confirmés par l\'organisation avant le jour J.</div>')+
+'<div class="grid g2"><div class="card"><div class="timeline">'+items.map(function(x){return '<div class="slot '+(x.fam?"fam-"+x.fam:"")+'"><div class="h num">'+esc(x.h)+'</div><div><div class="w">'+esc(x.w)+(x.id?' '+stLabel(S.acts[x.id].st):'')+'</div><div class="muted small">'+esc(x.l)+'</div></div></div>';}).join("")+'</div></div>'+
+'<div class="grid" style="gap:14px;align-content:start"><div class="card"><span class="eyebrow">Plan du site</span><h2 class="cond" style="font-weight:800;text-transform:uppercase;margin:4px 0 10px">Où se passe quoi</h2>'+mapSVG()+'</div><div class="card"><span class="eyebrow">Infos pratiques</span><ul style="margin:8px 0 0;padding-left:18px"><li>Lieu, Racing Club</li><li>Arrive avec ton équipe, en couleur, pour le défilé de 8h30</li><li>Eau et crème solaire conseillées</li><li>Les scores sont publiés ici en direct</li></ul></div></div></div></section>';
 }
 function mapSVG(){
-  var Z=[["Terrain A","Football",20,20,150,90,"#59AC9A"],["Terrain B","Basketball",185,20,110,90,"#59AC9A"],["Terrain C","Volleyball",310,20,110,90,"#59AC9A"],["Pelouse","Prisonnier, corde",20,125,200,85,"#E7363C"],["Piste","Relais",235,125,185,40,"#E7363C"],["Pétanque","Doublettes",235,175,90,35,"#E7363C"],["Club house","Uno, domino, échecs",335,175,85,75,"#FCAA20"],["Scène","Chaise, freeze",20,225,140,45,"#F56438"],["Entrée","Accueil",175,225,145,45,"#FBF4E8"]];
-  return '<svg viewBox="0 0 440 290" role="img" aria-label="Plan schématique du Racing Club" style="width:100%;height:auto;display:block"><rect x="4" y="4" width="432" height="282" rx="16" fill="#FBF4E8" stroke="#1F1A16" stroke-width="2"/>'+
-   Z.map(function(z){return '<g><rect x="'+z[2]+'" y="'+z[3]+'" width="'+z[4]+'" height="'+z[5]+'" rx="8" fill="'+z[6]+'" fill-opacity="'+(z[6]==="#FBF4E8"?1:.55)+'" stroke="#1F1A16" stroke-width="1.5"/><text x="'+(z[2]+8)+'" y="'+(z[3]+18)+'" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="14" fill="#1F1A16">'+z[0].toUpperCase()+'</text><text x="'+(z[2]+8)+'" y="'+(z[3]+33)+'" font-family="Barlow,sans-serif" font-size="11" fill="#1F1A16">'+z[1]+'</text></g>';}).join("")+'</svg><p class="muted small" style="margin:8px 0 0">Plan indicatif, l\'implantation exacte est confirmée sur place.</p>';
+var Z=[["Terrain A","Football",20,20,150,90,"#59AC9A"],["Terrain B","Basketball",185,20,110,90,"#59AC9A"],["Terrain C","Volleyball",310,20,110,90,"#59AC9A"],["Pelouse","Prisonnier, corde",20,125,200,85,"#E7363C"],["Piste","Relais",235,125,185,40,"#E7363C"],["Pétanque","Doublettes",235,175,90,35,"#E7363C"],["Club house","Uno, domino, échecs",335,175,85,75,"#FCAA20"],["Scène","Chaise, freeze",20,225,140,45,"#F56438"],["Entrée","Accueil",175,225,145,45,"#FBF4E8"]];
+return '<svg viewBox="0 0 440 290" role="img" aria-label="Plan schématique du Racing Club" style="width:100%;height:auto;display:block"><rect x="4" y="4" width="432" height="282" rx="16" fill="#FBF4E8" stroke="#1F1A16" stroke-width="2"/>'+
+Z.map(function(z){return '<g><rect x="'+z[2]+'" y="'+z[3]+'" width="'+z[4]+'" height="'+z[5]+'" rx="8" fill="'+z[6]+'" fill-opacity="'+(z[6]==="#FBF4E8"?1:.55)+'" stroke="#1F1A16" stroke-width="1.5"/><text x="'+(z[2]+8)+'" y="'+(z[3]+18)+'" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="14" fill="#1F1A16">'+z[0].toUpperCase()+'</text><text x="'+(z[2]+8)+'" y="'+(z[3]+33)+'" font-family="Barlow,sans-serif" font-size="11" fill="#1F1A16">'+z[1]+'</text></g>';}).join("")+'</svg><p class="muted small" style="margin:8px 0 0">Plan indicatif, l\'implantation exacte est confirmée sur place.</p>';
 }
 
-/* ---------- Classes ---------- */
 function vClasses(){
-  var st=standings();
-  return '<section class="block"><div class="head"><div><span class="eyebrow">Touche une équipe pour la suivre partout</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Les 7 équipes</h1></div></div><div class="grid g3">'+
-   CLASSES.map(function(c){var r=st.find(function(x){return x.id===c.id;});var pos=st.indexOf(r)+1;var nx=nextFor(c.id);
-    return '<button class="card team '+(ui.me===c.id?"mine":"")+'" data-me="'+c.id+'" style="--tc:'+c.col+';--tf:'+c.fg+'"><div class="flag"><span class="rk num">#'+pos+'</span><small>'+esc(c.coul)+'</small><span class="disp">'+esc(c.nom)+'</span><small>'+esc(c.cl)+'</small></div><div class="tb"><div class="row" style="justify-content:space-between"><div class="medals num small"><span class="m g"><i></i>'+r.g+'</span><span class="m s"><i></i>'+r.s+'</span><span class="m b"><i></i>'+r.b+'</span></div><span class="pts num" style="font-size:1.2rem">'+r.p+' pts</span></div><div class="muted small" id="sup-'+c.id+'"></div>'+(nx?'<div class="small"><b>Prochain match</b> '+esc(nx)+'</div>':'')+(ui.me===c.id?'<span class="pill" style="background:var(--mustard);justify-self:start">Mon équipe</span>':'')+'</div></button>';}).join("")+'</div></section>';
+var st=standings();
+return '<section class="block"><div class="head"><div><span class="eyebrow">Touche une équipe pour la suivre partout</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Les 7 équipes</h1></div></div><div class="grid g3">'+
+CLASSES.map(function(c){var r=st.find(function(x){return x.id===c.id;});var pos=st.indexOf(r)+1;var nx=nextFor(c.id);
+return '<button class="card team '+(ui.me===c.id?"mine":"")+'" data-me="'+c.id+'" style="--tc:'+c.col+';--tf:'+c.fg+'"><div class="flag"><span class="rk num">#'+pos+'</span><small>'+esc(c.coul)+'</small><span class="disp">'+esc(c.nom)+'</span><small>'+esc(c.cl)+'</small></div><div class="tb"><div class="row" style="justify-content:space-between"><div class="medals num small"><span class="m g"><i></i>'+r.g+'</span><span class="m s"><i></i>'+r.s+'</span><span class="m b"><i></i>'+r.b+'</span></div><span class="pts num" style="font-size:1.2rem">'+r.p+' pts</span></div><div class="muted small" id="sup-'+c.id+'"></div>'+(nx?'<div class="small"><b>Prochain match</b> '+esc(nx)+'</div>':'')+(ui.me===c.id?'<span class="pill" style="background:var(--mustard);justify-self:start">Mon équipe</span>':'')+'</div></button>';}).join("")+'</div></section>';
 }
 function nextFor(cid){var x=allMatches().find(function(x){return (x.m.a===cid||x.m.b===cid)&&x.m.st!=="fini";});if(!x)return "";var o=x.m.a===cid?x.m.b:x.m.a;return x.act.nom+(o?" contre "+nm(o):"")+(x.m.st==="encours"?", en direct":"");}
 
-/* ---------- Le Mur ---------- */
 function vMur(){
-  var ph=phase();
-  return '<section class="block"><div class="head"><div><span class="eyebrow">Photos et messages</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le mur</h1></div></div>'+
-   '<div class="grid g2" style="align-items:start"><div class="card">'+(canPost()?'<h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">'+(ph==="apres"?"Raconte ta journée":"Laisse un message")+'</h2>'+postForm():publicPhotoCard())+'</div>'+
-   (S.photos&&S.photos.length?'<div class="card"><span class="eyebrow">Photos officielles</span><div class="grid" style="grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px">'+S.photos.slice(0,9).map(function(p){return '<img src="'+p.src+'" alt="'+esc(p.cap||"Photo officielle")+'" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1.5px solid var(--ink)">';}).join("")+'</div></div>':'<div class="card"><span class="eyebrow">Photos officielles</span><p class="muted" style="margin:6px 0 0">Les photos de l\'équipe d\'organisation apparaîtront ici pendant et après la journée.</p></div>')+
-   '</div></section><section class="block"><div class="wall" id="wall-list"></div></section>';
+var ph=phase();
+return '<section class="block"><div class="head"><div><span class="eyebrow">Photos et messages</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le mur</h1></div></div>'+
+'<div class="grid g2" style="align-items:start"><div class="card">'+(canPost()?'<h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">'+(ph==="apres"?"Raconte ta journée":"Laisse un message")+'</h2>'+postForm():publicPhotoCard())+'</div>'+
+(S.photos&&S.photos.length?'<div class="card"><span class="eyebrow">Photos officielles</span><div class="grid" style="grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px">'+S.photos.slice(0,9).map(function(p){return '<img src="'+p.src+'" alt="'+esc(p.cap||"Photo officielle")+'" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1.5px solid var(--ink)">';}).join("")+'</div></div>':'<div class="card"><span class="eyebrow">Photos officielles</span><p class="muted" style="margin:6px 0 0">Les photos de l\'équipe d\'organisation apparaîtront ici pendant et après la journée.</p></div>')+
+'</div></section><section class="block"><div class="wall" id="wall-list"></div></section>';
 }
 function safeUrl(u){return typeof u==="string"&&/^https:\/\/[^\s"'<>]+$/.test(u)?u:"";}
 function publicPhotoCard(){var u=safeUrl(S.links&&S.links.photos);
-  return '<h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">Partage tes photos</h2>'+(u?'<p style="margin:0 0 12px">Envoie tes meilleures photos à l\'organisation. Les plus belles seront publiées ici.</p><a class="btn" style="text-decoration:none;display:inline-block" href="'+esc(u)+'" target="_blank" rel="noopener">Envoyer mes photos ↗</a>':'<p class="muted" style="margin:0">L\'organisation publiera ici les photos de la journée. Le lien pour envoyer les tiennes arrive bientôt.</p>');}
+return '<h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">Partage tes photos</h2>'+(u?'<p style="margin:0 0 12px">Envoie tes meilleures photos à l\'organisation. Les plus belles seront publiées ici.</p><a class="btn" style="text-decoration:none;display:inline-block" href="'+esc(u)+'" target="_blank" rel="noopener">Envoyer mes photos ↗</a>':'<p class="muted" style="margin:0">L\'organisation publiera ici les photos de la journée. Le lien pour envoyer les tiennes arrive bientôt.</p>');}
 function postForm(){
-  return '<form class="form" id="postf"><div class="row"><div class="field" style="flex:1;min-width:140px"><label for="p_nom">Prénom</label><input class="in" id="p_nom" maxlength="30" value="'+esc(lsGet("nom",""))+'"></div><div class="field" style="flex:1;min-width:140px"><label for="p_c">Équipe</label><select class="in" id="p_c">'+CLASSES.map(function(c){return '<option value="'+c.id+'" '+(ui.me===c.id?"selected":"")+'>'+esc(lab(c))+'</option>';}).join("")+'</select></div></div>'+
-   '<div class="field"><label for="p_txt">Message</label><textarea class="in" id="p_txt" maxlength="400" placeholder="Le meilleur moment de ta journée"></textarea></div>'+
-   '<div class="field"><label for="p_img">Photo</label><input class="in" type="file" id="p_img" accept="image/*"></div>'+
-   '<p class="muted small" style="margin:0">Trois messages maximum par personne, le plus ancien laisse sa place. Tu peux retirer tes messages à tout moment.</p><div class="note small" id="post-note" hidden></div><button class="btn" id="p_go" type="submit">Publier sur le mur</button></form>';
+return '<form class="form" id="postf"><div class="row"><div class="field" style="flex:1;min-width:140px"><label for="p_nom">Prénom</label><input class="in" id="p_nom" maxlength="30" value="'+esc(lsGet("nom",""))+'"></div><div class="field" style="flex:1;min-width:140px"><label for="p_c">Équipe</label><select class="in" id="p_c">'+CLASSES.map(function(c){return '<option value="'+c.id+'" '+(ui.me===c.id?"selected":"")+'>'+esc(lab(c))+'</option>';}).join("")+'</select></div></div>'+
+'<div class="field"><label for="p_txt">Message</label><textarea class="in" id="p_txt" maxlength="400" placeholder="Le meilleur moment de ta journée"></textarea></div>'+
+'<div class="field"><label for="p_img">Photo</label><input class="in" type="file" id="p_img" accept="image/*"></div>'+
+'<p class="muted small" style="margin:0">Trois messages maximum par personne, le plus ancien laisse sa place. Tu peux retirer tes messages à tout moment.</p><div class="note small" id="post-note" hidden></div><button class="btn" id="p_go" type="submit">Publier sur le mur</button></form>';
 }
 
-/* ---------- Zones mises à jour en direct ---------- */
 function refreshLive(){
-  // supporters
-  var m=$("#sup-meter");
-  if(m){var arr=CLASSES.map(function(c){return [c.id,LIVE.supports[c.id]||0];}).sort(function(a,b){return b[1]-a[1];});var tot=arr.reduce(function(s,x){return s+x[1];},0);var max=Math.max(1,arr[0][1]);
-    m.innerHTML=arr.slice(0,8).map(function(x){return '<div class="r"><span>'+esc(CL[x[0]].ab)+'</span><div class="bar" style="height:14px;margin:0"><i style="width:'+Math.round(x[1]/max*100)+'%;background:'+CL[x[0]].col+'"></i></div><span class="num" style="text-align:right">'+x[1]+'</span></div>';}).join("");
-    var t=$("#sup-total");if(t)t.textContent=tot+" supporter"+(tot>1?"s":"");
-    document.querySelectorAll("[data-sup]").forEach(function(b){b.setAttribute("aria-pressed",String(LIVE.myS===b.dataset.sup));});
-    var n=$("#sup-note");if(n){if(!CAP.ready){n.hidden=true;}else if(!canPost()){n.hidden=false;n.textContent="Le vote supporter s'ouvre aux comptes autorisés par l'organisation. Tu peux quand même suivre le compteur.";}else n.hidden=true;}
-  }
-  CLASSES.forEach(function(c){var e=$("#sup-"+c.id);if(e)e.textContent=ONCLAUDE?(LIVE.supports[c.id]||0)+" supporters":"";});
-  // votes
-  var vr=$("#votes-res");if(vr)vr.innerHTML=votesRes();
-  document.querySelectorAll("[data-vote]").forEach(function(b){var p=b.dataset.vote.split(":");b.setAttribute("aria-pressed",String(LIVE.myV[p[0]]===p[1]));});
-  var vn=$("#vote-note");if(vn){vn.hidden=!CAP.ready||canPost();vn.textContent="Le vote s'ouvre aux comptes autorisés par l'organisation.";}
-  // mur
-  ["#wall-list","#wall-mini"].forEach(function(sel,i){var w=$(sel);if(!w)return;var posts=LIVE.wall.slice(0,i?6:200);
-    w.hidden=!CAP.db&&!posts.length;w.innerHTML=posts.length?posts.map(postHTML).join(""):(CAP.db?'<div class="note" style="break-inside:avoid">Aucun message pour l\'instant.</div>':'');});
-  var pn=$("#post-note"),pg=$("#p_go");if(pn&&CAP.ready){if(!canPost()){pn.hidden=false;pn.textContent="Pour publier, ouvre ce site avec un compte autorisé par l'organisation.";if(pg)pg.disabled=true;}else{pn.hidden=true;if(pg)pg.disabled=false;}}
+var m=$("#sup-meter");
+if(m){var arr=CLASSES.map(function(c){return [c.id,LIVE.supports[c.id]||0];}).sort(function(a,b){return b[1]-a[1];});var tot=arr.reduce(function(s,x){return s+x[1];},0);var max=Math.max(1,arr[0][1]);
+m.innerHTML=arr.slice(0,8).map(function(x){return '<div class="r"><span>'+esc(CL[x[0]].ab)+'</span><div class="bar" style="height:14px;margin:0"><i style="width:'+Math.round(x[1]/max*100)+'%;background:'+CL[x[0]].col+'"></i></div><span class="num" style="text-align:right">'+x[1]+'</span></div>';}).join("");
+var t=$("#sup-total");if(t)t.textContent=tot+" supporter"+(tot>1?"s":"");
+document.querySelectorAll("[data-sup]").forEach(function(b){b.setAttribute("aria-pressed",String(LIVE.myS===b.dataset.sup));});
+var n=$("#sup-note");if(n){if(!CAP.ready){n.hidden=true;}else if(!canPost()){n.hidden=false;n.textContent="Le vote supporter s'ouvre aux comptes autorisés par l'organisation. Tu peux quand même suivre le compteur.";}else n.hidden=true;}
+}
+CLASSES.forEach(function(c){var e=$("#sup-"+c.id);if(e)e.textContent=ONCLAUDE?(LIVE.supports[c.id]||0)+" supporters":"";});
+var vr=$("#votes-res");if(vr)vr.innerHTML=votesRes();
+document.querySelectorAll("[data-vote]").forEach(function(b){var p=b.dataset.vote.split(":");b.setAttribute("aria-pressed",String(LIVE.myV[p[0]]===p[1]));});
+var vn=$("#vote-note");if(vn){vn.hidden=!CAP.ready||canPost();vn.textContent="Le vote s'ouvre aux comptes autorisés par l'organisation.";}
+["#wall-list","#wall-mini"].forEach(function(sel,i){var w=$(sel);if(!w)return;var posts=LIVE.wall.slice(0,i?6:200);
+w.hidden=!CAP.db&&!posts.length;w.innerHTML=posts.length?posts.map(postHTML).join(""):(CAP.db?'<div class="note" style="break-inside:avoid">Aucun message pour l\'instant.</div>':'');});
+var pn=$("#post-note"),pg=$("#p_go");if(pn&&CAP.ready){if(!canPost()){pn.hidden=false;pn.textContent="Pour publier, ouvre ce site avec un compte autorisé par l'organisation.";if(pg)pg.disabled=true;}else{pn.hidden=true;if(pg)pg.disabled=false;}}
 }
 function postHTML(p){return '<article class="post">'+(p.img?'<img src="'+esc(p.img)+'" alt="Photo partagée par '+esc(p.nom||"un participant")+'" loading="lazy">':'')+'<div class="pb"><div class="by">'+esc(p.nom||"Anonyme")+' · '+esc(nm(p.c))+'</div>'+(p.txt?'<p style="margin:6px 0 0">'+esc(p.txt)+'</p>':'')+((ui.admin&&CAP.edit)||p.owner===CAP.uid?'<button class="btn sm alt" style="margin-top:8px" data-del="'+esc(p.owner+"|"+p.pid)+'">Retirer</button>':'')+'</div></article>';}
-
 function votesBlock(){
-  if(!ONCLAUDE){var vu=safeUrl(S.links&&S.links.vote);return '<section class="block card"><span class="eyebrow">Les prix du public</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 10px">Vote pour tes coups de cœur</h2><p class="muted" style="margin:0 0 12px">Meilleure ambiance et meilleure tenue rétro, élues par le public.</p>'+(vu?'<a class="btn" style="text-decoration:none;display:inline-block" href="'+esc(vu)+'" target="_blank" rel="noopener">Voter ↗</a>':'<p class="muted small" style="margin:0">Le vote ouvre à la fin de la journée.</p>')+'</section>';}
-  return '<section class="block card"><span class="eyebrow">Les prix du public</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 10px">Vote pour tes coups de cœur</h2><div class="grid g2"><div>'+
-   [["amb","Meilleure ambiance"],["ten","Meilleure tenue rétro"]].map(function(v){return '<div style="margin-bottom:14px"><div class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:6px">'+v[1]+'</div><div class="picks">'+CLASSES.map(function(c){return '<button class="pick" data-vote="'+v[0]+':'+c.id+'" aria-pressed="false">'+esc(c.nom)+'</button>';}).join("")+'</div></div>';}).join("")+
-   '<div class="note small" id="vote-note" hidden></div>'+(safeUrl(S.links&&S.links.vote)?'<a class="btn" style="text-decoration:none;display:inline-block;margin-top:6px" href="'+esc(safeUrl(S.links.vote))+'" target="_blank" rel="noopener">Voter sans compte ↗</a>':'')+'</div><div id="votes-res"></div></div></section>';
+if(!ONCLAUDE){var vu=safeUrl(S.links&&S.links.vote);return '<section class="block card"><span class="eyebrow">Les prix du public</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 10px">Vote pour tes coups de cœur</h2><p class="muted" style="margin:0 0 12px">Meilleure ambiance et meilleure tenue rétro, élues par le public.</p>'+(vu?'<a class="btn" style="text-decoration:none;display:inline-block" href="'+esc(vu)+'" target="_blank" rel="noopener">Voter ↗</a>':'<p class="muted small" style="margin:0">Le vote ouvre à la fin de la journée.</p>')+'</section>';}
+return '<section class="block card"><span class="eyebrow">Les prix du public</span><h2 class="disp" style="font-size:1.6rem;margin:4px 0 10px">Vote pour tes coups de cœur</h2><div class="grid g2"><div>'+
+[["amb","Meilleure ambiance"],["ten","Meilleure tenue rétro"]].map(function(v){return '<div style="margin-bottom:14px"><div class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:6px">'+v[1]+'</div><div class="picks">'+CLASSES.map(function(c){return '<button class="pick" data-vote="'+v[0]+':'+c.id+'" aria-pressed="false">'+esc(c.nom)+'</button>';}).join("")+'</div></div>';}).join("")+
+'<div class="note small" id="vote-note" hidden></div>'+(safeUrl(S.links&&S.links.vote)?'<a class="btn" style="text-decoration:none;display:inline-block;margin-top:6px" href="'+esc(safeUrl(S.links.vote))+'" target="_blank" rel="noopener">Voter sans compte ↗</a>':'')+'</div><div id="votes-res"></div></div></section>';
 }
 function votesRes(){var out="";[["amb","Ambiance"],["ten","Tenue rétro"]].forEach(function(v){var c=(LIVE.votes||{})[v[0]]||{};var arr=Object.keys(c).map(function(k){return [k,c[k]];}).sort(function(a,b){return b[1]-a[1];}).slice(0,3);
-  out+='<div style="margin-bottom:12px"><div class="eyebrow">'+v[1]+'</div>'+(arr.length?arr.map(function(x,i){return '<div class="cls small" style="margin-top:6px"><span class="pill">'+(i+1)+'</span>'+chip(x[0])+'<span>'+esc(nm(x[0]))+'</span><span class="muted">'+x[1]+' voix</span></div>';}).join(""):'<div class="muted small">Pas encore de vote</div>')+'</div>';});return out;}
+out+='<div style="margin-bottom:12px"><div class="eyebrow">'+v[1]+'</div>'+(arr.length?arr.map(function(x,i){return '<div class="cls small" style="margin-top:6px"><span class="pill">'+(i+1)+'</span>'+chip(x[0])+'<span>'+esc(nm(x[0]))+'</span><span class="muted">'+x[1]+' voix</span></div>';}).join(""):'<div class="muted small">Pas encore de vote</div>')+'</div>';});return out;}
 
-/* ---------- Modale ---------- */
 function modal(html){closeModal();var s=document.createElement("div");s.className="scrim";s.id="scrim";s.innerHTML='<div class="modal" role="dialog" aria-modal="true">'+html+'<div class="row" style="justify-content:flex-end;margin-top:16px"><button class="btn alt" data-do="close">Fermer</button></div></div>';document.body.appendChild(s);s.addEventListener("click",function(e){if(e.target===s)closeModal();});var f=s.querySelector("input,select,button");if(f)f.focus();}
 function closeModal(){var s=$("#scrim");if(s)s.remove();}
 
-/* ---------- Mode écran géant ---------- */
 var tvT,tvI=0;
 function tvOpen(){var d=document.createElement("div");d.className="tv";d.id="tv";document.body.appendChild(d);tvI=0;tvDraw();tvT=setInterval(function(){tvI++;tvDraw();},12000);try{d.requestFullscreen&&d.requestFullscreen().catch(function(){});}catch(e){}}
 function tvClose(){clearInterval(tvT);var d=$("#tv");if(d)d.remove();try{document.fullscreenElement&&document.exitFullscreen();}catch(e){}}
 function tvDraw(){var d=$("#tv");if(!d)return;var st=standings();var lv=allMatches().filter(function(x){return x.m.st==="encours";});
-  var slides=[function(){return '<h2 class="disp retro tvt">Classement général</h2><table class="table"><tbody>'+st.map(function(r,i){return '<tr style="box-shadow:inset 8px 0 0 '+CL[r.id].col+'"><td class="rank num">'+(i+1)+'</td><td><div class="cls">'+chip(r.id)+tname(r.id)+'</div></td><td class="pts num">'+r.p+'</td></tr>';}).join("")+'</tbody></table>';},
-   function(){return '<h2 class="disp retro tvt">En direct</h2>'+(lv.length?'<div class="grid g2">'+lv.slice(0,4).map(matchCard).join("")+'</div>':'<p class="cond" style="font-size:2rem;font-weight:700">Prochains matchs dans quelques minutes</p>');},
-   function(){return '<h2 class="disp retro tvt">Derniers résultats</h2>'+feedHTML(6);}];
-  if(S.photos&&S.photos.length)slides.push(function(){var p=S.photos[tvI%S.photos.length];return '<img src="'+p.src+'" alt="'+esc(p.cap||"Photo")+'" style="max-height:70vh;margin:auto;border:4px solid var(--ink);border-radius:18px">';});
-  d.innerHTML='<div class="row" style="justify-content:space-between"><div class="brand"><i></i><b style="font-size:1.4rem">Retrolympique 2026</b></div><button class="btn alt" data-do="tvclose">Quitter</button></div><div class="slide">'+slides[tvI%slides.length]()+'</div><div class="ticker" style="border-radius:10px"><div class="run">'+tickerItems().map(function(x){return '<span class="'+(x.hot?"hot":"")+'">'+esc(x.t)+'</span>';}).join("")+'</div></div>';}
+var slides=[function(){return '<h2 class="disp retro tvt">Classement général</h2><table class="table"><tbody>'+st.map(function(r,i){return '<tr style="box-shadow:inset 8px 0 0 '+CL[r.id].col+'"><td class="rank num">'+(i+1)+'</td><td><div class="cls">'+chip(r.id)+tname(r.id)+'</div></td><td class="pts num">'+r.p+'</td></tr>';}).join("")+'</tbody></table>';},
+function(){return '<h2 class="disp retro tvt">En direct</h2>'+(lv.length?'<div class="grid g2">'+lv.slice(0,4).map(matchCard).join("")+'</div>':'<p class="cond" style="font-size:2rem;font-weight:700">Prochains matchs dans quelques minutes</p>');},
+function(){return '<h2 class="disp retro tvt">Derniers résultats</h2>'+feedHTML(6);}];
+if(S.photos&&S.photos.length)slides.push(function(){var p=S.photos[tvI%S.photos.length];return '<img src="'+p.src+'" alt="'+esc(p.cap||"Photo")+'" style="max-height:70vh;margin:auto;border:4px solid var(--ink);border-radius:18px">';});
+d.innerHTML='<div class="row" style="justify-content:space-between"><div class="brand"><i></i><b style="font-size:1.4rem">Retrolympique 2026</b></div><button class="btn alt" data-do="tvclose">Quitter</button></div><div class="slide">'+slides[tvI%slides.length]()+'</div><div class="ticker" style="border-radius:10px"><div class="run">'+tickerItems().map(function(x){return '<span class="'+(x.hot?"hot":"")+'">'+esc(x.t)+'</span>';}).join("")+'</div></div>';}
 
 /* ---------- Espace organisation ---------- */
 function adminOpen(){
-  if(FB){if(!FBS.user){loginModal();return;}ui.admin=true;ssSet("admin",true);ui.drawer=true;render();return;}
-  if(!CAP.edit){toast("Espace réservé à l'organisation");return;}
-  if(ui.admin){ui.drawer=true;renderDrawer();return;}
-  modal('<span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 10px">Code arbitre</h2><form id="pinf" class="form"><div class="field"><label for="pin">Code à 4 chiffres</label><input class="in" id="pin" inputmode="numeric" autocomplete="off" maxlength="8"></div><button class="btn" type="submit">Entrer</button><p class="muted small" style="margin:0">Seul un compte autorisé à modifier ce site peut publier les scores.</p></form>');
+if(FB){if(!FBS.user){loginModal();return;}ui.admin=true;ssSet("admin",true);ui.drawer=true;render();return;}
+if(!CAP.edit){toast("Espace réservé à l'organisation");return;}
+if(ui.admin){ui.drawer=true;renderDrawer();return;}
+modal('<span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 10px">Code arbitre</h2><form id="pinf" class="form"><div class="field"><label for="pin">Code à 4 chiffres</label><input class="in" id="pin" inputmode="numeric" autocomplete="off" maxlength="8"></div><button class="btn" type="submit">Entrer</button><p class="muted small" style="margin:0">Seul un compte autorisé à modifier ce site peut publier les scores.</p></form>');
 }
 function renderDrawer(){
-  ssSet("drawer",true);var d=$("#drawer");if(!d){d=document.createElement("aside");d.id="drawer";d.className="drawer adm";d.setAttribute("aria-label","Espace organisation");document.body.appendChild(d);var p=document.createElement("div");p.id="pubbar";p.className="pubbar";document.body.appendChild(p);}
-  var a=AC[ui.adAct],s=S.acts[ui.adAct];
-  var h='<div class="row" style="justify-content:space-between"><div><span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.5rem">Table de marque</h2></div><button class="btn sm alt" data-do="dclose">Fermer</button></div>';
-  if(FB)h+='<div class="note small" style="margin-top:10px">Connecté en tant que '+esc(FBS.user&&FBS.user.email||"")+'. Tes saisies restent en attente jusqu\'à ce que tu appuies sur Publier.</div>';
-  if(!FB&&CAP.ready&&!CAP.art)h+='<div class="note small" style="margin-top:10px">Ce compte ne peut pas publier. Tes modifications restent visibles sur cet écran seulement.</div>';
-  h+='<h3>Épreuve</h3><select class="in" id="ad_act">'+ACTS.map(function(x){return '<option value="'+x.id+'" '+(x.id===ui.adAct?"selected":"")+'>'+x.nom+'</option>';}).join("")+'</select>';
-  h+='<div class="row" style="margin-top:10px"><div class="field" style="flex:1;min-width:120px"><label for="ad_st">Statut</label><select class="in" id="ad_st">'+[["avenir","À venir"],["encours","En cours"],["termine","Terminée"]].map(function(o){return '<option value="'+o[0]+'" '+(s.st===o[0]?"selected":"")+'>'+o[1]+'</option>';}).join("")+'</select></div><div class="field" style="width:90px"><label for="ad_h">Heure</label><input class="in" id="ad_h" value="'+esc(s.h)+'"></div><div class="field" style="flex:1;min-width:120px"><label for="ad_l">Lieu</label><input class="in" id="ad_l" value="'+esc(s.l)+'"></div></div>';
-  h+='<div class="field" style="margin-top:10px"><label for="ad_fmt">Format</label><select class="in" id="ad_fmt"><option value="tableau" '+(s.fmt==="tableau"?"selected":"")+'>Tableau à élimination directe</option><option value="classement" '+(s.fmt==="classement"?"selected":"")+'>Classement final saisi</option></select></div>';
-  if(s.fmt==="tableau"){
-    h+='<h3>Matchs</h3>';
-    if(!s.br)h+='<button class="btn" data-do="draw">Lancer le tirage au sort</button>';
-    else{h+='<div class="row" style="margin-bottom:8px"><button class="btn sm alt" data-do="redraw">Refaire le tirage</button></div>';
-      var ms=[];s.br.r.forEach(function(rd,ri){rd.forEach(function(m,mi){ms.push({m:m,ri:ri,mi:mi,t:RN[ri]+" "+(mi+1)});});});ms.push({m:s.br.pf,ri:4,mi:0,t:"Petite finale"});
-      ms.forEach(function(x){var m=x.m;if(!m.a||!m.b)return;var k=x.ri+"_"+x.mi;
-        h+='<div class="ematch"><div class="row" style="justify-content:space-between"><span class="eyebrow">'+x.t+'</span><select class="in" style="width:auto;padding:4px 8px" data-mst="'+k+'">'+[["avenir","À venir"],["encours","En cours"],["fini","Terminé"]].map(function(o){return '<option value="'+o[0]+'" '+(m.st===o[0]?"selected":"")+'>'+o[1]+'</option>';}).join("")+'</select></div>'+
-        ['a','b'].map(function(sd){return '<div class="tm"><span>'+esc(nm(m[sd]))+'</span><span class="step"><button type="button" data-sc="'+k+':'+sd+':-1" aria-label="Retirer un point">−</button><span class="num">'+m["s"+sd]+'</span><button type="button" data-sc="'+k+':'+sd+':1" aria-label="Ajouter un point">+</button></span></div>';}).join("")+
-        (m.st==="fini"&&m.sa===m.sb?'<div class="row small"><span>Égalité, vainqueur</span><button class="pick" data-tw="'+k+':a" aria-pressed="'+(m.w===m.a)+'">'+esc(CL[m.a].ab)+'</button><button class="pick" data-tw="'+k+':b" aria-pressed="'+(m.w===m.b)+'">'+esc(CL[m.b].ab)+'</button></div>':'')+'</div>';});
-    }
-  } else {
-    h+='<h3>Classement final</h3>'+[0,1,2,3].map(function(i){return '<div class="field" style="margin-bottom:6px"><label for="rk'+i+'">'+["Médaille d'or","Médaille d'argent","Médaille de bronze","Quatrième"][i]+'</label><select class="in" id="rk'+i+'" data-rk="'+i+'"><option value="">Non attribué</option>'+CLASSES.map(function(c){return '<option value="'+c.id+'" '+(s.rk[i]===c.id?"selected":"")+'>'+esc(lab(c))+'</option>';}).join("")+'</select></div>';}).join("");
-  }
-  h+='<h3>Forfaits sur cette épreuve</h3><div class="picks">'+CLASSES.map(function(c){return '<button class="pick" data-ff="'+c.id+'" aria-pressed="'+((s.ff||[]).indexOf(c.id)>=0)+'">'+esc(c.ab)+'</button>';}).join("")+'</div>';
-  h+='<h3>Bonus fair play</h3><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px">'+CLASSES.map(function(c){var v=(S.fp||{})[c.id]||0;return '<div class="row small" style="justify-content:space-between;gap:6px"><b>'+esc(c.ab)+'</b><span class="step"><button type="button" data-fp="'+c.id+':-1" aria-label="Retirer">−</button><span class="num">'+v+'</span><button type="button" data-fp="'+c.id+':1" aria-label="Ajouter">+</button></span></div>';}).join("")+'</div>';
-  h+='<h3>Bonus mascottes et drapeaux</h3><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px">'+CLASSES.map(function(c){var v=(S.mb||{})[c.id]||0;return '<div class="row small" style="justify-content:space-between;gap:6px"><b>'+esc(c.ab)+'</b><span class="step"><button type="button" data-mb="'+c.id+':-1" aria-label="Retirer">−</button><span class="num">'+v+'</span><button type="button" data-mb="'+c.id+':1" aria-label="Ajouter">+</button></span></div>';}).join("")+'</div><p class="muted small">Jusqu\'à 10 points par team.</p>';
-  h+='<h3>Bandeau et fil d\'actu</h3><div class="field"><label for="ad_ann">Annonce en haut du site</label><input class="in" id="ad_ann" maxlength="120" value="'+esc(S.annonce||"")+'"></div><div class="row" style="margin-top:8px"><input class="in" id="ad_msg" style="flex:1;min-width:160px" maxlength="140" placeholder="Message pour le fil d\'actu"><button class="btn sm" data-do="addmsg">Ajouter</button></div>';
-  h+='<h3>Photos officielles</h3><input class="in" type="file" id="ad_photo" accept="image/*" multiple><div class="muted small" style="margin-top:4px">'+(S.photos||[]).length+' sur 12 photos publiées. Elles sont intégrées au site, garde les plus belles.</div>'+((S.photos||[]).length?'<div class="grid" style="grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px">'+S.photos.map(function(p,i){return '<button class="pick" style="padding:0;overflow:hidden;border-radius:8px" data-delph="'+i+'" title="Retirer"><img src="'+p.src+'" alt="Retirer cette photo" style="display:block;aspect-ratio:1;object-fit:cover"></button>';}).join("")+'</div><div class="muted small">Touche une photo pour la retirer.</div>':'');
-  h+='<h3>Liens pour le public sans compte</h3><div class="field"><label for="ad_lph">Lien pour envoyer des photos</label><input class="in" id="ad_lph" placeholder="https://… OneDrive, Google Drive ou Forms" value="'+esc(S.links.photos||"")+'"></div><div class="field" style="margin-top:8px"><label for="ad_lvo">Lien du vote du public</label><input class="in" id="ad_lvo" placeholder="https://forms.cloud.microsoft/…" value="'+esc(S.links.vote||"")+'"></div><p class="muted small">Ces boutons remplacent le mur et le vote pour les visiteurs qui n\'ont pas de compte autorisé.</p>';
-  h+='<h3>Phase affichée</h3><div class="picks">'+[[null,"Automatique"]].concat(PHASES.map(function(p){return [p[0],p[1]];})).map(function(p){return '<button class="pick" data-phase="'+(p[0]||"")+'" aria-pressed="'+(S.phase===p[0])+'">'+p[1]+'</button>';}).join("")+'</div><p class="muted small">Automatique suit la date, 48h avant le 21 octobre, direct le 23 octobre à 6h00, après à 18h00.</p>';
-  h+='<h3>Réglages</h3><label class="row small" style="gap:8px"><input type="checkbox" id="ad_hok" '+(S.horairesOk?"checked":"")+'> Horaires confirmés</label>'+(FB?'':'<div class="row" style="margin-top:8px"><input class="in" id="ad_pin" style="flex:1;min-width:120px" inputmode="numeric" placeholder="Nouveau code arbitre"><button class="btn sm alt" data-do="setpin">Changer le code</button></div>')+'<div class="row" style="margin-top:8px"><button class="btn sm alt" data-do="backup">Copier une sauvegarde</button><button class="btn sm alt" data-do="discard">Annuler mes saisies non publiées</button><button class="btn sm alt" data-do="logout">Quitter le mode orga</button></div>';
-  d.innerHTML=h;
+ssSet("drawer",true);var d=$("#drawer");if(!d){d=document.createElement("aside");d.id="drawer";d.className="drawer adm";d.setAttribute("aria-label","Espace organisation");document.body.appendChild(d);var p=document.createElement("div");p.id="pubbar";p.className="pubbar";document.body.appendChild(p);}
+var a=AC[ui.adAct],s=S.acts[ui.adAct];
+var h='<div class="row" style="justify-content:space-between"><div><span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.5rem">Table de marque</h2></div><button class="btn sm alt" data-do="dclose">Fermer</button></div>';
+if(FB)h+='<div class="note small" style="margin-top:10px">Connecté en tant que '+esc(FBS.user&&FBS.user.email||"")+'. Tes saisies restent en attente jusqu\'à ce que tu appuies sur Publier.</div>';
+if(!FB&&CAP.ready&&!CAP.art)h+='<div class="note small" style="margin-top:10px">Ce compte ne peut pas publier. Tes modifications restent visibles sur cet écran seulement.</div>';
+h+='<div class="card" style="margin-bottom:12px"><div class="head"><h3 class="cond" style="font-weight:800;text-transform:uppercase">Épreuves</h3><button class="btn sm" data-newact="1">+ Nouvelle</button></div><div class="grid" style="gap:6px">'+ACTS.map(function(x){var sx=S.acts[x.id];return '<div class="cls" style="padding:8px;border:1.5px solid var(--line);border-radius:8px"><span class="pill fam-'+x.fam+'">'+FAM[x.fam].split(" ")[0]+'</span><div style="flex:1;min-width:0"><b>'+esc(x.nom)+'</b><div class="muted small">'+esc(sx.h)+' · '+esc(sx.l)+' · '+stLabel(sx.st)+'</div></div><button class="btn sm alt" data-editact="'+x.id+'">✎</button></div>';}).join("")+'</div></div>';
+h+='<h3>Épreuve</h3><select class="in" id="ad_act">'+ACTS.map(function(x){return '<option value="'+x.id+'" '+(x.id===ui.adAct?"selected":"")+'>'+x.nom+'</option>';}).join("")+'</select>';
+h+='<div class="row" style="margin-top:10px"><div class="field" style="flex:1;min-width:120px"><label for="ad_st">Statut</label><select class="in" id="ad_st">'+[["avenir","À venir"],["encours","En cours"],["termine","Terminée"]].map(function(o){return '<option value="'+o[0]+'" '+(s.st===o[0]?"selected":"")+'>'+o[1]+'</option>';}).join("")+'</select></div><div class="field" style="width:90px"><label for="ad_h">Heure</label><input class="in" id="ad_h" value="'+esc(s.h)+'"></div><div class="field" style="flex:1;min-width:120px"><label for="ad_l">Lieu</label><input class="in" id="ad_l" value="'+esc(s.l)+'"></div></div>';
+h+='<div class="field" style="margin-top:10px"><label for="ad_fmt">Format</label><select class="in" id="ad_fmt"><option value="tableau" '+(s.fmt==="tableau"?"selected":"")+'>Tableau à élimination directe</option><option value="classement" '+(s.fmt==="classement"?"selected":"")+'>Classement final saisi</option></select></div>';
+if(s.fmt==="tableau"){
+h+='<h3>Matchs</h3>';
+if(!s.br)h+='<button class="btn" data-do="draw">Lancer le tirage au sort</button>';
+else{h+='<div class="row" style="margin-bottom:8px"><button class="btn sm alt" data-do="redraw">Refaire le tirage</button></div>';
+var ms=[];s.br.r.forEach(function(rd,ri){rd.forEach(function(m,mi){ms.push({m:m,ri:ri,mi:mi,t:RN[ri]+" "+(mi+1)});});});ms.push({m:s.br.pf,ri:4,mi:0,t:"Petite finale"});
+ms.forEach(function(x){var m=x.m;if(!m.a||!m.b)return;var k=x.ri+"_"+x.mi;
+h+='<div class="ematch"><div class="row" style="justify-content:space-between"><span class="eyebrow">'+x.t+'</span><select class="in" style="width:auto;padding:4px 8px" data-mst="'+k+'">'+[["avenir","À venir"],["encours","En cours"],["fini","Terminé"]].map(function(o){return '<option value="'+o[0]+'" '+(m.st===o[0]?"selected":"")+'>'+o[1]+'</option>';}).join("")+'</select></div>'+
+['a','b'].map(function(sd){return '<div class="tm"><span>'+esc(nm(m[sd]))+'</span><span class="step"><button type="button" data-sc="'+k+':'+sd+':-1" aria-label="Retirer un point">−</button><span class="num">'+m["s"+sd]+'</span><button type="button" data-sc="'+k+':'+sd+':1" aria-label="Ajouter un point">+</button></span></div>';}).join("")+
+(m.st==="fini"&&m.sa===m.sb?'<div class="row small"><span>Égalité, vainqueur</span><button class="pick" data-tw="'+k+':a" aria-pressed="'+(m.w===m.a)+'">'+esc(CL[m.a].ab)+'</button><button class="pick" data-tw="'+k+':b" aria-pressed="'+(m.w===m.b)+'">'+esc(CL[m.b].ab)+'</button></div>':'')+'</div>';});
+}
+} else {
+h+='<h3>Classement final</h3>'+[0,1,2,3].map(function(i){return '<div class="field" style="margin-bottom:6px"><label for="rk'+i+'">'+["Médaille d'or","Médaille d'argent","Médaille de bronze","Quatrième"][i]+'</label><select class="in" id="rk'+i+'" data-rk="'+i+'"><option value="">Non attribué</option>'+CLASSES.map(function(c){return '<option value="'+c.id+'" '+(s.rk[i]===c.id?"selected":"")+'>'+esc(lab(c))+'</option>';}).join("")+'</select></div>';}).join("");
+}
+h+='<h3>Forfaits sur cette épreuve</h3><div class="picks">'+CLASSES.map(function(c){return '<button class="pick" data-ff="'+c.id+'" aria-pressed="'+((s.ff||[]).indexOf(c.id)>=0)+'">'+esc(c.ab)+'</button>';}).join("")+'</div>';
+h+='<h3>Bonus fair play</h3><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px">'+CLASSES.map(function(c){var v=(S.fp||{})[c.id]||0;return '<div class="row small" style="justify-content:space-between;gap:6px"><b>'+esc(c.ab)+'</b><span class="step"><button type="button" data-fp="'+c.id+':-1" aria-label="Retirer">−</button><span class="num">'+v+'</span><button type="button" data-fp="'+c.id+':1" aria-label="Ajouter">+</button></span></div>';}).join("")+'</div>';
+h+='<h3>Bonus mascottes et drapeaux</h3><div class="grid" style="grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px">'+CLASSES.map(function(c){var v=(S.mb||{})[c.id]||0;return '<div class="row small" style="justify-content:space-between;gap:6px"><b>'+esc(c.ab)+'</b><span class="step"><button type="button" data-mb="'+c.id+':-1" aria-label="Retirer">−</button><span class="num">'+v+'</span><button type="button" data-mb="'+c.id+':1" aria-label="Ajouter">+</button></span></div>';}).join("")+'</div><p class="muted small">Jusqu\'à 10 points par team.</p>';
+h+='<h3>Bandeau et fil d\'actu</h3><div class="field"><label for="ad_ann">Annonce en haut du site</label><input class="in" id="ad_ann" maxlength="120" value="'+esc(S.annonce||"")+'"></div><div class="row" style="margin-top:8px"><input class="in" id="ad_msg" style="flex:1;min-width:160px" maxlength="140" placeholder="Message pour le fil d\'actu"><button class="btn sm" data-do="addmsg">Ajouter</button></div>';
+h+='<h3>Photos officielles</h3><input class="in" type="file" id="ad_photo" accept="image/*" multiple><div class="muted small" style="margin-top:4px">'+(S.photos||[]).length+' sur 12 photos publiées. Elles sont intégrées au site, garde les plus belles.</div>'+((S.photos||[]).length?'<div class="grid" style="grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px">'+S.photos.map(function(p,i){return '<button class="pick" style="padding:0;overflow:hidden;border-radius:8px" data-delph="'+i+'" title="Retirer"><img src="'+p.src+'" alt="Retirer cette photo" style="display:block;aspect-ratio:1;object-fit:cover"></button>';}).join("")+'</div><div class="muted small">Touche une photo pour la retirer.</div>':'');
+h+='<h3>Liens pour le public sans compte</h3><div class="field"><label for="ad_lph">Lien pour envoyer des photos</label><input class="in" id="ad_lph" placeholder="https://… OneDrive, Google Drive ou Forms" value="'+esc(S.links.photos||"")+'"></div><div class="field" style="margin-top:8px"><label for="ad_lvo">Lien du vote du public</label><input class="in" id="ad_lvo" placeholder="https://forms.cloud.microsoft/…" value="'+esc(S.links.vote||"")+'"></div><p class="muted small">Ces boutons remplacent le mur et le vote pour les visiteurs qui n\'ont pas de compte autorisé.</p>';
+h+='<h3>Phase affichée</h3><div class="picks">'+[[null,"Automatique"]].concat(PHASES.map(function(p){return [p[0],p[1]];})).map(function(p){return '<button class="pick" data-phase="'+(p[0]||"")+'" aria-pressed="'+(S.phase===p[0])+'">'+p[1]+'</button>';}).join("")+'</div><p class="muted small">Automatique suit la date, 48h avant le 21 octobre, direct le 23 octobre à 6h00, après à 18h00.</p>';
+h+='<h3>Réglages</h3><label class="row small" style="gap:8px"><input type="checkbox" id="ad_hok" '+(S.horairesOk?"checked":"")+'> Horaires confirmés</label>'+(FB?'':'<div class="row" style="margin-top:8px"><input class="in" id="ad_pin" style="flex:1;min-width:120px" inputmode="numeric" placeholder="Nouveau code arbitre"><button class="btn sm alt" data-do="setpin">Changer le code</button></div>')+'<div class="row" style="margin-top:8px"><button class="btn sm alt" data-do="backup">Copier une sauvegarde</button><button class="btn sm alt" data-do="discard">Annuler mes saisies non publiées</button><button class="btn sm alt" data-do="logout">Quitter le mode orga</button></div>';
+d.innerHTML=h;
 
-  if(FB){
-    $("#pubbar").innerHTML = '<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:0">' + esc(fbStatus()) + '</span>' +
-      (dirty ? '<button class="btn sm alt" data-do="discard" style="background:#fff;color:var(--ink);border:2px solid var(--ink);margin-right:6px">Effacer</button>' : '') +
-      '<button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" ' + (dirty ? "" : "disabled") + '>Publier en direct</button>';
-    return;
-  }
-  $("#pubbar").innerHTML = '<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em">' + (dirty ? dirty + " modification" + (dirty > 1 ? "s" : "") + " en attente" : "Tout est publié") + '</span>' +
-    (dirty ? '<button class="btn sm alt" data-do="discard" style="background:#fff;color:var(--ink);border:2px solid var(--ink);margin-right:6px">Effacer</button>' : '') +
-    '<button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" ' + (dirty && CAP.art ? "" : "disabled") + '>Publier en direct</button>';
+if(FB){
+$("#pubbar").innerHTML = '<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:0">' + esc(fbStatus()) + '</span>' +
+(dirty ? '<button class="btn sm alt" data-do="discard" style="background:#fff;color:var(--ink);border:2px solid var(--ink);margin-right:6px">Effacer</button>' : '') +
+'<button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" ' + (dirty ? "" : "disabled") + '>Publier en direct</button>';
+return;
+}
+$("#pubbar").innerHTML = '<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em">' + (dirty ? dirty + " modification" + (dirty > 1 ? "s" : "") + " en attente" : "Tout est publié") + '</span>' +
+(dirty ? '<button class="btn sm alt" data-do="discard" style="background:#fff;color:var(--ink);border:2px solid var(--ink);margin-right:6px">Effacer</button>' : '') +
+'<button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" ' + (dirty && CAP.art ? "" : "disabled") + '>Publier en direct</button>';
 }
 function renderPub(){if(!$("#pubbar"))return;if(FB){$("#pubbar").innerHTML='<span class="cond" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;min-width:0">'+esc(fbStatus())+'</span><button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" '+(dirty?"":"disabled")+'>Publier en direct</button>';}}
 function closeDrawer(){ui.drawer=false;ssSet("drawer",false);var d=$("#drawer");if(d)d.remove();var p=$("#pubbar");if(p)p.remove();}
 function changed(feedTxt,kind){if(FB){fbTrack(feedTxt,kind);var sc0=$("#drawer")?$("#drawer").scrollTop:0;render();if(ui.drawer&&$("#drawer"))$("#drawer").scrollTop=sc0;return;}dirty++;if(feedTxt){S.feed=S.feed||[];S.feed.unshift({t:now(),txt:feedTxt,k:kind||""});S.feed=S.feed.slice(0,80);}
-  ssSet("draft",{base:S.pub||0,n:dirty,S:S});
-  var sc=$("#drawer")?$("#drawer").scrollTop:0;render();if(ui.drawer){renderDrawer();$("#drawer").scrollTop=sc;}}
+ssSet("draft",{base:S.pub||0,n:dirty,S:S});
+var sc=$("#drawer")?$("#drawer").scrollTop:0;render();if(ui.drawer){renderDrawer();$("#drawer").scrollTop=sc;}}
 function getM(k){var s=S.acts[ui.adAct];var p=k.split("_");var ri=+p[0],mi=+p[1];return ri===4?s.br.pf:s.br.r[ri][mi];}
 function medalFeed(id){var rk=ranking(id);var a=AC[id];return rk[0]?"Médaille d'or en "+a.nom+" pour "+nm(rk[0])+(rk[1]?", argent pour "+nm(rk[1]):"")+(rk[2]?", bronze pour "+nm(rk[2]):""):null;}
 
+function openActEditor(id){var isNew=!id;var a=isNew?{id:"",nom:"",fam:"collectif",fmt:"tableau",h:"9h00",l:"",eq:"",r:""}:AC[id];var s=isNew?{st:"avenir",h:"9h00",l:"",fmt:"tableau",br:null,rk:[],ff:[]}:S.acts[id];
+var famOpts=Object.keys(FAM).map(function(k){return '<option value="'+k+'" '+(a.fam===k?"selected":"")+'>'+FAM[k]+'</option>';}).join("");
+var stOpts=["avenir","encours","termine"].map(function(k){var lbl=k==="avenir"?"À venir":k==="encours"?"En direct":"Terminé";return '<option value="'+k+'" '+(s.st===k?"selected":"")+'>'+lbl+'</option>';}).join("");
+var fmtOpts=[["tableau","Tableau éliminatoire"],["classement","Classement direct"]].map(function(k){return '<option value="'+k[0]+'" '+(s.fmt===k[0]?"selected":"")+'>'+k[1]+'</option>';}).join("");
+modal('<span class="eyebrow">'+(isNew?"Nouvelle épreuve":"Modifier l\'épreuve")+'</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 14px">'+(isNew?"Ajouter":"Modifier")+'</h2><form id="actform" class="form">'+(isNew?'<div class="field"><label for="af_id">Identifiant (sans espaces)</label><input class="in" id="af_id" required pattern="[a-z0-9]+" maxlength="20" placeholder="ex: tirarc"></div>':'')+'<div class="field"><label for="af_nom">Nom de l\'épreuve</label><input class="in" id="af_nom" required maxlength="40" value="'+esc(a.nom)+'"></div><div class="row"><div class="field" style="flex:1"><label for="af_fam">Famille</label><select class="in" id="af_fam">'+famOpts+'</select></div><div class="field" style="flex:1"><label for="af_fmt">Format</label><select class="in" id="af_fmt">'+fmtOpts+'</select></div></div><div class="row"><div class="field" style="flex:1"><label for="af_h">Horaire</label><input class="in" id="af_h" maxlength="10" value="'+esc(s.h||a.h)+'"></div><div class="field" style="flex:1"><label for="af_l">Lieu</label><input class="in" id="af_l" maxlength="30" value="'+esc(s.l||a.l)+'"></div></div><div class="field"><label for="af_eq">Format d\'équipe</label><input class="in" id="af_eq" maxlength="40" value="'+esc(a.eq)+'" placeholder="ex: 5 joueurs par équipe"></div><div class="field"><label for="af_r">Règles</label><textarea class="in" id="af_r" maxlength="300" rows="3">'+esc(a.r)+'</textarea></div>'+(isNew?'':'<div class="field"><label for="af_st">Statut</label><select class="in" id="af_st">'+stOpts+'</select></div>')+'<div class="row" style="justify-content:space-between;margin-top:10px">'+(isNew?'':'<button type="button" class="btn" style="background:var(--red);color:#fff;border-color:var(--red)" data-delact="'+id+'">Supprimer</button>')+'<button type="submit" class="btn">'+(isNew?"Créer l\'épreuve":"Enregistrer")+'</button></div></form>');
+var form=$("#actform");if(form)form.addEventListener("submit",function(e){e.preventDefault();saveAct(id,isNew);});}
+
+function saveAct(id,isNew){var nom=$("#af_nom").value.trim();if(!nom){toast("Le nom est requis");return;}
+if(isNew){var newId=$("#af_id").value.trim().toLowerCase();if(!newId||!/^[a-z0-9]+$/.test(newId)){toast("Identifiant invalide");return;}if(AC[newId]){toast("Cet identifiant existe déjà");return;}
+var newAct={id:newId,nom:nom,fam:$("#af_fam").value,fmt:$("#af_fmt").value,h:$("#af_h").value,l:$("#af_l").value,eq:$("#af_eq").value,r:$("#af_r").value};
+ACTS.push(newAct);AC[newId]=newAct;
+S.acts[newId]={st:"avenir",h:newAct.h,l:newAct.l,fmt:newAct.fmt,br:null,rk:[],ff:[]};
+rebuildFields();if(FB)FBS.base["a_"+newId]=fj("a_"+newId);
+saveCustomActs();if(FB)fbTrack("Nouvelle épreuve : "+nom,"or");toast("Épreuve créée : "+nom);
+}else{var a=AC[id];a.nom=nom;a.fam=$("#af_fam").value;a.fmt=$("#af_fmt").value;a.eq=$("#af_eq").value;a.r=$("#af_r").value;
+var s=S.acts[id];s.h=$("#af_h").value;s.l=$("#af_l").value;s.fmt=$("#af_fmt").value;if($("#af_st"))s.st=$("#af_st").value;
+saveCustomActs();if(FB)fbTrack("Épreuve modifiée : "+nom,null);toast("Épreuve modifiée");}
+dirty++;closeModal();render();if(ui.drawer)renderDrawer();}
+
+function deleteAct(id){if(!confirm("Supprimer définitivement l'épreuve \""+AC[id].nom+"\" ?"))return;
+var nom=AC[id].nom;ACTS=ACTS.filter(function(a){return a.id!==id;});delete AC[id];delete S.acts[id];
+FIELDS=FIELDS.filter(function(f){return f!=="a_"+id;});if(FB){delete FBS.base["a_"+id];delete FBS.touched["a_"+id];}
+saveCustomActs();if(FB)fbTrack("Épreuve supprimée : "+nom,null);toast("Épreuve supprimée");dirty++;closeModal();render();if(ui.drawer)renderDrawer();}
+
 function drawAnim(){
-  var order=CLASSES.map(function(c){return c.id;});for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t;}while(order.length<8)order.push(null);
-  var s=S.acts[ui.adAct];s.br=emptyBr(order);
-  modal('<span class="eyebrow">Tirage au sort · '+AC[ui.adAct].nom+'</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 12px">Les quarts de finale</h2><div id="drawlist" class="grid" style="gap:6px"></div>');
-  var list=$("#drawlist");var k=0;
-  var it=setInterval(function(){if(k>=4){clearInterval(it);confetti(120);return;}var m=s.br.r[0][k];var el=document.createElement("div");el.className="ematch";el.innerHTML=m.b?'<div class="tm"><span>'+chip(m.a)+' '+esc(nm(m.a))+'</span><span class="muted">contre</span></div><div class="tm"><span>'+chip(m.b)+' '+esc(nm(m.b))+'</span></div>':'<div class="tm"><span>'+chip(m.a)+' '+esc(nm(m.a))+'</span><span class="pill">Exempt, qualifiée</span></div>';list.appendChild(el);k++;},450);
-  changed("Tirage au sort effectué pour "+AC[ui.adAct].nom);
+var order=CLASSES.map(function(c){return c.id;});for(var i=order.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=order[i];order[i]=order[j];order[j]=t;}while(order.length<8)order.push(null);
+var s=S.acts[ui.adAct];s.br=emptyBr(order);
+modal('<span class="eyebrow">Tirage au sort · '+AC[ui.adAct].nom+'</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 12px">Les quarts de finale</h2><div id="drawlist" class="grid" style="gap:6px"></div>');
+var list=$("#drawlist");var k=0;
+var it=setInterval(function(){if(k>=4){clearInterval(it);confetti(120);return;}var m=s.br.r[0][k];var el=document.createElement("div");el.className="ematch";el.innerHTML=m.b?'<div class="tm"><span>'+chip(m.a)+' '+esc(nm(m.a))+'</span><span class="muted">contre</span></div><div class="tm"><span>'+chip(m.b)+' '+esc(nm(m.b))+'</span></div>':'<div class="tm"><span>'+chip(m.a)+' '+esc(nm(m.a))+'</span><span class="pill">Exempt, qualifiée</span></div>';list.appendChild(el);k++;},450);
+changed("Tirage au sort effectué pour "+AC[ui.adAct].nom);
 }
 
 async function publishNow(){
-  if(!CAP.art){toast("Ce compte ne peut pas publier");return;}
-  var prevPub=S.pub;S.pub=now();var saved=ssGet("draft",null);ssSet("draft",null);
-  var cssText="";try{cssText=await fetch("css/style.css").then(function(r){return r.text();});}catch(e){}
-  var doc='<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+RESET+'</style></head><body>'+
-   '<title>Retrolympique MCCI 2026</title>\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap">\n'+
-   '<style id="css">'+cssText+'</style>\n\n<div id="app"></div>\n<script type="application/json" id="state">'+JSON.stringify(S).replace(/</g,"\\u003c")+'<\/script>\n<script id="main">'+$("#main").textContent+'<\/script>\n</body></html>';
-  var b=$("[data-do=publish]");if(b){b.disabled=true;b.textContent="Publication…";}
-  try{await CAP.art.publish(doc);dirty=0;toast("Publié, tout le monde voit les nouveaux scores");}
-  catch(e){S.pub=prevPub;if(e&&e.code!=="conflict")ssSet("draft",saved);var c=e&&e.code;toast(c==="conflict"?"Un autre organisateur a publié juste avant toi. La page se recharge, refais ta dernière saisie.":c==="not_writer"||c==="not_granted"?"Ce compte ne peut pas publier les scores.":"Publication impossible pour le moment, réessaie.");if(b){b.disabled=false;b.textContent="Publier en direct";}}
+if(!CAP.art){toast("Ce compte ne peut pas publier");return;}
+var prevPub=S.pub;S.pub=now();var saved=ssGet("draft",null);ssSet("draft",null);
+var cssText="";try{cssText=await fetch("css/style.css").then(function(r){return r.text();});}catch(e){}
+var doc='<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>'+RESET+'</style></head><body>'+
+'<title>Retrolympique MCCI 2026</title>\n<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow+Condensed:wght@500;600;700;800&family=Barlow:wght@400;500;600;700&display=swap">\n'+
+'<style id="css">'+cssText+'</style>\n\n<div id="app"></div>\n<script type="application/json" id="state">'+JSON.stringify(S).replace(/</g,"\\u003c")+'<\/script>\n<script id="main">'+$("#main").textContent+'<\/script>\n</body></html>';
+var b=$("[data-do=publish]");if(b){b.disabled=true;b.textContent="Publication…";}
+try{await CAP.art.publish(doc);dirty=0;toast("Publié, tout le monde voit les nouveaux scores");}
+catch(e){S.pub=prevPub;if(e&&e.code!=="conflict")ssSet("draft",saved);var c=e&&e.code;toast(c==="conflict"?"Un autre organisateur a publié juste avant toi. La page se recharge, refais ta dernière saisie.":c==="not_writer"||c==="not_granted"?"Ce compte ne peut pas publier les scores.":"Publication impossible pour le moment, réessaie.");if(b){b.disabled=false;b.textContent="Publier en direct";}}
 }
 
 async function compress(file,max,limit){
-  var img=await new Promise(function(res,rej){var u=URL.createObjectURL(file);var i=new Image();i.onload=function(){res(i);};i.onerror=rej;i.src=u;});
-  var r=Math.min(1,max/Math.max(img.width,img.height));var c=document.createElement("canvas");c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);c.getContext("2d").drawImage(img,0,0,c.width,c.height);
-  var q=.78,url=c.toDataURL("image/jpeg",q);while(url.length>limit&&q>.3){q-=.08;url=c.toDataURL("image/jpeg",q);}return url;
+var img=await new Promise(function(res,rej){var u=URL.createObjectURL(file);var i=new Image();i.onload=function(){res(i);};i.onerror=rej;i.src=u;});
+var r=Math.min(1,max/Math.max(img.width,img.height));var c=document.createElement("canvas");c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+var q=.78,url=c.toDataURL("image/jpeg",q);while(url.length>limit&&q>.3){q-=.08;url=c.toDataURL("image/jpeg",q);}return url;
 }
 
-/* ---------- Évènements ---------- */
 document.addEventListener("click",async function(e){
-  var t=e.target.closest("[data-go],[data-do],[data-act],[data-me],[data-sup],[data-fil],[data-vote],[data-sc],[data-tw],[data-ff],[data-fp],[data-mb],[data-phase],[data-del],[data-delph]");if(!t)return;
-  var d=t.dataset;
-  if(d.go){e.preventDefault();closeModal();go(d.go);return;}
-  if(d.act){modal(actModal(d.act));return;}
-  if(d.me){ui.me=d.me;lsSet("me",d.me);confetti(60);render();toast("Bienvenue dans l'équipe "+nm(d.me));return;}
-  if(d.fil){ui.fil=d.fil;render();return;}
-  if(d.sup){if(!canPost()){toast("Le vote supporter est réservé aux comptes autorisés");return;}try{await CAP.db.doc("supports/"+CAP.uid).set({c:d.sup,t:now()});confetti(70);toast("Tu soutiens "+nm(d.sup));}catch(err){toast("Vote non enregistré, réessaie");}return;}
-  if(d.vote){if(!canPost()){toast("Le vote est réservé aux comptes autorisés");return;}var p=d.vote.split(":");var cur=Object.assign({},LIVE.myV||{});cur[p[0]]=p[1];cur.t=now();try{await CAP.db.doc("votes/"+CAP.uid).set({amb:cur.amb||null,ten:cur.ten||null,t:cur.t});toast("Vote enregistré");}catch(err){toast("Vote non enregistré, réessaie");}return;}
-  if(d.del){if(!CAP.db)return;var dp=d.del.split("|");try{var ref=CAP.db.doc("wall/"+dp[0]);var sn=await ref.get();var ps=((sn.data()||{}).posts||[]).filter(function(x){return String(x.id)!==dp[1];});await ref.set({posts:ps,t:now()});toast("Message retiré");}catch(err){toast("Suppression impossible");}return;}
-  // admin
-  var s=S.acts[ui.adAct];
-  if(d.sc){var q=d.sc.split(":");var m=getM(q[0]);m["s"+q[1]]=Math.max(0,m["s"+q[1]]+(+q[2]));if(m.st==="avenir")m.st="encours";if(s.st==="avenir")s.st="encours";resync(s.br);changed();return;}
-  if(d.tw){var q2=d.tw.split(":");var m2=getM(q2[0]);m2.w=m2[q2[1]];resync(s.br);changed(AC[ui.adAct].nom+" · "+nm(m2.w)+" l'emporte après égalité",null);var fz=s.br.r[s.br.r.length-1][0];if(m2===fz&&win(fz)){s.st="termine";changed(medalFeed(ui.adAct),"or");confetti(200);}return;}
-  if(d.ff){s.ff=s.ff||[];var i=s.ff.indexOf(d.ff);if(i>=0)s.ff.splice(i,1);else s.ff.push(d.ff);changed();return;}
-  if(d.fp){var f=d.fp.split(":");S.fp=S.fp||{};S.fp[f[0]]=Math.max(0,Math.min(5,(S.fp[f[0]]||0)+(+f[1])));changed(+f[1]>0?"Bonus fair play pour "+nm(f[0]):null);return;}
-  if(d.mb){var g=d.mb.split(":");S.mb=S.mb||{};var before=S.mb[g[0]]||0;S.mb[g[0]]=Math.max(0,Math.min(10,before+(+g[1])));changed(+g[1]>0&&S.mb[g[0]]>before?"Bonus créativité pour "+nm(g[0])+", mascottes et drapeau":null);return;}
-  if(d.phase!==undefined){S.phase=d.phase||null;changed();return;}
-  if(d.delph){if(FB){var ph=S.photos[+d.delph];if(ph&&ph.id)FBS.db.collection("photos").doc(ph.id).delete().then(function(){fbPhotos(true);}).catch(function(){toast("Suppression refusée");});return;}S.photos.splice(+d.delph,1);changed();return;}
-  switch(d.do){
-    case "close":closeModal();break;
-    case "tv":tvOpen();break;
-    case "tvclose":tvClose();break;
-    case "admin":adminOpen();break;
-    case "dclose":closeDrawer();break;
-    case "pronos":go("accueil");setTimeout(function(){var x=$("[data-prono]");if(x)x.scrollIntoView({behavior:"smooth",block:"center"});},200);break;
-    case "draw":drawAnim();break;
-    case "redraw":if(t.dataset.sure){drawAnim();}else{t.dataset.sure="1";t.textContent="Confirmer, les scores seront effacés";}break;
-    case "addmsg":var mm=$("#ad_msg").value.trim();if(mm)changed(mm);break;
-    case "setpin":var np=$("#ad_pin").value.trim();if(np.length>=4){S.pin=hash(np);changed();toast("Nouveau code enregistré, publie pour l'appliquer");}else toast("Le code doit faire au moins 4 chiffres");break;
-    case "backup":var txt=JSON.stringify(S);try{await navigator.clipboard.writeText(txt);toast("Sauvegarde copiée");}catch(err){toast("Copie refusée par ce navigateur");}break;
-    case "logout":ui.admin=false;ssSet("admin",false);closeDrawer();if(FB){if(dirty){toast("Publie ou annule tes saisies avant de te déconnecter");ui.admin=true;ssSet("admin",true);ui.drawer=true;render();break;}firebase.auth().signOut();}render();break;
-    case "publish":if(FB)fbPublish();else publishNow();break;
-    case "discard":if(!t.dataset.sure){t.dataset.sure="1";t.textContent="Confirmer l'annulation";break;}if(FB){fbDiscard();render();toast("Saisies annulées, retour à la version publiée");break;}try{S=JSON.parse(document.getElementById("state").textContent)||defaultState();}catch(err){S=defaultState();}if(!S.links)S.links={photos:"",vote:""};if(!S.mb)S.mb={};dirty=0;ssSet("draft",null);render();renderDrawer();toast("Saisies annulées, retour à la version publiée");break;
-  }
+var t=e.target.closest("[data-go],[data-do],[data-act],[data-me],[data-sup],[data-fil],[data-vote],[data-sc],[data-tw],[data-ff],[data-fp],[data-mb],[data-phase],[data-del],[data-delph],[data-adj],[data-newact],[data-editact],[data-delact]");if(!t)return;
+var d=t.dataset;
+if(d.adj){var p=d.adj.split(":");adjustRank(p[0],p[1],parseInt(p[2],10));if($("#scrim")&&AC[p[0]]){actModal(p[0]);}return;}
+if(d.newact){openActEditor(null);return;}
+if(d.editact){openActEditor(d.editact);return;}
+if(d.delact){deleteAct(d.delact);return;}
+if(d.go){e.preventDefault();closeModal();go(d.go);return;}
+if(d.act){modal(actModal(d.act));return;}
+if(d.me){ui.me=d.me;lsSet("me",d.me);confetti(60);render();toast("Bienvenue dans l'équipe "+nm(d.me));return;}
+if(d.fil){ui.fil=d.fil;render();return;}
+if(d.sup){if(!canPost()){toast("Le vote supporter est réservé aux comptes autorisés");return;}try{await CAP.db.doc("supports/"+CAP.uid).set({c:d.sup,t:now()});confetti(70);toast("Tu soutiens "+nm(d.sup));}catch(err){toast("Vote non enregistré, réessaie");}return;}
+if(d.vote){if(!canPost()){toast("Le vote est réservé aux comptes autorisés");return;}var p=d.vote.split(":");var cur=Object.assign({},LIVE.myV||{});cur[p[0]]=p[1];cur.t=now();try{await CAP.db.doc("votes/"+CAP.uid).set({amb:cur.amb||null,ten:cur.ten||null,t:cur.t});toast("Vote enregistré");}catch(err){toast("Vote non enregistré, réessaie");}return;}
+if(d.del){if(!CAP.db)return;var dp=d.del.split("|");try{var ref=CAP.db.doc("wall/"+dp[0]);var sn=await ref.get();var ps=((sn.data()||{}).posts||[]).filter(function(x){return String(x.id)!==dp[1];});await ref.set({posts:ps,t:now()});toast("Message retiré");}catch(err){toast("Suppression impossible");}return;}
+var s=S.acts[ui.adAct];
+if(d.sc){var q=d.sc.split(":");var m=getM(q[0]);m["s"+q[1]]=Math.max(0,m["s"+q[1]]+(+q[2]));if(m.st==="avenir")m.st="encours";if(s.st==="avenir")s.st="encours";resync(s.br);changed();return;}
+if(d.tw){var q2=d.tw.split(":");var m2=getM(q2[0]);m2.w=m2[q2[1]];resync(s.br);changed(AC[ui.adAct].nom+" · "+nm(m2.w)+" l'emporte après égalité",null);var fz=s.br.r[s.br.r.length-1][0];if(m2===fz&&win(fz)){s.st="termine";changed(medalFeed(ui.adAct),"or");confetti(200);}return;}
+if(d.ff){s.ff=s.ff||[];var i=s.ff.indexOf(d.ff);if(i>=0)s.ff.splice(i,1);else s.ff.push(d.ff);changed();return;}
+if(d.fp){var f=d.fp.split(":");S.fp=S.fp||{};S.fp[f[0]]=Math.max(0,Math.min(5,(S.fp[f[0]]||0)+(+f[1])));changed(+f[1]>0?"Bonus fair play pour "+nm(f[0]):null);return;}
+if(d.mb){var g=d.mb.split(":");S.mb=S.mb||{};var before=S.mb[g[0]]||0;S.mb[g[0]]=Math.max(0,Math.min(10,before+(+g[1])));changed(+g[1]>0&&S.mb[g[0]]>before?"Bonus créativité pour "+nm(g[0])+", mascottes et drapeau":null);return;}
+if(d.phase!==undefined){S.phase=d.phase||null;changed();return;}
+if(d.delph){if(FB){var ph=S.photos[+d.delph];if(ph&&ph.id)FBS.db.collection("photos").doc(ph.id).delete().then(function(){fbPhotos(true);}).catch(function(){toast("Suppression refusée");});return;}S.photos.splice(+d.delph,1);changed();return;}
+switch(d.do){
+case "close":closeModal();break;
+case "tv":tvOpen();break;
+case "tvclose":tvClose();break;
+case "admin":adminOpen();break;
+case "dclose":closeDrawer();break;
+case "pronos":go("accueil");setTimeout(function(){var x=$("[data-prono]");if(x)x.scrollIntoView({behavior:"smooth",block:"center"});},200);break;
+case "draw":drawAnim();break;
+case "redraw":if(t.dataset.sure){drawAnim();}else{t.dataset.sure="1";t.textContent="Confirmer, les scores seront effacés";}break;
+case "addmsg":var mm=$("#ad_msg").value.trim();if(mm)changed(mm);break;
+case "setpin":var np=$("#ad_pin").value.trim();if(np.length>=4){S.pin=hash(np);changed();toast("Nouveau code enregistré, publie pour l'appliquer");}else toast("Le code doit faire au moins 4 chiffres");break;
+case "backup":var txt=JSON.stringify(S);try{await navigator.clipboard.writeText(txt);toast("Sauvegarde copiée");}catch(err){toast("Copie refusée par ce navigateur");}break;
+case "logout":ui.admin=false;ssSet("admin",false);closeDrawer();if(FB){if(dirty){toast("Publie ou annule tes saisies avant de te déconnecter");ui.admin=true;ssSet("admin",true);ui.drawer=true;render();break;}firebase.auth().signOut();}render();break;
+case "publish":if(FB)fbPublish();else publishNow();break;
+case "discard":if(!t.dataset.sure){t.dataset.sure="1";t.textContent="Confirmer l'annulation";break;}if(FB){fbDiscard();render();toast("Saisies annulées, retour à la version publiée");break;}try{S=JSON.parse(document.getElementById("state").textContent)||defaultState();}catch(err){S=defaultState();}if(!S.links)S.links={photos:"",vote:""};if(!S.mb)S.mb={};dirty=0;ssSet("draft",null);render();renderDrawer();toast("Saisies annulées, retour à la version publiée");break;
+}
 });
 document.addEventListener("change",async function(e){
-  var t=e.target;var s=S.acts[ui.adAct];
-  if(t.dataset.chk!==undefined){var c=lsGet("check",{});c[t.dataset.chk]=t.checked;lsSet("check",c);if(Object.keys(c).filter(function(k){return c[k];}).length===7)confetti(120);return;}
-  if(t.dataset.prono){var P=lsGet("pronos",{});P[t.dataset.prono]=t.value;lsSet("pronos",P);toast("Prono enregistré sur ce téléphone");return;}
-  if(t.id==="ad_act"){ui.adAct=t.value;ssSet("adAct",t.value);renderDrawer();return;}
-  if(t.id==="ad_st"){var prev=s.st;s.st=t.value;changed(t.value==="encours"&&prev!=="encours"?"C'est parti pour "+AC[ui.adAct].nom:t.value==="termine"?medalFeed(ui.adAct):null,t.value==="termine"?"or":"");if(t.value==="termine")confetti(160);return;}
-  if(t.id==="ad_h"){s.h=t.value.trim();changed();return;}
-  if(t.id==="ad_l"){s.l=t.value.trim();changed();return;}
-  if(t.id==="ad_fmt"){s.fmt=t.value;changed();return;}
-  if(t.id==="ad_ann"){S.annonce=t.value.trim();changed();return;}
-  if(t.id==="ad_lph"||t.id==="ad_lvo"){var v=t.value.trim();if(v&&!/^https:\/\//.test(v)){toast("Le lien doit commencer par https://");return;}S.links[t.id==="ad_lph"?"photos":"vote"]=v;changed();return;}
-  if(t.id==="ad_hok"){S.horairesOk=t.checked;changed();return;}
-  if(t.dataset.rk!==undefined){s.rk=s.rk||[];s.rk[+t.dataset.rk]=t.value||null;changed();return;}
-  if(t.dataset.mst){var m=getM(t.dataset.mst);m.st=t.value;resync(s.br);var a=AC[ui.adAct];
-    if(t.value==="fini"){var w=win(m);changed(w?a.nom+" · "+nm(w)+" bat "+nm(w===m.a?m.b:m.a)+" "+Math.max(m.sa,m.sb)+" à "+Math.min(m.sa,m.sb):null,"");var f=s.br.r[s.br.r.length-1][0];if(m===f&&win(f)){s.st="termine";changed(medalFeed(ui.adAct),"or");confetti(200);}}
-    else changed(t.value==="encours"?a.nom+" · coup d'envoi "+nm(m.a)+" contre "+nm(m.b):null);return;}
-  if(t.id==="ad_photo"&&t.files.length){for(var i=0;i<t.files.length;i++){if(S.photos.length>=12){toast("12 photos maximum, retire en une pour en ajouter");break;}try{var u=await compress(t.files[i],1000,95000);if(safeImg(u)){if(FB){await FBS.db.collection("photos").add({src:u,t:now()}).catch(function(){toast("Envoi de la photo refusé");});}else S.photos.unshift({src:u,cap:"",t:now()});}}catch(err){toast("Photo illisible");}}if(FB)fbPhotos(true);changed();return;}
+var t=e.target;var s=S.acts[ui.adAct];
+if(t.dataset.chk!==undefined){var c=lsGet("check",{});c[t.dataset.chk]=t.checked;lsSet("check",c);if(Object.keys(c).filter(function(k){return c[k];}).length===7)confetti(120);return;}
+if(t.dataset.prono){var P=lsGet("pronos",{});P[t.dataset.prono]=t.value;lsSet("pronos",P);toast("Prono enregistré sur ce téléphone");return;}
+if(t.id==="ad_act"){ui.adAct=t.value;ssSet("adAct",t.value);renderDrawer();return;}
+if(t.id==="ad_st"){var prev=s.st;s.st=t.value;changed(t.value==="encours"&&prev!=="encours"?"C'est parti pour "+AC[ui.adAct].nom:t.value==="termine"?medalFeed(ui.adAct):null,t.value==="termine"?"or":"");if(t.value==="termine")confetti(160);return;}
+if(t.id==="ad_h"){s.h=t.value.trim();changed();return;}
+if(t.id==="ad_l"){s.l=t.value.trim();changed();return;}
+if(t.id==="ad_fmt"){s.fmt=t.value;changed();return;}
+if(t.id==="ad_ann"){S.annonce=t.value.trim();changed();return;}
+if(t.id==="ad_lph"||t.id==="ad_lvo"){var v=t.value.trim();if(v&&!/^https:\/\//.test(v)){toast("Le lien doit commencer par https://");return;}S.links[t.id==="ad_lph"?"photos":"vote"]=v;changed();return;}
+if(t.id==="ad_hok"){S.horairesOk=t.checked;changed();return;}
+if(t.dataset.rk!==undefined){s.rk=s.rk||[];s.rk[+t.dataset.rk]=t.value||null;changed();return;}
+if(t.dataset.mst){var m=getM(t.dataset.mst);m.st=t.value;resync(s.br);var a=AC[ui.adAct];
+if(t.value==="fini"){var w=win(m);changed(w?a.nom+" · "+nm(w)+" bat "+nm(w===m.a?m.b:m.a)+" "+Math.max(m.sa,m.sb)+" à "+Math.min(m.sa,m.sb):null,"");var f=s.br.r[s.br.r.length-1][0];if(m===f&&win(f)){s.st="termine";changed(medalFeed(ui.adAct),"or");confetti(200);}}
+else changed(t.value==="encours"?a.nom+" · coup d'envoi "+nm(m.a)+" contre "+nm(m.b):null);return;}
+if(t.id==="ad_photo"&&t.files.length){for(var i=0;i<t.files.length;i++){if(S.photos.length>=12){toast("12 photos maximum, retire en une pour en ajouter");break;}try{var u=await compress(t.files[i],1000,95000);if(safeImg(u)){if(FB){await FBS.db.collection("photos").add({src:u,t:now()}).catch(function(){toast("Envoi de la photo refusé");});}else S.photos.unshift({src:u,cap:"",t:now()});}}catch(err){toast("Photo illisible");}}if(FB)fbPhotos(true);changed();return;}
 });
 document.addEventListener("submit",async function(e){
-  e.preventDefault();var f=e.target;
-  if(f.id==="loginf"){var b=$("#lg_go");b.disabled=true;b.textContent="Connexion…";
-    firebase.auth().signInWithEmailAndPassword($("#lg_mail").value.trim(),$("#lg_pw").value).then(function(){closeModal();ui.admin=true;ssSet("admin",true);ui.drawer=true;render();toast("Connecté, bienvenue à la table de marque");})
-    .catch(function(err){b.disabled=false;b.textContent="Se connecter";console.error("Erreur Firebase Auth:",err);var c=err&&err.code||"";toast(/unauthorized-domain/.test(c)?"Domaine non autorisé sur Firebase":/network/.test(c)?"Pas de réseau, réessaie":/too-many/.test(c)?"Trop d'essais, attends quelques minutes":/user-not-found|wrong-password|invalid-credential/.test(c)?"Email ou mot de passe incorrect":(err&&err.message)||"Erreur ("+c+")");});return;}
-  if(f.id==="pinf"){var v=$("#pin").value.trim();if(hash(v)===S.pin){ui.admin=true;ssSet("admin",true);closeModal();ui.drawer=true;render();toast("Mode organisation activé");}else{toast("Code incorrect");}return;}
-  if(f.id==="postf"){
-    if(!canPost()){toast("Publication réservée aux comptes autorisés");return;}
-    var nom=$("#p_nom").value.trim().slice(0,30),c=$("#p_c").value,txt=$("#p_txt").value.trim().slice(0,400),file=$("#p_img").files[0];
-    if(!txt&&!file){toast("Ajoute un message ou une photo");return;}
-    var b=$("#p_go");b.disabled=true;b.textContent="Envoi…";
-    try{var img=file?await compress(file,900,70000):null;var mine=(LIVE.myPosts||[]).slice(-2);mine.push({id:Math.random().toString(36).slice(2,10),nom:nom,c:CL[c]?c:null,txt:txt,img:img,t:now()});await CAP.db.doc("wall/"+CAP.uid).set({posts:mine,t:now()});lsSet("nom",nom);$("#p_txt").value="";$("#p_img").value="";confetti(100);toast("C'est sur le mur");}
-    catch(err){toast(err&&err.code==="quota_exceeded"?"Le mur est plein, préviens l'organisation":"Envoi impossible, réessaie");}
-    b.disabled=false;b.textContent="Publier sur le mur";
-  }
+e.preventDefault();var f=e.target;
+if(f.id==="actform"){return;}
+if(f.id==="loginf"){var b=$("#lg_go");b.disabled=true;b.textContent="Connexion…";
+firebase.auth().signInWithEmailAndPassword($("#lg_mail").value.trim(),$("#lg_pw").value).then(function(){closeModal();ui.admin=true;ssSet("admin",true);ui.drawer=true;render();toast("Connecté, bienvenue à la table de marque");})
+.catch(function(err){b.disabled=false;b.textContent="Se connecter";console.error("Erreur Firebase Auth:",err);var c=err&&err.code||"";toast(/unauthorized-domain/.test(c)?"Domaine non autorisé sur Firebase":/network/.test(c)?"Pas de réseau, réessaie":/too-many/.test(c)?"Trop d'essais, attends quelques minutes":/user-not-found|wrong-password|invalid-credential/.test(c)?"Email ou mot de passe incorrect":(err&&err.message)||"Erreur ("+c+")");});return;}
+if(f.id==="pinf"){var v=$("#pin").value.trim();if(hash(v)===S.pin){ui.admin=true;ssSet("admin",true);closeModal();ui.drawer=true;render();toast("Mode organisation activé");}else{toast("Code incorrect");}return;}
+if(f.id==="postf"){
+if(!canPost()){toast("Publication réservée aux comptes autorisés");return;}
+var nom=$("#p_nom").value.trim().slice(0,30),c=$("#p_c").value,txt=$("#p_txt").value.trim().slice(0,400),file=$("#p_img").files[0];
+if(!txt&&!file){toast("Ajoute un message ou une photo");return;}
+var b=$("#p_go");b.disabled=true;b.textContent="Envoi…";
+try{var img=file?await compress(file,900,70000):null;var mine=(LIVE.myPosts||[]).slice(-2);mine.push({id:Math.random().toString(36).slice(2,10),nom:nom,c:CL[c]?c:null,txt:txt,img:img,t:now()});await CAP.db.doc("wall/"+CAP.uid).set({posts:mine,t:now()});lsSet("nom",nom);$("#p_txt").value="";$("#p_img").value="";confetti(100);toast("C'est sur le mur");}
+catch(err){toast(err&&err.code==="quota_exceeded"?"Le mur est plein, préviens l'organisation":"Envoi impossible, réessaie");}
+b.disabled=false;b.textContent="Publier sur le mur";
+}
 });
 document.addEventListener("keydown",function(e){if(e.key==="Escape"){closeModal();tvClose();}});
 window.addEventListener("beforeunload",function(e){if((dirty||(FB&&FBS.pending))&&ui.admin){e.preventDefault();e.returnValue="";}});
@@ -729,9 +735,7 @@ window.addEventListener("hashchange",function(){var h=location.hash.replace("#",
 render();
 if(draftMsg)setTimeout(function(){toast(draftMsg);},700);
 if(location.hash==="#tv")tvOpen();
-/* célébration des nouvelles médailles depuis la dernière visite */
 var seen=lsGet("seenFeed",0);var fl=(S.feed||[]).filter(function(x){return x.k==="or";}).length;if(fl>seen){setTimeout(function(){confetti(150);},600);}lsSet("seenFeed",fl);
-/* rafraîchit le compte à rebours de phase toutes les minutes */
 setInterval(function(){var p=phase();if(p!==window.__ph){window.__ph=p;render();}},60000);window.__ph=phase();
 })();
 </script>
