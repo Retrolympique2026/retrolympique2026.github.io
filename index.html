@@ -822,6 +822,7 @@ window.addEventListener("hashchange",function(){var h=location.hash.replace("#",
 render();
 if(draftMsg)setTimeout(function(){toast(draftMsg);},700);
 if(location.hash==="#tv")tvOpen();
+if(location.hash==="#orga"){var oT=0,oI=setInterval(function(){if(!FB||FBS.authKnown||++oT>60){clearInterval(oI);adminOpen();}},150);}
 var seen=lsGet("seenFeed",0);var fl=(S.feed||[]).filter(function(x){return x.k==="or";}).length;if(fl>seen){setTimeout(function(){confetti(150);},600);}lsSet("seenFeed",fl);
 setInterval(function(){var p=phase();if(p!==window.__ph){window.__ph=p;render();}},60000);window.__ph=phase();
 })();
