@@ -1,9 +1,9 @@
-/* Configuration Firebase du direct. */
+/* Configuration Firebase du direct, projet de Thomas (retrolympique2026-ab93e). */
 window.RETRO_FIREBASE = {
-  apiKey: "AIzaSyBYzSBsSJybcZ-sEPcAXoca0fOxvhYAiRg",
-  authDomain: "retrolympique2026.firebaseapp.com",
-  projectId: "retrolympique2026",
-  storageBucket: "retrolympique2026.firebasestorage.app",
-  messagingSenderId: "906850160102",
-  appId: "1:906850160102:web:82de98048f7af5151d9a27"
+  apiKey: "AIzaSyD1EVgofIqspcU70MvNJKXaazAT6GZl3xM",
+  authDomain: "retrolympique2026-ab93e.firebaseapp.com",
+  projectId: "retrolympique2026-ab93e",
+  storageBucket: "retrolympique2026-ab93e.firebasestorage.app",
+  messagingSenderId: "84587384772",
+  appId: "1:84587384772:web:87c14e4d699c543e7cde91"
 };
