@@ -298,7 +298,7 @@ Object.keys(FBS.dL).forEach(function(a){Object.keys(FBS.dL[a]).forEach(function(
 Object.keys(FBS.oL).forEach(function(a){Object.keys(FBS.oL[a]).forEach(function(k){var o=FBS.oL[a][k];["st","w"].forEach(function(z){if(z in o){Lu[a]=Lu[a]||{};Lu[a][k]=Lu[a][k]||{};Lu[a][k][z]=o[z]||null;nl++;}});});});
 Object.keys(FBS.dP).forEach(function(a){Object.keys(FBS.dP[a]).forEach(function(t){if(+FBS.dP[a][t]){Pu[a]=Pu[a]||{};Pu[a][t]=inc(+FBS.dP[a][t]);nl++;}});});
 if(!n&&!q.length&&!nl){toast("Rien à publier");return;}
-var prevBase={},prevTouched=Object.assign({},FBS.touched),prevFeed=FBS.serverFeed.slice();
+var prevBase={},prevTouched=Object.assign({},FBS.touched),prevFeed=FBS.serverFeed.slice();var jTk=Object.keys(FBS.touched);
 Object.keys(upd).forEach(function(f){prevBase[f]=FBS.base[f];});
 upd.t=now();upd.by=FBS.user.email||"";if(Object.keys(Lu).length)upd.L=Lu;if(Object.keys(Pu).length)upd.P=Pu;
 (function(){var L=JSON.parse(JSON.stringify(FBS.L||{})),P=JSON.parse(JSON.stringify(FBS.P||{}));
@@ -308,7 +308,7 @@ Object.keys(pDP).forEach(function(a){Object.keys(pDP[a]).forEach(function(t){P[a
 FBS.L=L;FBS.P=P;})();
 FBS.dL={};FBS.dP={};FBS.oL={};
 if(q.length){if(FBS.serverFeed.length+q.length>80)upd.feed=q.concat(FBS.serverFeed).slice(0,60);else upd.feed=firebase.firestore.FieldValue.arrayUnion.apply(null,q.slice().reverse());}
-FBS.db.collection("live").doc("state").set(upd,{merge:true}).then(function(){fbRerender();}).catch(function(e){
+FBS.db.collection("live").doc("state").set(upd,{merge:true}).then(function(){fbJournal(pDL,pOL,pDP,jTk,q);fbRerender();}).catch(function(e){
 Object.keys(prevBase).forEach(function(f){FBS.base[f]=prevBase[f];});
 FBS.touched=Object.assign(prevTouched,FBS.touched);
 FBS.feedQ=q.concat(FBS.feedQ);FBS.serverFeed=prevFeed;
@@ -322,6 +322,18 @@ FBS.touched={};FBS.feedQ=[];FBS.serverFeed=q.concat(FBS.serverFeed).slice(0,80);
 toast(navigator.onLine?"Publié, tout le monde voit les nouveaux scores":"Hors ligne, la publication partira dès le retour du réseau");
 render();
 }
+function fbJournal(pDL,pOL,pDP,tk,q){try{var parts=[],an=function(a){return AC[a]?AC[a].nom:a;},sg=function(v){return (v>0?"+":"")+v;};
+Object.keys(pDL).forEach(function(a){Object.keys(pDL[a]).forEach(function(k){var x=pDL[a][k],m=getMOf(a,k)||{};var t=[];if(+x.a)t.push(nm(m.a)+" "+sg(+x.a));if(+x.b)t.push(nm(m.b)+" "+sg(+x.b));if(t.length)parts.push(an(a)+", "+t.join(", "));});});
+Object.keys(pDP).forEach(function(a){var t=[];Object.keys(pDP[a]).forEach(function(c){if(+pDP[a][c])t.push(nm(c)+" "+sg(+pDP[a][c]));});if(t.length)parts.push(an(a)+", "+t.join(", "));});
+Object.keys(pOL).forEach(function(a){Object.keys(pOL[a]).forEach(function(k){var o=pOL[a][k];if(o.w)parts.push(an(a)+", vainqueur "+nm(o.w));else if(o.st==="fini")parts.push(an(a)+", match terminé");else if(o.st)parts.push(an(a)+", match "+o.st);});});
+tk.forEach(function(f){if(f.indexOf("a_")===0)parts.push(an(f.slice(2))+", statut, réglage ou tirage mis à jour");else parts.push("Réglages généraux modifiés");});
+q.forEach(function(x){if(x&&x.txt)parts.push(x.txt);});
+var txt=parts.join(" · ").slice(0,580);if(!txt)return;
+FBS.db.collection("journal").add({e:FBS.user.email||"",t:now(),x:txt}).catch(function(){});}catch(e){}}
+function fbJournalShow(){if(!FBS.db||!FBS.user){toast("Connecte toi d'abord");return;}
+FBS.db.collection("journal").orderBy("t","desc").limit(100).get().then(function(r){var rows=r.docs.map(function(d){var v=d.data()||{};var dt=new Date(+v.t||0);var hh=("0"+dt.getHours()).slice(-2)+"h"+("0"+dt.getMinutes()).slice(-2);var day=dt.toLocaleDateString("fr-FR",{day:"numeric",month:"short"});
+return '<div style="padding:8px 0;border-bottom:1px solid var(--line,#ddd)"><div class="small"><b>'+esc(hh)+'</b> <span class="muted">'+esc(day)+'</span> <b style="color:var(--red)">'+esc(String(v.e||"").split("@")[0])+'</b></div><div class="small">'+esc(v.x||"")+'</div></div>';}).join("");
+modal('<span class="eyebrow">Espace organisation</span><h2 class="disp" style="font-size:1.6rem;margin:6px 0 10px">Journal des saisies</h2><p class="muted small" style="margin:0 0 8px">Les 100 dernières publications, la plus récente en haut.</p><div style="max-height:60vh;overflow:auto">'+(rows||'<p class="muted">Aucune saisie pour le moment.</p>')+'</div>');}).catch(function(e){toast(e&&e.code==="permission-denied"?"Journal non autorisé, vérifie les règles Firestore":"Journal indisponible, réessaie");});}
 function fbPhotos(force){if(!FB||!FBS.db)return;if(!force&&now()-FBS.photosAt<300000)return;FBS.photosAt=now();
 FBS.db.collection("photos").orderBy("t","desc").limit(12).get().then(function(q){S.photos=q.docs.map(function(d){var v=d.data()||{};return {id:d.id,src:safeImg(v.src),cap:"",t:+v.t||0};}).filter(function(p){return p.src;});fbRerender();}).catch(function(){});}
 function fbStatus(){if(!FBS.ready)return FBS.err||"Connexion au direct…";var off=!navigator.onLine;
@@ -663,7 +675,7 @@ h+='<h3>Bandeau et fil d\'actu</h3><div class="field"><label for="ad_ann">Annonc
 h+='<h3>Photos officielles</h3><input class="in" type="file" id="ad_photo" accept="image/*" multiple><div class="muted small" style="margin-top:4px">'+(S.photos||[]).length+' sur 12 photos publiées. Elles sont intégrées au site, garde les plus belles.</div>'+((S.photos||[]).length?'<div class="grid" style="grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px">'+S.photos.map(function(p,i){return '<button class="pick" style="padding:0;overflow:hidden;border-radius:8px" data-delph="'+i+'" title="Retirer"><img src="'+p.src+'" alt="Retirer cette photo" style="display:block;aspect-ratio:1;object-fit:cover"></button>';}).join("")+'</div><div class="muted small">Touche une photo pour la retirer.</div>':'');
 h+='<h3>Liens pour le public sans compte</h3><div class="field"><label for="ad_lph">Lien pour envoyer des photos</label><input class="in" id="ad_lph" placeholder="https://… OneDrive, Google Drive ou Forms" value="'+esc(S.links.photos||"")+'"></div><div class="field" style="margin-top:8px"><label for="ad_lvo">Lien du vote du public</label><input class="in" id="ad_lvo" placeholder="https://forms.cloud.microsoft/…" value="'+esc(S.links.vote||"")+'"></div><p class="muted small">Ces boutons remplacent le mur et le vote pour les visiteurs qui n\'ont pas de compte autorisé.</p>';
 h+='<h3>Phase affichée</h3><div class="picks">'+[[null,"Automatique"]].concat(PHASES.map(function(p){return [p[0],p[1]];})).map(function(p){return '<button class="pick" data-phase="'+(p[0]||"")+'" aria-pressed="'+(S.phase===p[0])+'">'+p[1]+'</button>';}).join("")+'</div><p class="muted small">Automatique suit la date, 48h avant le 21 octobre, direct le 23 octobre à 6h00, après à 18h00.</p>';
-if(FB)h+='<h3>Liens WhatsApp de saisie rapide</h3><p class="muted small" style="margin:0 0 8px">Un lien par épreuve. Colle le message dans le groupe WhatsApp, chaque arbitre ouvre le lien de son épreuve.</p><button class="btn sm" data-do="qlinks">Copier le message pour WhatsApp</button><div class="grid" style="gap:4px;margin-top:8px">'+ACTS.map(function(x){return '<a class="small" href="#saisie-'+encodeURIComponent(x.id)+'">'+esc(x.nom)+' ↗</a>';}).join("")+'</div>';
+if(FB)h+='<h3>Liens WhatsApp de saisie rapide</h3><p class="muted small" style="margin:0 0 8px">Un lien par épreuve. Colle le message dans le groupe WhatsApp, chaque arbitre ouvre le lien de son épreuve.</p><button class="btn sm" data-do="qlinks">Copier le message pour WhatsApp</button> <button class="btn sm alt" data-do="journal">Journal des saisies</button><div class="grid" style="gap:4px;margin-top:8px">'+ACTS.map(function(x){return '<a class="small" href="#saisie-'+encodeURIComponent(x.id)+'">'+esc(x.nom)+' ↗</a>';}).join("")+'</div>';
 h+='<h3>Réglages</h3><label class="row small" style="gap:8px"><input type="checkbox" id="ad_hok" '+(S.horairesOk?"checked":"")+'> Horaires confirmés</label>'+(FB?'':'<div class="row" style="margin-top:8px"><input class="in" id="ad_pin" style="flex:1;min-width:120px" inputmode="numeric" placeholder="Nouveau code arbitre"><button class="btn sm alt" data-do="setpin">Changer le code</button></div>')+'<div class="row" style="margin-top:8px"><button class="btn sm alt" data-do="backup">Copier une sauvegarde</button><button class="btn sm alt" data-do="discard">Annuler mes saisies non publiées</button><button class="btn sm alt" data-do="logout">Quitter le mode orga</button></div>';
 d.innerHTML=h;
 
@@ -775,6 +787,7 @@ case "addmsg":var mm=$("#ad_msg").value.trim();if(mm)changed(mm);break;
 case "setpin":var np=$("#ad_pin").value.trim();if(np.length>=4){S.pin=hash(np);changed();toast("Nouveau code enregistré, publie pour l'appliquer");}else toast("Le code doit faire au moins 4 chiffres");break;
 case "backup":var txt=JSON.stringify(S);try{await navigator.clipboard.writeText(txt);toast("Sauvegarde copiée");}catch(err){toast("Copie refusée par ce navigateur");}break;
 case "logout":ui.admin=false;ssSet("admin",false);closeDrawer();if(FB){if(dirty){toast("Publie ou annule tes saisies avant de te déconnecter");ui.admin=true;ssSet("admin",true);ui.drawer=true;render();break;}firebase.auth().signOut();}render();break;
+case "journal":fbJournalShow();break;
 case "qlinks":var qmsg=qMessage();try{await navigator.clipboard.writeText(qmsg);toast("Message copié, colle le dans le groupe WhatsApp");}catch(err){modal('<span class="eyebrow">Message pour WhatsApp</span><textarea class="in" id="qmsg" style="min-height:260px">'+esc(qmsg)+'</textarea><p class="muted small">Sélectionne tout et copie.</p>');var ta=$("#qmsg");if(ta){ta.focus();ta.select();}}break;
 case "publish":if(FB)fbPublish();else publishNow();break;
 case "discard":if(!t.dataset.sure){t.dataset.sure="1";t.textContent="Confirmer l'annulation";break;}if(FB){fbDiscard();render();toast("Saisies annulées, retour à la version publiée");break;}try{S=JSON.parse(document.getElementById("state").textContent)||defaultState();}catch(err){S=defaultState();}if(!S.links)S.links={photos:"",vote:""};if(!S.mb)S.mb={};dirty=0;ssSet("draft",null);render();renderDrawer();toast("Saisies annulées, retour à la version publiée");break;
