@@ -434,7 +434,7 @@ h+=hero("Merci<br>à tous","Retrolympique 2026 · Le palmarès",'<div class="row
 h+=podiumBlock();
 h+=votesBlock();
 h+=creaBlock();
-h+='<section class="block"><div class="head"><div><span class="eyebrow">Souvenirs</span><h2 class="disp">Le mur</h2></div><button class="btn sm" data-go="mur">Ouvrir le mur</button></div><div class="wall" id="wall-mini"></div></section>';
+h+='<section class="block"><div class="head"><div><span class="eyebrow">Souvenirs</span><h2 class="disp">Le mur</h2></div><button class="btn sm" data-go="mur">Ouvrir le mur</button></div>'+(canPost()?'':'<div class="card" style="margin-bottom:12px"><p style="margin:0 0 10px">Tes photos souvenirs et tes messages, envoie les sur WhatsApp au 5942 1295.</p>'+waBtn("Envoyer sur WhatsApp")+'</div>')+'<div class="wall" id="wall-mini"></div></section>';
 h+=pronoScore();
 }
 return h;
@@ -588,8 +588,9 @@ return '<section class="block"><div class="head"><div><span class="eyebrow">Phot
 '</div></section><section class="block"><div class="wall" id="wall-list"></div></section>';
 }
 function safeUrl(u){return typeof u==="string"&&/^https:\/\/[^\s"'<>]+$/.test(u)?u:"";}
-function publicPhotoCard(){var u=safeUrl(S.links&&S.links.photos);
-return '<h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">Partage tes photos</h2>'+(u?'<p style="margin:0 0 12px">Envoie tes meilleures photos à l\'organisation. Les plus belles seront publiées ici.</p><a class="btn" style="text-decoration:none;display:inline-block" href="'+esc(u)+'" target="_blank" rel="noopener">Envoyer mes photos ↗</a>':'<p class="muted" style="margin:0">L\'organisation publiera ici les photos de la journée. Le lien pour envoyer les tiennes arrive bientôt.</p>');}
+var WA_MUR="https://wa.me/23059421295?text="+encodeURIComponent("Bonjour, voici mes photos et mon message pour le mur des Retrolympiques 2026 📸");
+function waBtn(lbl){return '<a class="btn" style="text-decoration:none;display:inline-block;background:#25D366;border-color:var(--ink);color:#0b2e13" href="'+WA_MUR+'" target="_blank" rel="noopener">'+lbl+' ↗</a>';}
+function publicPhotoCard(){return '<h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">Partage tes photos et messages</h2><p style="margin:0 0 12px">Envoie tes photos souvenirs et ton message sur WhatsApp au 5942 1295. Les plus beaux seront publiés ici.</p>'+waBtn("Envoyer sur WhatsApp");}
 function postForm(){
 return '<form class="form" id="postf"><div class="row"><div class="field" style="flex:1;min-width:140px"><label for="p_nom">Prénom</label><input class="in" id="p_nom" maxlength="30" value="'+esc(lsGet("nom",""))+'"></div><div class="field" style="flex:1;min-width:140px"><label for="p_c">Équipe</label><select class="in" id="p_c">'+CLASSES.map(function(c){return '<option value="'+c.id+'" '+(ui.me===c.id?"selected":"")+'>'+esc(lab(c))+'</option>';}).join("")+'</select></div></div>'+
 '<div class="field"><label for="p_txt">Message</label><textarea class="in" id="p_txt" maxlength="400" placeholder="Le meilleur moment de ta journée"></textarea></div>'+
