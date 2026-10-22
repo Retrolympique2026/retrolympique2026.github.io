@@ -32,8 +32,6 @@ var CLASSES=[
 ["ART","Artémis","BTS GPME + Alternance","Vert","#5BAE9A","#1F1A16","ART"],
 ["ARE","Arès","BTS SIO","Noir","#141414","#FFFFFF","ARÈS"],
 ["HES","Hestia","BTS COMM","Rose","#F55A7A","#1F1A16","HES"],
-["RHE","Rhéa","Licence","Violet","#7765AE","#FFFFFF","RHÉA"],
-["APH","Aphrodite","Master","Rouge","#E7363C","#FFFFFF","APH"],
 ["HER","Hermès","Admin","Orange","#F56438","#1F1A16","HER"]
 ].map(function(c){return {id:c[0],nom:c[1],cl:c[2],coul:c[3],col:c[4],fg:c[5],ab:c[6]};});
 var NT=CLASSES.length;
@@ -390,7 +388,7 @@ var lv=allMatches().filter(function(x){return x.m.st==="encours";});
 lv.forEach(function(x){it.push({t:"En direct · "+x.act.nom+" · "+nm(x.m.a)+" "+x.m.sa+" · "+x.m.sb+" "+nm(x.m.b),hot:true});});
 ACTS.forEach(function(a){if(!S.acts[a.id]||S.acts[a.id].st!=="encours")return;var L=livePts(a.id).slice(0,3);if(L.length)it.push({t:"En direct · "+a.nom+" · "+L.map(function(x){return nm(x.id)+" "+x.n;}).join(", "),hot:true});});
 (S.feed||[]).slice(0,6).forEach(function(f){it.push({t:f.txt});});
-if(it.length<3){it.push({t:"Vendredi 23 octobre 2026 · Racing Club"});it.push({t:"7 équipes · 7 dieux de l'Olympe · 12 épreuves"});it.push({t:"Tenue rétro fortement conseillée"});}
+if(it.length<3){it.push({t:"Vendredi 23 octobre 2026 · Racing Club"});it.push({t:"5 équipes · 5 dieux de l'Olympe · 10 épreuves"});it.push({t:"Tenue rétro fortement conseillée"});}
 return it;
 }
 function view(){
@@ -425,7 +423,7 @@ h+=teamsStrip();
 h+=creaBlock();
 h+=supportBlock();
 h+='<section class="block"><div class="head"><div><span class="eyebrow">Le principe</span><h2 class="disp">Une journée, un champion</h2></div></div><div class="grid g3">'+
-rule("7 équipes en lice","Chaque filière défend les couleurs d'un dieu de l'Olympe. Même l'administration entre dans l'arène avec Hermès.","var(--teal)")+
+rule("5 équipes en lice","Chaque filière défend les couleurs d'un dieu de l'Olympe. Même l'administration entre dans l'arène avec Hermès.","var(--teal)")+
 rule("Des points à chaque épreuve","Le vainqueur gagne 10 points et le finaliste 7 points. Les autres équipes ne marquent pas de points sur cette épreuve.","var(--mustard)")+
 rule("Mascottes et drapeaux","2 mascottes et 1 drapeau par team, pour mettre l'ambiance et défendre vos couleurs.","var(--red)")+'</div></section>';
 h+=actsTeaser();
@@ -472,7 +470,7 @@ return '<section class="block"><div class="head"><div><span class="eyebrow">Plac
 '<p class="muted small" style="margin:12px 0 0">Préparez vos mascottes et votre drapeau, mobilisez vos équipes et venez défendre fièrement vos couleurs.</p></section>';
 }
 function teamsStrip(){
-return '<section class="block"><div class="head"><div><span class="eyebrow">'+(ui.me?"Les forces en présence":"Touche ton équipe pour la suivre partout")+'</span><h2 class="disp">7 équipes, 7 dieux</h2></div><button class="btn sm alt" data-go="classes">Fiches équipes</button></div><div class="tstrip">'+
+return '<section class="block"><div class="head"><div><span class="eyebrow">'+(ui.me?"Les forces en présence":"Touche ton équipe pour la suivre partout")+'</span><h2 class="disp">5 équipes, 5 dieux</h2></div><button class="btn sm alt" data-go="classes">Fiches équipes</button></div><div class="tstrip">'+
 CLASSES.map(function(c){return '<button class="tflag" data-me="'+c.id+'" aria-pressed="'+(ui.me===c.id)+'" style="--tc:'+c.col+';--tf:'+c.fg+'"><span>'+esc(c.coul)+'</span><b>'+esc(c.nom)+'</b><small>'+esc(c.cl)+'</small></button>';}).join("")+'</div></section>';
 }
 function supportBlock(){
@@ -589,7 +587,7 @@ return '<svg viewBox="0 0 440 290" role="img" aria-label="Plan schématique du R
 Z.map(function(z){return '<g><rect x="'+z[2]+'" y="'+z[3]+'" width="'+z[4]+'" height="'+z[5]+'" rx="8" fill="'+z[6]+'" fill-opacity="'+(z[6]==="#FBF4E8"?1:.55)+'" stroke="#1F1A16" stroke-width="1.5"/><text x="'+(z[2]+8)+'" y="'+(z[3]+18)+'" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="14" fill="#1F1A16">'+z[0].toUpperCase()+'</text><text x="'+(z[2]+8)+'" y="'+(z[3]+33)+'" font-family="Barlow,sans-serif" font-size="11" fill="#1F1A16">'+z[1]+'</text></g>';}).join("")+'</svg><p class="muted small" style="margin:8px 0 0">Plan indicatif, l\'implantation exacte est confirmée sur place.</p>';
 }
 
-function INS(){return Array.isArray(window.RETRO_INSCRITS)?window.RETRO_INSCRITS:[];}
+function INS(){return (Array.isArray(window.RETRO_INSCRITS)?window.RETRO_INSCRITS:[]).filter(function(x){return CL[x[1]];});}
 function insOf(t,a){return INS().filter(function(x){return (!t||x[1]===t)&&(!a||(x[2]||[]).indexOf(a)>=0);}).map(function(x){return x[0];}).sort(function(p,q){return p.localeCompare(q);});}
 function insNames(l){return l.length?'<div class="small" style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:4px">'+l.map(function(n){return '<span>'+esc(n)+'</span>';}).join('')+'</div>':'<div class="muted small" style="margin-top:4px">Personne pour le moment</div>';}
 function insBlock(){var L=INS();if(!L.length)return '';var t=ui.insT||ui.me||CLASSES[0].id;var c=CL[t];var mine=insOf(t);
@@ -600,7 +598,7 @@ return '<section class="block"><div class="head"><div><span class="eyebrow">'+L.
 '<p class="muted small" style="margin:10px 0 0">Liste des inscrits, prénom et initiale du nom. Une erreur ou un oubli, signale le à l\'organisation.</p></section>';}
 function vClasses(){
 var st=standings();
-return '<section class="block"><div class="head"><div><span class="eyebrow">Touche une équipe pour la suivre partout</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Les 7 équipes</h1></div></div><div class="grid g3">'+
+return '<section class="block"><div class="head"><div><span class="eyebrow">Touche une équipe pour la suivre partout</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Les 5 équipes</h1></div></div><div class="grid g3">'+
 CLASSES.map(function(c){var r=st.find(function(x){return x.id===c.id;});var pos=st.indexOf(r)+1;var nx=nextFor(c.id);
 return '<button class="card team '+(ui.me===c.id?"mine":"")+'" data-me="'+c.id+'" style="--tc:'+c.col+';--tf:'+c.fg+'"><div class="flag"><span class="rk num">#'+pos+'</span><small>'+esc(c.coul)+'</small><span class="disp">'+esc(c.nom)+'</span><small>'+esc(c.cl)+'</small></div><div class="tb"><div class="row" style="justify-content:space-between"><div class="medals num small"><span class="m g"><i></i>'+r.g+'</span><span class="m s"><i></i>'+r.s+'</span><span class="m b"><i></i>'+r.b+'</span></div><span class="pts num" style="font-size:1.2rem">'+r.p+' pts</span></div><div class="muted small" id="sup-'+c.id+'"></div>'+(INS().length?'<div class="small"><b>'+insOf(c.id).length+' inscrits</b></div>':'')+(nx?'<div class="small"><b>Prochain match</b> '+esc(nx)+'</div>':'')+(ui.me===c.id?'<span class="pill" style="background:var(--mustard);justify-self:start">Mon équipe</span>':'')+'</div></button>';}).join("")+'</div></section>'+insBlock();
 }
