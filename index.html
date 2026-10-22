@@ -11,6 +11,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com; frame-src https://*.firebaseapp.com; form-action 'none'; base-uri 'none'; object-src 'none'; manifest-src 'self'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <script src="config.js"></script>
+<script src="inscrits.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
@@ -48,7 +49,7 @@ var ACTS=[
 {id:"uno",m:[["Match 1","Préliminaire","50 points"],["Match 2","Demi finale","50 points"],["Match 3","Demi finale","50 points"],["Match 4","Finale","50 points"]],nom:"Uno",fam:"plateau",fmt:"tableau",h:"12h00",l:"Club house",eq:"1 équipe par classe",resp:"Teisha, aide Mika",r:"Parties en 50 points, préliminaire, demi finales puis finale. Présélection dans la classe si besoin."},
 {id:"relais",m:[["Course","Chronomètre ou course relais",""]],nom:"Relais",fam:"force",fmt:"classement",h:"12h30",l:"Piste",eq:"Équipe de 5",resp:"Elodie, aide Neeta",r:"Course de relais au chronomètre."},
 {id:"corde",m:[["Match 1","Préliminaire","5 min"],["Match 2","Demi finale","5 min"],["Match 3","Demi finale","5 min"],["Match 4","Finale","5 min"]],nom:"Tir à la corde",fam:"force",fmt:"tableau",h:"13h00",l:"Pelouse",eq:"Équipe de 10",resp:"Florian, aide Loïc",r:"Tug of war. Duels de 5 minutes, préliminaire, demi finales puis finale."},
-{id:"pingpong",m:[["Match 1","Préliminaire","11 points"],["Match 2","Demi finale","11 points"],["Match 3","Demi finale","11 points"],["Match 4","Finale","11 points"]],nom:"Ping Pong",fam:"plateau",fmt:"tableau",h:"10h30",l:"Club house",eq:"2 joueurs par équipe",resp:"",r:"Matchs en 11 points, 2 manches gagnantes. Préliminaire, demi finales puis finale."}
+{id:"pingpong",m:[["Match 1","Préliminaire","11 points"],["Match 2","Demi finale","11 points"],["Match 3","Demi finale","11 points"],["Match 4","Finale","11 points"]],nom:"Ping Pong",fam:"plateau",fmt:"tableau",h:"En amont",l:"Club house",eq:"Double mixte",resp:"",r:"Double mixte. Matchs joués en amont, avant la journée du 23 octobre. Matchs en 11 points, 2 manches gagnantes, préliminaire, demi finales puis finale."}
 ];
 var AC={};ACTS.forEach(function(a){AC[a.id]=a;});
 function saveCustomActs(){var custom=ACTS.map(function(a){return {id:a.id,nom:a.nom,fam:a.fam,fmt:a.fmt,h:a.h,l:a.l,eq:a.eq,resp:a.resp||"",m:a.m||null,r:a.r};});lsSet("customActs2",custom);}
@@ -559,6 +560,7 @@ var h='<div class="row" style="justify-content:space-between"><span class="eyebr
 if(a.m&&a.m.length)h+='<div class="card" style="margin-bottom:14px;padding:12px"><span class="eyebrow">Déroulé officiel</span><div style="display:grid;gap:4px;margin-top:6px">'+a.m.map(function(x){return '<div class="row small" style="justify-content:space-between;gap:8px;border-bottom:1px dashed rgba(0,0,0,.15);padding:3px 0"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span><span class="muted">'+esc(x[2])+'</span></div>';}).join('')+'</div><div class="row small" style="gap:6px;margin-top:8px"><span class="pill" style="background:var(--mustard)">Vainqueur 10 pts</span><span class="pill">Finaliste 7 pts</span></div></div>';
 if(rk.some(Boolean))h+='<div class="grid" style="gap:6px;margin-bottom:14px">'+rk.map(function(c,i){return c?'<div class="cls"><span class="pill">'+["Or","Argent","Bronze","4e"][i]+'</span>'+chip(c)+'<span>'+esc(nm(c))+'</span><div class="row" style="margin-left:auto;gap:4px"><button class="btn sm" data-adj="'+id+':'+c+':-1" title="Retirer">−</button><button class="btn sm" data-adj="'+id+':'+c+':1" title="Ajouter">+</button></div></div>':"";}).join("")+'</div>';
 if(s.fmt==="classement"){var unranked=CLASSES.filter(function(c){return rk.indexOf(c.id)<0;});if(unranked.length)h+='<div style="margin-bottom:14px"><span class="eyebrow">Ajouter au classement</span><div class="picks" style="margin-top:6px">'+unranked.map(function(c){return '<button class="pick" data-adj="'+id+':'+c.id+':1">+ '+esc(c.nom)+'</button>';}).join("")+'</div></div>';}
+if(INS().length){var tot=insOf(null,id).length;h+='<details class="card" style="margin-bottom:14px;padding:12px"><summary style="cursor:pointer"><b>'+tot+' inscrits</b> <span class="muted small">par team, touche pour voir</span></summary>'+CLASSES.map(function(c){var l=insOf(c.id,id);return '<div style="margin-top:8px"><div class="cls small">'+chip(c.id)+'<b>'+esc(c.nom)+'</b><span class="muted">'+l.length+'</span></div>'+insNames(l)+'</div>';}).join('')+'</details>';}
 if(livePts(id).length&&s.st!=="termine")h+=liveBoard(a);
 if(s.fmt==="tableau"){h+=s.br?bracketHTML(s.br):'<div class="note">Le tableau sera révélé après le tirage au sort.</div>';}
 return h;
@@ -585,11 +587,20 @@ return '<svg viewBox="0 0 440 290" role="img" aria-label="Plan schématique du R
 Z.map(function(z){return '<g><rect x="'+z[2]+'" y="'+z[3]+'" width="'+z[4]+'" height="'+z[5]+'" rx="8" fill="'+z[6]+'" fill-opacity="'+(z[6]==="#FBF4E8"?1:.55)+'" stroke="#1F1A16" stroke-width="1.5"/><text x="'+(z[2]+8)+'" y="'+(z[3]+18)+'" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="14" fill="#1F1A16">'+z[0].toUpperCase()+'</text><text x="'+(z[2]+8)+'" y="'+(z[3]+33)+'" font-family="Barlow,sans-serif" font-size="11" fill="#1F1A16">'+z[1]+'</text></g>';}).join("")+'</svg><p class="muted small" style="margin:8px 0 0">Plan indicatif, l\'implantation exacte est confirmée sur place.</p>';
 }
 
+function INS(){return Array.isArray(window.RETRO_INSCRITS)?window.RETRO_INSCRITS:[];}
+function insOf(t,a){return INS().filter(function(x){return (!t||x[1]===t)&&(!a||(x[2]||[]).indexOf(a)>=0);}).map(function(x){return x[0];}).sort(function(p,q){return p.localeCompare(q);});}
+function insNames(l){return l.length?'<div class="small" style="display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:4px">'+l.map(function(n){return '<span>'+esc(n)+'</span>';}).join('')+'</div>':'<div class="muted small" style="margin-top:4px">Personne pour le moment</div>';}
+function insBlock(){var L=INS();if(!L.length)return '';var t=ui.insT||ui.me||CLASSES[0].id;var c=CL[t];var mine=insOf(t);
+return '<section class="block"><div class="head"><div><span class="eyebrow">'+L.length+' inscrits au total</span><h2 class="disp">Qui joue quoi</h2></div></div>'+
+'<div class="picks" style="margin-bottom:12px">'+CLASSES.map(function(k){var n=insOf(k.id).length;return '<button type="button" class="pick" data-ins="'+k.id+'" style="'+(k.id===t?'background:'+k.col+';color:'+k.fg+';border-color:var(--ink)':'')+'">'+esc(k.nom)+' <b>'+n+'</b></button>';}).join('')+'</div>'+
+'<div class="card" style="border-top:10px solid '+c.col+'"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:6px"><h3 class="cond" style="font-weight:800;text-transform:uppercase;font-size:1.4rem;margin:0">'+esc(c.nom)+' <span class="muted small" style="text-transform:none">'+esc(c.cl)+'</span></h3><span class="pill">'+mine.length+' inscrits</span></div>'+
+'<div class="grid g2" style="gap:10px;margin-top:10px">'+ACTS.map(function(a){var l=insOf(t,a.id);return '<div style="border-bottom:1px dashed rgba(0,0,0,.15);padding-bottom:8px"><div class="row" style="justify-content:space-between"><b>'+esc(a.nom)+'</b><span class="muted small">'+l.length+'</span></div>'+insNames(l)+'</div>';}).join('')+'</div></div>'+
+'<p class="muted small" style="margin:10px 0 0">Liste issue du formulaire d\'inscription, prénom et initiale du nom. Une erreur ou un oubli, signale le à l\'organisation.</p></section>';}
 function vClasses(){
 var st=standings();
 return '<section class="block"><div class="head"><div><span class="eyebrow">Touche une équipe pour la suivre partout</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Les 7 équipes</h1></div></div><div class="grid g3">'+
 CLASSES.map(function(c){var r=st.find(function(x){return x.id===c.id;});var pos=st.indexOf(r)+1;var nx=nextFor(c.id);
-return '<button class="card team '+(ui.me===c.id?"mine":"")+'" data-me="'+c.id+'" style="--tc:'+c.col+';--tf:'+c.fg+'"><div class="flag"><span class="rk num">#'+pos+'</span><small>'+esc(c.coul)+'</small><span class="disp">'+esc(c.nom)+'</span><small>'+esc(c.cl)+'</small></div><div class="tb"><div class="row" style="justify-content:space-between"><div class="medals num small"><span class="m g"><i></i>'+r.g+'</span><span class="m s"><i></i>'+r.s+'</span><span class="m b"><i></i>'+r.b+'</span></div><span class="pts num" style="font-size:1.2rem">'+r.p+' pts</span></div><div class="muted small" id="sup-'+c.id+'"></div>'+(nx?'<div class="small"><b>Prochain match</b> '+esc(nx)+'</div>':'')+(ui.me===c.id?'<span class="pill" style="background:var(--mustard);justify-self:start">Mon équipe</span>':'')+'</div></button>';}).join("")+'</div></section>';
+return '<button class="card team '+(ui.me===c.id?"mine":"")+'" data-me="'+c.id+'" style="--tc:'+c.col+';--tf:'+c.fg+'"><div class="flag"><span class="rk num">#'+pos+'</span><small>'+esc(c.coul)+'</small><span class="disp">'+esc(c.nom)+'</span><small>'+esc(c.cl)+'</small></div><div class="tb"><div class="row" style="justify-content:space-between"><div class="medals num small"><span class="m g"><i></i>'+r.g+'</span><span class="m s"><i></i>'+r.s+'</span><span class="m b"><i></i>'+r.b+'</span></div><span class="pts num" style="font-size:1.2rem">'+r.p+' pts</span></div><div class="muted small" id="sup-'+c.id+'"></div>'+(INS().length?'<div class="small"><b>'+insOf(c.id).length+' inscrits</b></div>':'')+(nx?'<div class="small"><b>Prochain match</b> '+esc(nx)+'</div>':'')+(ui.me===c.id?'<span class="pill" style="background:var(--mustard);justify-self:start">Mon équipe</span>':'')+'</div></button>';}).join("")+'</div></section>'+insBlock();
 }
 function nextFor(cid){var x=allMatches().find(function(x){return (x.m.a===cid||x.m.b===cid)&&x.m.st!=="fini";});if(!x)return "";var o=x.m.a===cid?x.m.b:x.m.a;return x.act.nom+(o?" contre "+nm(o):"")+(x.m.st==="encours"?", en direct":"");}
 
@@ -774,8 +785,9 @@ var q=.78,url=c.toDataURL("image/jpeg",q);while(url.length>limit&&q>.3){q-=.08;u
 }
 
 document.addEventListener("click",async function(e){
-var t=e.target.closest("[data-go],[data-do],[data-act],[data-me],[data-sup],[data-fil],[data-vote],[data-sc],[data-tw],[data-ff],[data-fp],[data-pt],[data-qst],[data-qact],[data-mb],[data-phase],[data-del],[data-delph],[data-adj],[data-newact],[data-editact],[data-delact],[data-dsel]");if(!t)return;
+var t=e.target.closest("[data-go],[data-do],[data-act],[data-me],[data-sup],[data-fil],[data-vote],[data-sc],[data-tw],[data-ff],[data-fp],[data-pt],[data-qst],[data-qact],[data-mb],[data-phase],[data-del],[data-delph],[data-adj],[data-newact],[data-editact],[data-delact],[data-dsel],[data-ins]");if(!t)return;
 var d=t.dataset;
+if(d.ins){ui.insT=d.ins;render();return;}
 if(d.dsel){var ds=dselOf(ui.adAct);var ix=ds.indexOf(d.dsel);if(ix>=0)ds.splice(ix,1);else if(ds.length<8)ds.push(d.dsel);renderDrawer();return;}
 if(d.adj){var p=d.adj.split(":");adjustRank(p[0],p[1],parseInt(p[2],10));if($("#scrim")&&AC[p[0]]){actModal(p[0]);}return;}
 if(d.newact){openActEditor(null);return;}
