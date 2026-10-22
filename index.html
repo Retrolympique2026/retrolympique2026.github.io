@@ -62,6 +62,18 @@ function defaultState(){
 var a={};ACTS.forEach(function(x){a[x.id]={st:"avenir",h:x.h,l:x.l,fmt:x.fmt,br:null,rk:[],ff:[],pts:{}};});
 return {v:2,phase:null,pin:hash("2310"),annonce:"",acts:a,fp:{},mb:{},feed:[],photos:[],horairesOk:false,pub:null};
 }
+var TK=[
+["📼","Transformation rétro","Tenue de tous les jours, un saut, et te voilà en look années 80. Bandeau, chaussettes hautes, lunettes fluo.","Facile","var(--teal)"],
+["🏛️","L'entrée des dieux","Ta team arrive au ralenti comme les divinités de l'Olympe, sur une musique épique. Regards sérieux obligatoires.","Facile","var(--mustard)"],
+["🎙️","Commentateur d'époque","Commente un match comme à la télé des années 80. Voix nasillarde, micro imaginaire, suspense total.","Moyen","var(--orange)"],
+["🐢","Le replay olympique","Rejoue le plus beau point de la journée au super ralenti, façon finale des Jeux.","Moyen","var(--red)"],
+["🕺","La danse de la victoire","Une chorégraphie rétro de toute la team, avec la mascotte au premier rang.","Moyen","var(--teal)"],
+["🔥","Le passage de flamme","Un objet passe de main en main et chaque membre fait une transition. Plus c'est fluide, plus c'est fort.","Défi","var(--mustard)"],
+["📸","Photo de classe 1985","Pose figée comme une vieille photo, puis tout le monde explose de rire. Filtre VHS conseillé.","Facile","var(--orange)"],
+["🗣️","Le cri de guerre","Le cri de ta team version film épique. Gros plan, vent dans les cheveux, tambours.","Facile","var(--red)"],
+["🤝","Le geste fair play","Capture le plus beau moment d'esprit sportif de la journée. Le vrai esprit olympique.","Facile","var(--teal)"],
+["🎞️","Un jour en 15 secondes","Un plan par heure, du réveil au podium. Le résumé de ta journée Retrolympiques.","Défi","var(--mustard)"]];
+var tkLast=-1;
 var S;try{S=JSON.parse(document.getElementById("state").textContent);}catch(e){S=null;}
 if(!S)S=defaultState();
 if(!S.mb)S.mb={};
@@ -580,12 +592,22 @@ return '<button class="card team '+(ui.me===c.id?"mine":"")+'" data-me="'+c.id+'
 }
 function nextFor(cid){var x=allMatches().find(function(x){return (x.m.a===cid||x.m.b===cid)&&x.m.st!=="fini";});if(!x)return "";var o=x.m.a===cid?x.m.b:x.m.a;return x.act.nom+(o?" contre "+nm(o):"")+(x.m.st==="encours"?", en direct":"");}
 
+function tkCard(i){var x=TK[i];return '<div class="it" style="border-top:10px solid '+x[4]+'"><span class="big" style="font-size:2rem">'+x[0]+'</span><h3>'+esc(x[1])+'</h3><p class="muted" style="margin:0 0 8px">'+esc(x[2])+'</p><span class="pill" style="font-size:.75rem;width:max-content;align-self:start;justify-self:start">'+esc(x[3])+'</span></div>';}
+function tkPick(){var i;do{i=Math.floor(Math.random()*TK.length);}while(TK.length>1&&i===tkLast);tkLast=i;var x=TK[i];var el=$("#tk-pick");if(el){el.hidden=false;el.innerHTML='<span class="eyebrow" style="color:var(--mustard)">Ton défi du jour</span><div style="font-size:2.4rem;line-height:1.1;margin:6px 0">'+x[0]+'</div><h3 class="cond" style="font-weight:800;text-transform:uppercase;font-size:1.4rem;margin:0 0 6px">'+esc(x[1])+'</h3><p style="margin:0;color:#efe4d3">'+esc(x[2])+'</p>';}confetti(60);}
+function tiktokBlock(){
+return '<section class="block"><div class="head"><div><span class="eyebrow">Studio créa</span><h2 class="disp">Idées de vidéos TikTok</h2></div><span class="pill" style="background:var(--mustard)">#Retrolympiques2026</span></div>'+
+'<p class="lead" style="margin-bottom:14px">Sors ton téléphone et lâche ta créativité. Rétro, épique ou complètement absurde, tout est permis tant que c\'est dans la bonne humeur. Montre au monde ce que vaut ta team.</p>'+
+'<div class="card" style="background:var(--ink);color:var(--paper);display:grid;gap:12px;margin-bottom:14px"><div id="tk-pick" hidden></div><div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn" data-do="tiktok" style="background:var(--mustard);color:var(--ink)">🎲 Tire un défi au hasard</button><span class="small" style="color:#efe4d3">Pas d\'inspiration ? Laisse le hasard choisir pour toi.</span></div></div>'+
+'<div class="crea">'+TK.map(function(x,i){return tkCard(i);}).join("")+'</div>'+
+'<div class="grid g2" style="margin-top:14px;align-items:start"><div class="card"><span class="eyebrow">Les règles du jeu</span><ul style="margin:8px 0 0;padding-left:18px;display:grid;gap:6px"><li>Mentionne ta team et ajoute <b>#Retrolympiques2026</b></li><li>Demande toujours l\'accord avant de filmer quelqu\'un</li><li>Bonne humeur et respect avant tout, zéro moquerie</li><li>Pas de vidéo pendant un match si tu joues, ta team a besoin de toi</li></ul></div>'+
+'<div class="card"><span class="eyebrow">Ta vidéo mérite d\'être vue</span><p style="margin:8px 0 12px">Envoie aussi ta vidéo au 5942 1295. Les plus créatives seront mises en avant par l\'organisation.</p>'+waBtn("Envoyer ma vidéo")+'</div></div></section>';
+}
 function vMur(){
 var ph=phase();
 return '<section class="block"><div class="head"><div><span class="eyebrow">Photos et messages</span><h1 class="disp retro" style="font-size:clamp(2rem,6vw,3.4rem)">Le mur</h1></div></div>'+
 '<div class="grid g2" style="align-items:start"><div class="card">'+(canPost()?'<h2 class="cond" style="font-weight:800;text-transform:uppercase;margin-bottom:10px">'+(ph==="apres"?"Raconte ta journée":"Laisse un message")+'</h2>'+postForm():publicPhotoCard())+'</div>'+
 (S.photos&&S.photos.length?'<div class="card"><span class="eyebrow">Photos officielles</span><div class="grid" style="grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px">'+S.photos.slice(0,9).map(function(p){return '<img src="'+p.src+'" alt="'+esc(p.cap||"Photo officielle")+'" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;border:1.5px solid var(--ink)">';}).join("")+'</div></div>':'<div class="card"><span class="eyebrow">Photos officielles</span><p class="muted" style="margin:6px 0 0">Les photos de l\'équipe d\'organisation apparaîtront ici pendant et après la journée.</p></div>')+
-'</div></section><section class="block"><div class="wall" id="wall-list"></div></section>';
+'</div></section>'+tiktokBlock()+'<section class="block"><div class="wall" id="wall-list"></div></section>';
 }
 function safeUrl(u){return typeof u==="string"&&/^https:\/\/[^\s"'<>]+$/.test(u)?u:"";}
 var WA_MUR="https://wa.me/23059421295?text="+encodeURIComponent("Bonjour, voici mes photos et mon message pour le mur des Retrolympiques 2026 📸");
@@ -788,6 +810,7 @@ case "addmsg":var mm=$("#ad_msg").value.trim();if(mm)changed(mm);break;
 case "setpin":var np=$("#ad_pin").value.trim();if(np.length>=4){S.pin=hash(np);changed();toast("Nouveau code enregistré, publie pour l'appliquer");}else toast("Le code doit faire au moins 4 chiffres");break;
 case "backup":var txt=JSON.stringify(S);try{await navigator.clipboard.writeText(txt);toast("Sauvegarde copiée");}catch(err){toast("Copie refusée par ce navigateur");}break;
 case "logout":ui.admin=false;ssSet("admin",false);closeDrawer();if(FB){if(dirty){toast("Publie ou annule tes saisies avant de te déconnecter");ui.admin=true;ssSet("admin",true);ui.drawer=true;render();break;}firebase.auth().signOut();}render();break;
+case "tiktok":tkPick();break;
 case "journal":fbJournalShow();break;
 case "qlinks":var qmsg=qMessage();try{await navigator.clipboard.writeText(qmsg);toast("Message copié, colle le dans le groupe WhatsApp");}catch(err){modal('<span class="eyebrow">Message pour WhatsApp</span><textarea class="in" id="qmsg" style="min-height:260px">'+esc(qmsg)+'</textarea><p class="muted small">Sélectionne tout et copie.</p>');var ta=$("#qmsg");if(ta){ta.focus();ta.select();}}break;
 case "publish":if(FB)fbPublish();else publishNow();break;
