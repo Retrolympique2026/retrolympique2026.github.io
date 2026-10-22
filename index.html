@@ -433,7 +433,7 @@ rule("Des points à chaque épreuve","Le vainqueur gagne 10 points et le finalis
 rule("Mascottes et drapeaux","2 mascottes et 1 drapeau par team, pour mettre l'ambiance et défendre vos couleurs.","var(--red)")+'</div></section>';
 h+=actsTeaser();
 } else if(ph==="j2"){
-h+=hero("Plus que<br>48 heures","Vendredi 23 octobre · Accueil dès 8h00",countHTML()+'<div class="row"><button class="btn" data-go="programme">Le programme</button><button class="btn alt" data-do="pronos">Faire mes pronos</button></div>');
+h+=hero((function(){var hh=Math.ceil((T_GO-now())/36e5);return hh>1?"Plus que<br>"+hh+" heures":hh===1?"Plus qu'une<br>heure":"C'est<br>parti";})(),"Vendredi 23 octobre · Arrivée à 8h45, coup d'envoi à 9h00",countHTML()+'<div class="row"><button class="btn" data-go="programme">Le programme</button><button class="btn alt" data-do="pronos">Faire mes pronos</button></div>');
 h+=meBlock();
 h+=ctaBlock();
 h+=teamsStrip();
@@ -884,7 +884,7 @@ if(draftMsg)setTimeout(function(){toast(draftMsg);},700);
 if(location.hash==="#tv")tvOpen();
 if(location.hash==="#orga"){var oT=0,oI=setInterval(function(){if(!FB||FBS.authKnown||++oT>60){clearInterval(oI);adminOpen();}},150);}
 var seen=lsGet("seenFeed",0);var fl=(S.feed||[]).filter(function(x){return x.k==="or";}).length;if(fl>seen){setTimeout(function(){confetti(150);},600);}lsSet("seenFeed",fl);
-setInterval(function(){var p=phase();if(p!==window.__ph){window.__ph=p;render();}},60000);window.__ph=phase();
+setInterval(function(){var p=phase();var hh=Math.ceil((T_GO-now())/36e5);if(p!==window.__ph||(p==="j2"&&hh!==window.__hh&&ui.tab==="accueil"&&!$("#scrim")&&!$("#drawer"))){window.__ph=p;window.__hh=hh;render();}},60000);window.__ph=phase();window.__hh=Math.ceil((T_GO-now())/36e5);
 })();
 </script>
 
