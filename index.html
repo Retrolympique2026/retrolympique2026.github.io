@@ -213,7 +213,7 @@ function quickView(){var a=AC[ui.quick],s=S.acts[ui.quick];
   else h+=s.fmt==="tableau"?qvBracket(a,s):(a.id==="relais"?qvRelais(a,s):qvPoints(a,s));
   if(FB&&FBS.user)h+='<div class="qv-bar"><span>'+esc(fbStatus())+'</span><button class="btn" style="box-shadow:3px 3px 0 var(--red)" data-do="publish" '+(dirty?"":"disabled")+'>Envoyer</button></div>';
   return h+'</div>';}
-function qvBracket(a,s){if(!s.br)return '<div class="note">Le tirage au sort n\'est pas encore fait. La table de marque le lance depuis l\'espace organisation, puis les matchs apparaissent ici.</div>';
+function qvBracket(a,s){if(!s.br)return '<div class="note">Le tableau de cette épreuve n\'est pas encore disponible, puis les matchs apparaissent ici.</div>';
   var it=[];s.br.r.forEach(function(rd,ri){rd.forEach(function(m,mi){it.push({m:m,k:ri+"_"+mi,t:mLabel(ri,mi)});});});
   var play=it.filter(function(x){return x.m.a&&x.m.b&&(x.m.st!=="fini"||(x.m.sa===x.m.sb&&!x.m.w));}),done=it.filter(function(x){return x.m.a&&x.m.b&&x.m.st==="fini"&&!(x.m.sa===x.m.sb&&!x.m.w);});
   var h=play.length?play.map(function(x){var m=x.m,tie=m.st==="fini"&&m.sa===m.sb&&!m.w;
@@ -342,7 +342,7 @@ function fbJournal(pDL,pOL,pDP,tk,q){try{var parts=[],an=function(a){return AC[a
 Object.keys(pDL).forEach(function(a){Object.keys(pDL[a]).forEach(function(k){var x=pDL[a][k],m=getMOf(a,k)||{};var t=[];if(+x.a)t.push(nm(m.a)+" "+sg(+x.a));if(+x.b)t.push(nm(m.b)+" "+sg(+x.b));if(t.length)parts.push(an(a)+", "+t.join(", "));});});
 Object.keys(pDP).forEach(function(a){var t=[];Object.keys(pDP[a]).forEach(function(c){if(+pDP[a][c])t.push(nm(c)+" "+sg(+pDP[a][c]));});if(t.length)parts.push(an(a)+", "+t.join(", "));});
 Object.keys(pOL).forEach(function(a){Object.keys(pOL[a]).forEach(function(k){var o=pOL[a][k];if(o.w)parts.push(an(a)+", vainqueur "+nm(o.w));else if(o.st==="fini")parts.push(an(a)+", match terminé");else if(o.st)parts.push(an(a)+", match "+o.st);});});
-tk.forEach(function(f){if(f.indexOf("a_")===0)parts.push(an(f.slice(2))+", statut, réglage ou tirage mis à jour");else parts.push("Réglages généraux modifiés");});
+tk.forEach(function(f){if(f.indexOf("a_")===0)parts.push(an(f.slice(2))+", statut de l'épreuve mis à jour");else parts.push("Réglages généraux modifiés");});
 q.forEach(function(x){if(x&&x.txt)parts.push(x.txt);});
 var txt=parts.join(" · ").slice(0,580);if(!txt)return;
 FBS.db.collection("journal").add({e:FBS.user.email||"",t:now(),x:txt}).catch(function(){});}catch(e){}}
@@ -569,7 +569,7 @@ if(rk.some(Boolean))h+='<div class="grid" style="gap:6px;margin-bottom:14px">'+r
 if(s.fmt==="classement"&&isAdm()){var unranked=CLASSES.filter(function(c){return rk.indexOf(c.id)<0;});if(unranked.length)h+='<div style="margin-bottom:14px"><span class="eyebrow">Ajouter au classement</span><div class="picks" style="margin-top:6px">'+unranked.map(function(c){return '<button class="pick" data-adj="'+id+':'+c.id+':1">+ '+esc(c.nom)+'</button>';}).join("")+'</div></div>';}
 if(INS().length){var tot=insOf(null,id).length;h+='<details class="card" style="margin-bottom:14px;padding:12px"><summary style="cursor:pointer"><b>'+tot+' inscrits</b> <span class="muted small">par team, touche pour voir</span></summary>'+CLASSES.map(function(c){var l=insOf(c.id,id);return '<div style="margin-top:8px"><div class="cls small">'+chip(c.id)+'<b>'+esc(c.nom)+'</b><span class="muted">'+l.length+'</span></div>'+insNames(l)+'</div>';}).join('')+'</details>';}
 if(livePts(id).length&&s.st!=="termine")h+=liveBoard(a);
-if(s.fmt==="tableau"){h+=s.br?bracketHTML(s.br):'<div class="note">Le tableau sera révélé après le tirage au sort.</div>';}
+if(s.fmt==="tableau"){h+=s.br?bracketHTML(s.br):'<div class="note">Le tableau de cette épreuve arrive bientôt.</div>';}
 return h;
 }
 function bracketHTML(br){
