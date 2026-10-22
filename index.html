@@ -569,7 +569,7 @@ if(s.fmt==="tableau"){h+=s.br?bracketHTML(s.br):'<div class="note">Le tableau se
 return h;
 }
 function bracketHTML(br){
-var col=function(t,ms){return '<div class="round"><h4>'+t+'</h4>'+ms.map(function(m){var w=win(m);return '<div class="match '+(m.st==="encours"?"live":"")+'">'+['a','b'].map(function(k){var c=m[k];return '<div class="mrow '+(w&&w===c?"win":"")+'">'+(c?'<span>'+esc(nm(c))+'</span>':'<span class="tbd">'+(t===RN[0]?"Qualifiée en demi":"À définir")+'</span>')+'<span class="sc num">'+(m.st==="avenir"?"":m["s"+k])+'</span></div>';}).join("")+'</div>';}).join("")+'</div>';};
+var col=function(t,ms){return '<div class="round"><h4>'+t+'</h4>'+ms.map(function(m){var w=win(m);return '<div class="match '+(m.st==="encours"?"live":"")+'">'+['a','b'].map(function(k){var c=m[k];return '<div class="mrow '+(w&&w===c?"win":"")+'">'+(c?'<span>'+esc(nm(c))+'</span>':'<span class="tbd">'+(t===RN[0]?"Qualifiée en demi":"À définir")+'</span>')+'<span class="sc num">'+(m.st==="avenir"||!c||!m.b?"":m["s"+k])+'</span></div>';}).join("")+'</div>';}).join("")+'</div>';};
 return '<div class="bracket">'+br.r.map(function(rd,i){return col(RN[i],rd);}).join("")+'</div>';
 }
 
