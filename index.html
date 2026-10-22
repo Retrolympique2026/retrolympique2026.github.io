@@ -54,7 +54,7 @@ var ACTS=[
 var AC={};ACTS.forEach(function(a){AC[a.id]=a;});
 function saveCustomActs(){var custom=ACTS.map(function(a){return {id:a.id,nom:a.nom,fam:a.fam,fmt:a.fmt,h:a.h,l:a.l,eq:a.eq,resp:a.resp||"",m:a.m||null,r:a.r};});lsSet("customActs2",custom);}
 function loadCustomActs(){var saved=lsGet("customActs2",null);if(!saved||!Array.isArray(saved))return;ACTS=saved.map(function(a){return {id:a.id,nom:a.nom,fam:a.fam,fmt:a.fmt,h:a.h,l:a.l,eq:a.eq||"",resp:a.resp||"",m:a.m||null,r:a.r||""};});AC={};ACTS.forEach(function(a){AC[a.id]=a;});}
-var PTS=[10,7,0,0], PART=1, OFFICIEL=true;
+var PTS=[10,7,0,0], PART=0, OFFICIEL=true;
 var T_J2=Date.parse("2026-10-21T00:00:00+04:00"), T_GO=Date.parse("2026-10-23T09:00:00+04:00"), T_LIVE=Date.parse("2026-10-23T06:00:00+04:00"), T_END=Date.parse("2026-10-23T14:00:00+04:00");
 var PHASES=[["avant","Avant","Échauffement"],["j2","48h avant","Compte à rebours final"],["live","Jour J","Scores en direct"],["apres","Après","Souvenirs et palmarès"]];
 var RESET=":root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px/1.4 system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}";
@@ -370,7 +370,7 @@ app.innerHTML=
 '<button class="iconbtn" data-do="tv" title="Mode écran géant">Écran</button>'+
 (MIRROR&&LIVE_URL?'<a class="iconbtn" style="background:var(--red);color:#fff;border-color:var(--red);text-decoration:none" href="'+LIVE_URL+'" target="_blank" rel="noopener">● <span class="lbl-long">Scores en direct</span><span class="lbl-short">Direct</span></a>':'')+(CAP.edit?'<button class="iconbtn" data-do="admin">'+(ui.admin?"Orga ●":"Orga")+'</button>':'')+'</div></header>'+
 '<main class="wrap" id="view">'+view()+'</main>'+
-'<footer><div class="wrap row" style="justify-content:space-between"><div><b class="cond" style="font-size:1.1rem;text-transform:uppercase;letter-spacing:.05em">Journée Sportive MCCI Business School</b><div class="muted small">Vendredi 23 octobre 2026 au Racing Club. 40 ans au service de l\'éducation tertiaire.</div></div><div style="display:grid;gap:6px;justify-items:start"><div class="muted small">Par épreuve, vainqueur 10 points et finaliste 7 points, plus 1 point de participation et les bonus</div>'+(FB&&!FBS.user?'<button class="tab" style="padding:4px 0;font-size:.85rem;color:var(--ink2)" data-do="admin">Accès organisation</button>':'')+'</div></div><div class="wrap small" style="margin-top:14px;padding-top:10px;border-top:1px solid currentColor;opacity:.75;text-align:center">Fait par <b>Thomas Lenferna</b> et l\'équipe <b>BTS SIO</b></div></footer>';
+'<footer><div class="wrap row" style="justify-content:space-between"><div><b class="cond" style="font-size:1.1rem;text-transform:uppercase;letter-spacing:.05em">Journée Sportive MCCI Business School</b><div class="muted small">Vendredi 23 octobre 2026 au Racing Club. 40 ans au service de l\'éducation tertiaire.</div></div><div style="display:grid;gap:6px;justify-items:start"><div class="muted small">Par épreuve, vainqueur 10 points et finaliste 7 points, plus les bonus</div>'+(FB&&!FBS.user?'<button class="tab" style="padding:4px 0;font-size:.85rem;color:var(--ink2)" data-do="admin">Accès organisation</button>':'')+'</div></div><div class="wrap small" style="margin-top:14px;padding-top:10px;border-top:1px solid currentColor;opacity:.75;text-align:center">Fait par <b>Thomas Lenferna</b> et l\'équipe <b>BTS SIO</b></div></footer>';
 if(!CAP.edit&&CAP.ready&&(!FB||FBS.authKnown)){ui.admin=false;ui.drawer=false;}
 if(ui.admin&&ui.drawer&&CAP.edit){var dw=$("#drawer"),ae=document.activeElement;if(dw&&ae&&dw.contains(ae)&&/INPUT|SELECT|TEXTAREA/.test(ae.tagName)){renderPub();}else{var sc1=dw?dw.scrollTop:0;renderDrawer();if($("#drawer"))$("#drawer").scrollTop=sc1;}}
 if(FB&&(ui.tab==="mur"||phase()==="apres"||$("#tv")||(ui.admin&&ui.drawer)))fbPhotos();
@@ -426,7 +426,7 @@ h+=creaBlock();
 h+=supportBlock();
 h+='<section class="block"><div class="head"><div><span class="eyebrow">Le principe</span><h2 class="disp">Une journée, un champion</h2></div></div><div class="grid g3">'+
 rule("7 équipes en lice","Chaque filière défend les couleurs d'un dieu de l'Olympe. Même l'administration entre dans l'arène avec Hermès.","var(--teal)")+
-rule("Des points à chaque épreuve","Le vainqueur gagne 10 points et le finaliste 7 points. Chaque équipe présente gagne 1 point de participation.","var(--mustard)")+
+rule("Des points à chaque épreuve","Le vainqueur gagne 10 points et le finaliste 7 points. Les autres équipes ne marquent pas de points sur cette épreuve.","var(--mustard)")+
 rule("Le fair play compte","Les arbitres peuvent offrir jusqu'à 5 points bonus à une équipe exemplaire.","var(--orange)")+
 rule("Mascottes et drapeaux","2 mascottes et 1 drapeau par team, des points bonus pour les plus créatives.","var(--red)")+'</div></section>';
 h+=actsTeaser();
