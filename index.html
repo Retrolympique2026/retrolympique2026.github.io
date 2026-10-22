@@ -206,7 +206,7 @@ function fbCount(){return Object.keys(FBS.touched).length+FBS.feedQ.length+fbLiv
 function qBase(){return location.origin+location.pathname;}
 function qLink(id){return qBase()+"#saisie-"+encodeURIComponent(id);}
 function quickView(){var a=AC[ui.quick],s=S.acts[ui.quick];
-  var h='<div class="qv"><header class="qv-top"><a class="brand" href="#accueil" aria-label="Retour au site"><i aria-hidden="true"></i></a><div style="min-width:0"><span class="eyebrow">Saisie rapide · table de marque</span><h1 class="disp">'+esc(a.nom)+'</h1></div></header>';
+  var h='<div class="qv"><header class="qv-top"><a class="brand" href="#accueil" aria-label="Retour au site"><i aria-hidden="true"></i></a><div style="min-width:0"><span class="eyebrow">Saisie rapide · table de marque</span><h1 class="disp">'+esc(a.nom)+'</h1>'+(a.resp?'<div class="small">'+esc(respTxt(a))+'</div>':'')+'</div></header>';
   if(!FB)h+='<div class="note">La saisie rapide fonctionne sur le site public retrolympique2026.github.io.</div>';
   else if(!FBS.authKnown||!FBS.ready)h+='<div class="note">Connexion au direct…</div>';
   else if(!FBS.user)h+='<div class="card" style="display:grid;gap:10px"><p style="margin:0">Connecte toi une seule fois avec le compte reçu de l\'organisation. Ensuite ce lien s\'ouvre directement sur les boutons de score.</p><button class="btn" data-do="admin">Se connecter</button></div>';
@@ -487,15 +487,17 @@ function actsTeaser(){
 return '<section class="block"><div class="head"><div><span class="eyebrow">Au programme</span><h2 class="disp">10 épreuves</h2></div>'+legend()+'</div><div class="grid g4">'+ACTS.map(actCard).join("")+'</div></section>';
 }
 function legend(){return '<div class="legend">'+Object.keys(FAM).map(function(k){return '<span class="fam-'+k+'"><i></i>'+FAM[k]+'</span>';}).join("")+'</div>';}
+function respTxt(a){return a&&a.resp?"Responsable "+a.resp:"";}
+function respLine(a){return a&&a.resp?'<div class="small" style="margin-top:6px">👤 '+esc(respTxt(a))+'</div>':"";}
 function actCard(a){var s=S.acts[a.id];var rk=ranking(a.id);
-return '<button class="card act fam-'+a.fam+'" data-act="'+a.id+'"><span class="eyebrow">'+FAM[a.fam]+'</span><h3>'+a.nom+'</h3><div class="meta">'+stLabel(s.st)+'<span class="pill">'+esc(s.h)+'</span><span class="pill">'+esc(s.l)+'</span></div>'+(s.st==="encours"&&livePts(a.id).length?'<div class="cls small">'+chip(livePts(a.id)[0].id)+'<span>En tête, '+esc(nm(livePts(a.id)[0].id))+' avec '+livePts(a.id)[0].n+'</span></div>':rk[0]?'<div class="cls small">'+chip(rk[0])+'<span>Or pour '+esc(nm(rk[0]))+'</span></div>':'')+'</button>';}
+return '<button class="card act fam-'+a.fam+'" data-act="'+a.id+'"><span class="eyebrow">'+FAM[a.fam]+'</span><h3>'+a.nom+'</h3><div class="meta">'+stLabel(s.st)+'<span class="pill">'+esc(s.h)+'</span><span class="pill">'+esc(s.l)+'</span></div>'+respLine(a)+(s.st==="encours"&&livePts(a.id).length?'<div class="cls small">'+chip(livePts(a.id)[0].id)+'<span>En tête, '+esc(nm(livePts(a.id)[0].id))+' avec '+livePts(a.id)[0].n+'</span></div>':rk[0]?'<div class="cls small">'+chip(rk[0])+'<span>Vainqueur, '+esc(nm(rk[0]))+'</span></div>':'')+'</button>';}
 function checklist(){var items=["Tenue rétro, bandeau et chaussettes hautes","Baskets propres et bien lacées","Gourde remplie","Crème solaire et casquette","Carte étudiante","Les 2 mascottes et le drapeau de ta team","Le cri de guerre de ta team"];var done=lsGet("check",{});
 return '<div class="check">'+items.map(function(t,i){return '<label><input type="checkbox" data-chk="'+i+'" '+(done[i]?"checked":"")+'>'+t+'</label>';}).join("")+'</div>';}
 function drawBlock(){
 var L=ACTS.filter(function(a){return S.acts[a.id].br;});if(!L.length)return '';
 var nmx=function(c,alt){return c?esc(nm(c)):'<span class="muted">'+alt+'</span>';};
 return '<section class="block"><div class="head"><div><span class="eyebrow">Tableaux officiels</span><h2 class="disp">Les affiches</h2></div><button class="btn sm alt" data-go="epreuves">Tous les tableaux</button></div><div class="grid g3">'+
-L.map(function(a){var br=S.acts[a.id].br;var rows=[["M1",br.r[0][1].a,br.r[0][1].b,"",""],["M2",br.r[1][0].a,br.r[1][0].b,"","Vainqueur M1"],["M3",br.r[1][1].a,br.r[1][1].b,"",""]];return '<div class="card fam-'+a.fam+'" style="border-top:10px solid var(--fam)"><h3 class="cond" style="font-weight:800;text-transform:uppercase;font-size:1.3rem;margin-bottom:8px">'+a.nom+'</h3>'+rows.map(function(r){return '<div class="small" style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid var(--line)"><span class="muted">'+r[0]+'</span><b>'+nmx(r[1],r[3]||"À définir")+'</b><span class="muted">contre</span><b style="text-align:right">'+nmx(r[2],r[4]||"À définir")+'</b></div>';}).join("")+'</div>';}).join("")+'</div></section>';
+L.map(function(a){var br=S.acts[a.id].br;var rows=[["M1",br.r[0][1].a,br.r[0][1].b,"",""],["M2",br.r[1][0].a,br.r[1][0].b,"","Vainqueur M1"],["M3",br.r[1][1].a,br.r[1][1].b,"",""]];return '<div class="card fam-'+a.fam+'" style="border-top:10px solid var(--fam)"><h3 class="cond" style="font-weight:800;text-transform:uppercase;font-size:1.3rem;margin-bottom:2px">'+a.nom+'</h3><div class="muted small" style="margin-bottom:8px">'+esc(S.acts[a.id].h)+' · '+esc(respTxt(a))+'</div>'+rows.map(function(r){return '<div class="small" style="display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid var(--line)"><span class="muted">'+r[0]+'</span><b>'+nmx(r[1],r[3]||"À définir")+'</b><span class="muted">contre</span><b style="text-align:right">'+nmx(r[2],r[4]||"À définir")+'</b></div>';}).join("")+'</div>';}).join("")+'</div></section>';
 }
 
 function pronoCard(){
@@ -517,7 +519,7 @@ return '<div class="hero" style="min-height:0"><div class="stripes" aria-hidden=
 }
 function matchCard(x){var m=x.m;var w=win(m);
 return '<div class="card livecard fam-'+x.act.fam+'" style="border-top:10px solid var(--fam)"><div class="row" style="justify-content:space-between"><span class="eyebrow">'+x.act.nom+' · '+x.rn+'</span>'+(m.st==="encours"?'<span class="pill live">En direct</span>':m.st==="fini"?'<span class="pill done">Terminé</span>':'<span class="pill soon">À venir</span>')+'</div>'+
-'<div class="score"><div class="t">'+esc(nm(m.a)||"À définir")+'</div><div class="s num"><span>'+m.sa+'</span><span class="muted">·</span><span>'+m.sb+'</span></div><div class="t">'+esc(nm(m.b)||"À définir")+'</div></div>'+(w?'<div class="small" style="text-align:center"><b>Qualifié, '+esc(nm(w))+'</b></div>':'')+'<div class="muted small">'+esc(S.acts[x.act.id].l)+'</div></div>';}
+'<div class="score"><div class="t">'+esc(nm(m.a)||"À définir")+'</div><div class="s num"><span>'+m.sa+'</span><span class="muted">·</span><span>'+m.sb+'</span></div><div class="t">'+esc(nm(m.b)||"À définir")+'</div></div>'+(w?'<div class="small" style="text-align:center"><b>Qualifié, '+esc(nm(w))+'</b></div>':'')+'<div class="muted small">'+esc(S.acts[x.act.id].l)+(x.act.resp?' · '+esc(respTxt(x.act)):'')+'</div></div>';}
 function liveMatchesBlock(){
 var all=allMatches();var lv=all.filter(function(x){return x.m.st==="encours";});
 var next=all.filter(function(x){return x.m.st==="avenir"&&x.m.a&&x.m.b;}).slice(0,6);
