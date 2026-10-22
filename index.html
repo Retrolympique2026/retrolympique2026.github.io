@@ -154,7 +154,7 @@ function standings(){
 var t={};CLASSES.forEach(function(c){t[c.id]={id:c.id,p:0,g:0,s:0,b:0,f:0};});
 ACTS.forEach(function(a){var s=S.acts[a.id];var rk=ranking(a.id);
 rk.forEach(function(cid,i){if(cid&&t[cid]){t[cid].p+=PTS[i];if(i===0)t[cid].g++;if(i===1)t[cid].s++;if(i===2)t[cid].b++;if(i===3)t[cid].f++;}});
-if(s.st==="termine"){CLASSES.forEach(function(c){if(rk.indexOf(c.id)<0&&(s.ff||[]).indexOf(c.id)<0)t[c.id].p+=PART;});}
+if(s.st==="termine"&&rk[0]){var inBr=null;if(s.fmt==="tableau"&&s.br){inBr=[];s.br.r[0].forEach(function(m){if(m.a)inBr.push(m.a);if(m.b)inBr.push(m.b);});}CLASSES.forEach(function(c){if(rk.indexOf(c.id)<0&&(s.ff||[]).indexOf(c.id)<0&&(!inBr||inBr.indexOf(c.id)>=0))t[c.id].p+=PART;});}
 });
 Object.keys(S.fp||{}).forEach(function(k){if(t[k])t[k].p+=S.fp[k]||0;});
 Object.keys(S.mb||{}).forEach(function(k){if(t[k])t[k].p+=S.mb[k]||0;});
