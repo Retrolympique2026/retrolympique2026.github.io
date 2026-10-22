@@ -46,7 +46,8 @@ var ACTS=[
 {id:"volley",m:[["Match 1","Préliminaire","11 points"],["Match 2","Demi finale","11 points"],["Match 3","Demi finale","11 points"],["Match 4","Finale","10 min"]],nom:"Volleyball",fam:"collectif",fmt:"tableau",h:"11h30",l:"Terrain C",eq:"Équipe de 5",resp:"Jérémie, aide Ophélie",r:"Matchs en 11 points avec 2 points d'écart. Finale en 10 minutes."},
 {id:"uno",m:[["Match 1","Préliminaire","50 points"],["Match 2","Demi finale","50 points"],["Match 3","Demi finale","50 points"],["Match 4","Finale","50 points"]],nom:"Uno",fam:"plateau",fmt:"tableau",h:"12h00",l:"Club house",eq:"1 équipe par classe",resp:"Teisha, aide Mika",r:"Parties en 50 points, préliminaire, demi finales puis finale. Présélection dans la classe si besoin."},
 {id:"relais",m:[["Match 1","Préliminaire",""],["Match 2","Demi finale",""],["Match 3","Demi finale",""],["Match 4","Finale",""]],nom:"Relais",fam:"force",fmt:"tableau",h:"12h30",l:"Piste",eq:"Équipe de 5",resp:"Elodie, aide Neeta",r:"Relais avec épreuve en duels. Préliminaire, demi finales puis finale."},
-{id:"corde",m:[["Match 1","Préliminaire","5 min"],["Match 2","Demi finale","5 min"],["Match 3","Demi finale","5 min"],["Match 4","Finale","5 min"]],nom:"Tir à la corde",fam:"force",fmt:"tableau",h:"13h00",l:"Pelouse",eq:"Équipe de 10",resp:"Florian, aide Loïc",r:"Tug of war. Duels de 5 minutes, préliminaire, demi finales puis finale."}
+{id:"corde",m:[["Match 1","Préliminaire","5 min"],["Match 2","Demi finale","5 min"],["Match 3","Demi finale","5 min"],["Match 4","Finale","5 min"]],nom:"Tir à la corde",fam:"force",fmt:"tableau",h:"13h00",l:"Pelouse",eq:"Équipe de 10",resp:"Florian, aide Loïc",r:"Tug of war. Duels de 5 minutes, préliminaire, demi finales puis finale."},
+{id:"pingpong",nom:"Ping Pong",fam:"plateau",fmt:"resultat",h:"22 oct.",l:"Club house",eq:"Double mixte",resp:"",r:"Double mixte, joué en amont le jeudi 22 octobre. Résultats officiels, deux vainqueurs à 10 points et deux finalistes à 7 points."}
 ];
 var AC={};ACTS.forEach(function(a){AC[a.id]=a;});
 function saveCustomActs(){var custom=ACTS.map(function(a){return {id:a.id,nom:a.nom,fam:a.fam,fmt:a.fmt,h:a.h,l:a.l,eq:a.eq,resp:a.resp||"",m:a.m||null,r:a.r};});lsSet("customActs2",custom);}
@@ -121,10 +122,11 @@ function toast(msg){var t=document.createElement("div");t.className="toast";t.se
 function stLabel(st){return st==="encours"?'<span class="pill live">En direct</span>':st==="termine"?'<span class="pill done">Terminé</span>':'<span class="pill soon">À venir</span>';}
 
 var RN=["Préliminaire","Demi finale","Finale"];
+var RES={pingpong:[["HER",10],["ART",10],["POS",7],["HES",7]]};
 var FIXBID="xl26";
 var FIXED={foot:["POS","ART","ARE","HES","HER"],basket:["HES","ART","HER","POS","ARE"],volley:["POS","HER","ARE","ART","HES"],corde:["ART","POS","ARE","HES","HER"],prison:["HES","HER","POS","ART","ARE"],echecs:["ART","HES","ARE","POS","HER"],domino:["POS","ART","ARE","HES","HER"],uno:["HER","ARE","ART","HES","POS"],relais:["POS","ART","ARE","HES","HER"]};
 function fixedBr(id){var f=FIXED[id];if(!f)return null;return brFromQ([[f[0],null],[f[3],f[4]],[f[1],null],[f[2],null]],FIXBID);}
-function ensureFixed(){if(!S||!S.acts)return;Object.keys(FIXED).forEach(function(id){var s=S.acts[id];if(!s)return;s.fmt="tableau";if(!s.br||s.br.bid!==FIXBID){s.br=fixedBr(id);if(FB&&typeof fbOverlay==="function")fbOverlay();}});}
+function ensureFixed(){if(!S||!S.acts)return;Object.keys(RES).forEach(function(id){var s=S.acts[id];if(s){s.st="termine";s.fmt="resultat";s.br=null;}});Object.keys(FIXED).forEach(function(id){var s=S.acts[id];if(!s)return;s.fmt="tableau";if(!s.br||s.br.bid!==FIXBID){s.br=fixedBr(id);if(FB&&typeof fbOverlay==="function")fbOverlay();}});}
 function mLabel(ri,mi){return ri===0?"M1 · Préliminaire":ri===1?"M"+(mi+2)+" · Demi finale "+(mi+1):ri===2?"M4 · Finale":"Match";}
 
 function emptyBr(order){var r0=[];for(var i=0;i<4;i++){var m=mk(order[2*i],order[2*i+1]);if(m.a&&!m.b)m.st="fini";r0.push(m);}return {bid:Math.random().toString(36).slice(2,8),r:[r0,[mk(),mk()],[mk()]],pf:mk()};}
@@ -137,6 +139,7 @@ var L=br.r.length;for(var r=1;r<L;r++){br.r[r].forEach(function(m,i){var a=win(b
 var a=lose(br.r[L-2][0]),b=lose(br.r[L-2][1]);var p=br.pf;if(p.a!==a||p.b!==b){p.a=a;p.b=b;p.sa=0;p.sb=0;p.st="avenir";p.w=null;}
 }
 function ranking(id){
+if(RES[id])return RES[id].map(function(x){return x[0];});
 var s=S.acts[id];
 if(s.fmt==="classement"&&!s.rkm&&typeof livePts==="function"&&livePts(id).length)return livePts(id).slice(0,4).map(function(x){return x.id;});
 if(s.fmt==="tableau"){if(!s.br)return [];var f=s.br.r[s.br.r.length-1][0];return [win(f),lose(f)];}
@@ -155,7 +158,7 @@ function allMatches(){var out=[];ACTS.forEach(function(a){var s=S.acts[a.id];if(
 
 function standings(){
 var t={};CLASSES.forEach(function(c){t[c.id]={id:c.id,p:0,g:0,s:0,b:0,f:0};});
-ACTS.forEach(function(a){var s=S.acts[a.id];var rk=ranking(a.id);
+ACTS.forEach(function(a){var s=S.acts[a.id];if(RES[a.id]){RES[a.id].forEach(function(x){if(t[x[0]]){t[x[0]].p+=x[1];if(x[1]===10)t[x[0]].g++;else t[x[0]].s++;}});return;}var rk=ranking(a.id);
 rk.forEach(function(cid,i){if(cid&&t[cid]){t[cid].p+=PTS[i];if(i===0)t[cid].g++;if(i===1)t[cid].s++;if(i===2)t[cid].b++;if(i===3)t[cid].f++;}});
 if(s.st==="termine"&&rk[0]){var inBr=null;if(s.fmt==="tableau"&&s.br){inBr=[];s.br.r[0].forEach(function(m){if(m.a)inBr.push(m.a);if(m.b)inBr.push(m.b);});}CLASSES.forEach(function(c){if(rk.indexOf(c.id)<0&&(s.ff||[]).indexOf(c.id)<0&&(!inBr||inBr.indexOf(c.id)>=0))t[c.id].p+=PART;});}
 });
@@ -528,8 +531,8 @@ var lb=ACTS.filter(function(a){return S.acts[a.id]&&S.acts[a.id].st==="encours"&
 h+=(lv.length||lb.length)?'<div class="grid g3">'+lv.map(matchCard).join("")+lb.map(liveBoard).join("")+'</div>':'<div class="note">Aucun match en cours pour le moment. Les scores apparaissent ici dès qu\'un arbitre lance une rencontre.</div>';
 h+='</section>';
 if(next.length)h+='<section class="block"><div class="head"><div><span class="eyebrow">Prochaines affiches</span><h2 class="disp" style="font-size:1.6rem">À suivre</h2></div></div><div class="grid g3">'+next.map(matchCard).join("")+'</div></section>';
-var other=ACTS.filter(function(a){return S.acts[a.id].fmt==="classement";});
-h+='<section class="block"><div class="head"><div><span class="eyebrow">Épreuves au classement</span><h2 class="disp" style="font-size:1.6rem">Jeux et relais</h2></div></div><div class="grid g4">'+other.map(actCard).join("")+'</div></section>';
+var other=ACTS.filter(function(a){return S.acts[a.id].fmt==="classement"||RES[a.id];});
+if(other.length)h+='<section class="block"><div class="head"><div><span class="eyebrow">Déjà joué</span><h2 class="disp" style="font-size:1.6rem">Résultats connus</h2></div></div><div class="grid g4">'+other.map(actCard).join("")+'</div></section>';
 return h;
 }
 function feedHTML(n){var f=(S.feed||[]).slice(0,n||50);if(!f.length)return '<div class="note">Le fil d\'actu démarre avec le premier résultat.</div>';
@@ -563,9 +566,9 @@ function isAdm(){return !!(ui.admin&&(FB?FBS.user:CAP.edit));}
 function actModal(id){
 var a=AC[id],s=S.acts[id];var rk=ranking(id);
 var h='<div class="row" style="justify-content:space-between"><span class="eyebrow">'+FAM[a.fam]+'</span>'+stLabel(s.st)+'</div><h2 class="disp" style="font-size:2rem;margin:6px 0 10px">'+a.nom+'</h2>'+
-'<div class="row" style="margin-bottom:10px"><span class="pill">'+esc(s.h)+'</span><span class="pill">'+esc(s.l)+'</span><span class="pill">'+esc(a.eq)+'</span>'+(a.resp?'<span class="pill">Responsable '+esc(a.resp)+'</span>':'')+'</div><p style="margin:0 0 6px">'+esc(a.r)+'</p><p class="muted small" style="margin:0 0 14px">Format '+(s.fmt==="tableau"?"tableau officiel à 5 équipes. M1 préliminaire, M2 et M3 demi finales, M4 finale. Trois équipes sont qualifiées directement en demi finale. Vainqueur 10 points, finaliste 7 points.":"classement final saisi par l'arbitre.")+((S.horairesOk||OFFICIEL)?"":" Horaires provisoires.")+'</p>';
+'<div class="row" style="margin-bottom:10px"><span class="pill">'+esc(s.h)+'</span><span class="pill">'+esc(s.l)+'</span><span class="pill">'+esc(a.eq)+'</span>'+(a.resp?'<span class="pill">Responsable '+esc(a.resp)+'</span>':'')+'</div><p style="margin:0 0 6px">'+esc(a.r)+'</p><p class="muted small" style="margin:0 0 14px">Format '+(s.fmt==="tableau"?"tableau officiel à 5 équipes. M1 préliminaire, M2 et M3 demi finales, M4 finale. Trois équipes sont qualifiées directement en demi finale. Vainqueur 10 points, finaliste 7 points.":s.fmt==="resultat"?"résultats officiels déjà enregistrés.":"classement final saisi par l'arbitre.")+((S.horairesOk||OFFICIEL)?"":" Horaires provisoires.")+'</p>';
 if(a.m&&a.m.length)h+='<div class="card" style="margin-bottom:14px;padding:12px"><span class="eyebrow">Déroulé officiel</span><div style="display:grid;gap:4px;margin-top:6px">'+a.m.map(function(x){return '<div class="row small" style="justify-content:space-between;gap:8px;border-bottom:1px dashed rgba(0,0,0,.15);padding:3px 0"><b>'+esc(x[0])+'</b><span>'+esc(x[1])+'</span><span class="muted">'+esc(x[2])+'</span></div>';}).join('')+'</div><div class="row small" style="gap:6px;margin-top:8px"><span class="pill" style="background:var(--mustard)">Vainqueur 10 pts</span><span class="pill">Finaliste 7 pts</span></div></div>';
-if(rk.some(Boolean))h+='<div class="grid" style="gap:6px;margin-bottom:14px">'+rk.map(function(c,i){return c?'<div class="cls"><span class="pill">'+["Or","Argent","Bronze","4e"][i]+'</span>'+chip(c)+'<span>'+esc(nm(c))+'</span>'+(isAdm()?'<div class="row" style="margin-left:auto;gap:4px"><button class="btn sm" data-adj="'+id+':'+c+':-1" title="Retirer">−</button><button class="btn sm" data-adj="'+id+':'+c+':1" title="Ajouter">+</button></div>':'')+'</div>':"";}).join("")+'</div>';
+if(rk.some(Boolean))h+='<div class="grid" style="gap:6px;margin-bottom:14px">'+rk.map(function(c,i){return c?'<div class="cls"><span class="pill">'+(RES[id]?(RES[id][i][1]===10?"Vainqueur 10 pts":"Finaliste 7 pts"):["Vainqueur","Finaliste","3e","4e"][i])+'</span>'+chip(c)+'<span>'+esc(nm(c))+'</span>'+(isAdm()?'<div class="row" style="margin-left:auto;gap:4px"><button class="btn sm" data-adj="'+id+':'+c+':-1" title="Retirer">−</button><button class="btn sm" data-adj="'+id+':'+c+':1" title="Ajouter">+</button></div>':'')+'</div>':"";}).join("")+'</div>';
 if(s.fmt==="classement"&&isAdm()){var unranked=CLASSES.filter(function(c){return rk.indexOf(c.id)<0;});if(unranked.length)h+='<div style="margin-bottom:14px"><span class="eyebrow">Ajouter au classement</span><div class="picks" style="margin-top:6px">'+unranked.map(function(c){return '<button class="pick" data-adj="'+id+':'+c.id+':1">+ '+esc(c.nom)+'</button>';}).join("")+'</div></div>';}
 if(INS().length){var tot=insOf(null,id).length;h+='<details class="card" style="margin-bottom:14px;padding:12px"><summary style="cursor:pointer"><b>'+tot+' inscrits</b> <span class="muted small">par team, touche pour voir</span></summary>'+CLASSES.map(function(c){var l=insOf(c.id,id);return '<div style="margin-top:8px"><div class="cls small">'+chip(c.id)+'<b>'+esc(c.nom)+'</b><span class="muted">'+l.length+'</span></div>'+insNames(l)+'</div>';}).join('')+'</details>';}
 if(livePts(id).length&&s.st!=="termine")h+=liveBoard(a);
@@ -689,11 +692,11 @@ function simpleOrga(){
 var sec=function(n,t,body){return '<div class="card" style="margin-top:12px;display:grid;gap:8px"><h3 class="cond" style="font-weight:800;text-transform:uppercase;margin:0"><span style="display:inline-grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--ink);color:var(--paper);margin-right:8px;font-size:1rem">'+n+'</span>'+t+'</h3>'+body+'</div>';};
 var h='';
 if(S.phase)h+='<div class="note small" style="margin-top:10px">Le site est bloqué sur la phase « '+esc((PHASES.find(function(p){return p[0]===S.phase;})||[,""])[1])+' ». <button class="btn sm" data-phase="">Remettre en automatique</button></div>';
-h+=sec(1,"Saisir les scores",'<p class="muted small" style="margin:0">Touche une épreuve pour ouvrir ses matchs, puis +1 et Terminer le match.</p><div class="grid" style="gap:6px">'+ACTS.map(function(a){var s=S.acts[a.id];var all=[],done=0;if(s.br){s.br.r.forEach(function(rd){rd.forEach(function(m){if(m.a&&m.b){all.push(m);if(m.st==="fini")done++;}});});}
+h+=sec(1,"Saisir les scores",'<p class="muted small" style="margin:0">Touche une épreuve pour ouvrir ses matchs, puis +1 et Terminer le match.</p><div class="grid" style="gap:6px">'+ACTS.filter(function(a){return !RES[a.id];}).map(function(a){var s=S.acts[a.id];var all=[],done=0;if(s.br){s.br.r.forEach(function(rd){rd.forEach(function(m){if(m.a&&m.b){all.push(m);if(m.st==="fini")done++;}});});}
 return '<a class="btn alt" style="text-decoration:none;display:flex;justify-content:space-between;align-items:center;gap:8px" href="#saisie-'+encodeURIComponent(a.id)+'"><span style="display:grid;gap:2px;text-align:left"><span>'+esc(a.nom)+' <span class="muted small" style="text-transform:none">'+esc(s.h)+'</span></span>'+(a.resp?'<span class="small" style="text-transform:none;letter-spacing:0;font-weight:500">👤 '+esc(respTxt(a))+'</span>':'')+'</span><span class="small" style="text-transform:none;white-space:nowrap">'+(s.st==="termine"?"Terminé ✓":(all.length?done+"/4":""))+'</span></a>';}).join('')+'</div>');
 h+=sec(2,"Vérifier",'<p class="muted small" style="margin:0">Qui a saisi quoi, et à quelle heure.</p><button class="btn alt" data-do="journal">Journal des saisies</button>');
 h+='<div class="row" style="margin-top:14px;justify-content:space-between;flex-wrap:wrap;gap:8px"><button class="btn sm alt" data-do="logout">Se déconnecter</button><button class="btn sm red" data-do="resetall">Remise à zéro</button></div><div class="muted small" style="margin-top:4px">Remise à zéro efface tous les scores. À utiliser seulement avant le début, avec trois appuis.</div>';
-h+='<div class="muted small" style="margin-top:10px;text-align:center">Version du 22 octobre, 18h45</div>';
+h+='<div class="muted small" style="margin-top:10px;text-align:center">Version du 22 octobre, 19h00</div>';
 return h;}
 function renderDrawer(){
 ssSet("drawer",true);var d=$("#drawer");if(!d){d=document.createElement("aside");d.id="drawer";d.className="drawer adm";d.setAttribute("aria-label","Espace organisation");document.body.appendChild(d);var p=document.createElement("div");p.id="pubbar";p.className="pubbar";document.body.appendChild(p);}
