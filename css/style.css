@@ -292,3 +292,25 @@ footer{margin-top:40px;border-top:2px solid var(--ink);padding-block:22px 40px}
 .tv .tvsc{font-size:14vh;font-weight:900;line-height:1;white-space:nowrap}
 .tv .tvsc i{font-style:normal;opacity:.4;margin:0 1.5vw}
 .tv .tvnone{font-size:5vh;font-weight:800}
+
+/* Scores encore plus gros */
+.tv{padding:1.5vh 2vw}
+.tv .tvt{font-size:5vh}
+.tv .slide{gap:1.2vh}
+.tv .tvrows{gap:1vh}
+.tv .tvrow{padding:.2vh 2vw .2vh 3vw;grid-template-columns:10vh 1fr auto}
+.tv .tvrk{font-size:10vh}
+.tv .tvnm{font-size:7vh}
+.tv .tvnm small{font-size:2.2vh}
+.tv .tvpts{font-size:15vh;letter-spacing:-.02em}
+.tv .tvpts small{font-size:3.5vh}
+.tv .tvsc{font-size:30vh;letter-spacing:-.02em}
+.tv .tvteam{font-size:7vh}
+.tv .tvact{font-size:3.4vh}
+.tv .tvms.n2 .tvsc{font-size:17vh}
+.tv .tvms.n2 .tvteam{font-size:5.5vh}
+.tv .tvms.n3 .tvsc{font-size:12vh}
+.tv .tvms.n3 .tvteam{font-size:4.5vh}
+.tv .tvms.n3 .tvact,.tv .tvms.n2 .tvact{font-size:2.6vh}
+.tv .tvms.n1 .tvsc{font-size:42vh;line-height:.9}
+.tv .tvms.n1 .tvteam{font-size:8vh}
